@@ -1,4 +1,5 @@
 // SkillHub Frontend - Version 3.0 - Connected to Backend API
+// Last updated: deployed to Netlify
 
 // ===== CONFIG =====
 // Auto-detect if running on localhost or a real device/network
