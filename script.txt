@@ -1,0 +1,354 @@
+// ============ CONFIGURATION ============
+const YOUR_WHATSAPP = "1234567890"; // Replace with your WhatsApp number (e.g., "971501234567")
+
+// ============ LOCALSTORAGE KEYS ============
+const STORAGE_KEYS = {
+    INSTRUCTORS: 'skillhub_instructors',
+    FREELANCERS: 'skillhub_freelancers'
+};
+
+// ============ INITIALIZE DATA ============
+let instructors = [];
+let freelancers = [];
+let currentChatFreelancer = null;
+
+// Load data from localStorage
+function loadFromLocalStorage() {
+    const storedInstructors = localStorage.getItem(STORAGE_KEYS.INSTRUCTORS);
+    const storedFreelancers = localStorage.getItem(STORAGE_KEYS.FREELANCERS);
+    
+    if (storedInstructors) {
+        instructors = JSON.parse(storedInstructors);
+    } else {
+        // Add some sample courses to localStorage
+        instructors = [
+            {
+                id: Date.now() + 1,
+                name: "John Doe",
+                course: "Complete Web Development Bootcamp",
+                price: 49.99,
+                desc: "Learn HTML, CSS, JavaScript, React, Node.js and become a full-stack developer"
+            },
+            {
+                id: Date.now() + 2,
+                name: "Jane Smith",
+                course: "UI/UX Design Masterclass",
+                price: 39.99,
+                desc: "Master Figma, user research, prototyping, and design principles"
+            },
+            {
+                id: Date.now() + 3,
+                name: "Mike Johnson",
+                course: "Python for Data Science",
+                price: 59.99,
+                desc: "Learn Python, Pandas, NumPy, and Machine Learning basics"
+            }
+        ];
+        saveInstructorsToLocalStorage();
+    }
+    
+    if (storedFreelancers) {
+        freelancers = JSON.parse(storedFreelancers);
+    } else {
+        // Add sample freelancers
+        freelancers = [
+            {
+                id: Date.now() + 101,
+                name: "Alice Wonderland",
+                skill: "Web Development",
+                rate: "$50/hour",
+                desc: "Expert in React, Node.js, and MongoDB. 5+ years experience"
+            },
+            {
+                id: Date.now() + 102,
+                name: "Bob Marley",
+                skill: "Graphic Design",
+                rate: "$35/hour",
+                desc: "Logo design, branding, social media graphics, Photoshop expert"
+            },
+            {
+                id: Date.now() + 103,
+                name: "Charlie Brown",
+                skill: "Content Writing",
+                rate: "$30/hour",
+                desc: "SEO content, blog posts, copywriting, and editing"
+            }
+        ];
+        saveFreelancersToLocalStorage();
+    }
+}
+
+// Save instructors to localStorage
+function saveInstructorsToLocalStorage() {
+    localStorage.setItem(STORAGE_KEYS.INSTRUCTORS, JSON.stringify(instructors));
+}
+
+// Save freelancers to localStorage
+function saveFreelancersToLocalStorage() {
+    localStorage.setItem(STORAGE_KEYS.FREELANCERS, JSON.stringify(freelancers));
+}
+
+// ============ WHATSAPP INTEGRATION ============
+function sendToWhatsApp(message) {
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${YOUR_WHATSAPP}?text=${encoded}`, '_blank');
+}
+
+// ============ INSTRUCTOR FUNCTIONS ============
+// Show instructor registration form
+function showInstructorForm() {
+    hideAllContainers();
+    document.getElementById('instructorFormContainer').classList.remove('hidden');
+}
+
+// Show add course manually form
+function showAddCourseManually() {
+    hideAllContainers();
+    document.getElementById('addCourseContainer').classList.remove('hidden');
+}
+
+// Manual add course to localStorage
+document.getElementById('addCourseForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('manualCourseTitle').value;
+    const instructor = document.getElementById('manualInstructorName').value;
+    const price = parseFloat(document.getElementById('manualCoursePrice').value);
+    const desc = document.getElementById('manualCourseDesc').value;
+    
+    const newCourse = {
+        id: Date.now(),
+        name: instructor,
+        course: title,
+        price: price,
+        desc: desc
+    };
+    
+    instructors.push(newCourse);
+    saveInstructorsToLocalStorage();
+    
+    document.getElementById('addCourseMsg').innerText = '✅ Course added to localStorage successfully!';
+    document.getElementById('addCourseForm').reset();
+    
+    setTimeout(() => {
+        document.getElementById('addCourseMsg').innerText = '';
+    }, 3000);
+});
+
+// Instructor form submission
+document.getElementById('instructorForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('instructorName').value;
+    const course = document.getElementById('instructorCourse').value;
+    const price = parseFloat(document.getElementById('instructorPrice').value);
+    const desc = document.getElementById('instructorDesc').value;
+    
+    const instructorData = {
+        id: Date.now(),
+        name: name,
+        course: course,
+        price: price,
+        desc: desc
+    };
+    
+    instructors.push(instructorData);
+    saveInstructorsToLocalStorage();
+    
+    document.getElementById('instructorMsg').innerText = '✅ Registration confirmed! You are now listed as an instructor.';
+    
+    // Send to WhatsApp
+    const msg = `NEW INSTRUCTOR REGISTRATION:\nName: ${name}\nCourse: ${course}\nPrice: $${price}\nDescription: ${desc}`;
+    sendToWhatsApp(msg);
+    
+    document.getElementById('instructorForm').reset();
+    setTimeout(() => {
+        document.getElementById('instructorMsg').innerText = '';
+    }, 3000);
+});
+
+// View courses
+function showViewCourses() {
+    hideAllContainers();
+    const container = document.getElementById('viewCoursesContainer');
+    container.classList.remove('hidden');
+    renderCourses();
+}
+
+function renderCourses() {
+    const container = document.getElementById('viewCoursesContainer');
+    
+    if (instructors.length === 0) {
+        container.innerHTML = '<div class="no-data">No courses available. Add some courses to localStorage!</div>';
+        return;
+    }
+    
+    container.innerHTML = instructors.map(inst => `
+        <div class="course-card">
+            <h3>${escapeHtml(inst.course)}</h3>
+            <div class="instructor"><i class="fas fa-user"></i> Instructor: ${escapeHtml(inst.name)}</div>
+            <div class="price">$${inst.price}</div>
+            <div class="description">${escapeHtml(inst.desc)}</div>
+            <button onclick="buyCourse('${escapeHtml(inst.course)}', ${inst.price}, '${escapeHtml(inst.name)}')" class="btn btn-blue">
+                Buy via WhatsApp
+            </button>
+        </div>
+    `).join('');
+}
+
+function buyCourse(courseName, price, instructorName) {
+    const msg = `I'm interested in buying course "${courseName}" for $${price} taught by ${instructorName} on SkillHub. Please guide me for payment.`;
+    sendToWhatsApp(msg);
+    alert("Redirecting to WhatsApp to complete purchase.");
+}
+
+function showBuyCourse() {
+    const msg = "I want to buy a course on SkillHub. Please share available courses and payment details.";
+    sendToWhatsApp(msg);
+    alert("Redirecting to WhatsApp to purchase a course.");
+}
+
+// ============ FREELANCER FUNCTIONS ============
+function showFreelancerForm() {
+    hideAllContainers();
+    document.getElementById('freelancerFormContainer').classList.remove('hidden');
+}
+
+// Freelancer form submission
+document.getElementById('freelancerForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('freelancerName').value;
+    const skill = document.getElementById('freelancerSkill').value;
+    const rate = document.getElementById('freelancerRate').value;
+    const desc = document.getElementById('freelancerDesc').value;
+    
+    const freelancerData = {
+        id: Date.now(),
+        name: name,
+        skill: skill,
+        rate: rate,
+        desc: desc
+    };
+    
+    freelancers.push(freelancerData);
+    saveFreelancersToLocalStorage();
+    
+    document.getElementById('freelancerMsg').innerText = '✅ Registered as freelancer! You now appear in "Hire a freelancer" section.';
+    
+    // Send to WhatsApp
+    const msg = `NEW FREELANCER REGISTRATION:\nName: ${name}\nSkill: ${skill}\nRate: ${rate}\nDescription: ${desc}`;
+    sendToWhatsApp(msg);
+    
+    document.getElementById('freelancerForm').reset();
+    setTimeout(() => {
+        document.getElementById('freelancerMsg').innerText = '';
+    }, 3000);
+});
+
+function showHireFreelancer() {
+    hideAllContainers();
+    const container = document.getElementById('hireFreelancerContainer');
+    container.classList.remove('hidden');
+    renderFreelancerProfiles();
+}
+
+function renderFreelancerProfiles() {
+    const listContainer = document.getElementById('freelancerList');
+    
+    if (freelancers.length === 0) {
+        listContainer.innerHTML = '<div class="no-data">No freelancers registered yet. Become the first!</div>';
+        return;
+    }
+    
+    listContainer.innerHTML = freelancers.map(freelancer => `
+        <div class="freelancer-card">
+            <h3>${escapeHtml(freelancer.name)}</h3>
+            <div class="skill"><i class="fas fa-code"></i> ${escapeHtml(freelancer.skill)}</div>
+            <div class="rate"><i class="fas fa-dollar-sign"></i> ${escapeHtml(freelancer.rate)}</div>
+            <div class="description">${escapeHtml(freelancer.desc)}</div>
+            <button onclick="openChatWithFreelancer('${escapeHtml(freelancer.name)}', ${freelancer.id})" class="btn btn-green">
+                <i class="fas fa-comment"></i> Chat & Hire
+            </button>
+        </div>
+    `).join('');
+}
+
+function openChatWithFreelancer(name, id) {
+    currentChatFreelancer = { name, id };
+    const chatBoard = document.getElementById('chatBoard');
+    chatBoard.classList.remove('hidden');
+    document.getElementById('chatFreelancerName').innerText = name;
+    document.getElementById('chatMessages').innerHTML = '<div class="chat-message">💬 Start conversation — messages go to admin WhatsApp</div>';
+    document.getElementById('chatInput').value = '';
+}
+
+function sendChatMessage() {
+    if (!currentChatFreelancer) {
+        alert("Please select a freelancer first.");
+        return;
+    }
+    
+    const messageText = document.getElementById('chatInput').value.trim();
+    if (!messageText) return;
+    
+    const freelancerName = currentChatFreelancer.name;
+    const fullMsg = `💬 CHAT from client to freelancer (${freelancerName}):\n${messageText}\n[Admin only - SkillHub]`;
+    sendToWhatsApp(fullMsg);
+    
+    // Add to chat board
+    const chatDiv = document.getElementById('chatMessages');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-message';
+    msgDiv.style.background = '#dbeafe';
+    msgDiv.style.textAlign = 'right';
+    msgDiv.innerHTML = `<strong>You:</strong> ${escapeHtml(messageText)}`;
+    chatDiv.appendChild(msgDiv);
+    
+    document.getElementById('chatInput').value = '';
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+    
+    alert("Message sent to admin WhatsApp. The freelancer will be notified.");
+}
+
+// ============ HELPER FUNCTIONS ============
+function hideAllContainers() {
+    const containers = [
+        'instructorFormContainer',
+        'addCourseContainer',
+        'viewCoursesContainer',
+        'freelancerFormContainer',
+        'hireFreelancerContainer'
+    ];
+    
+    containers.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.classList.add('hidden');
+    });
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// ============ INITIALIZATION ============
+document.addEventListener('DOMContentLoaded', function() {
+    loadFromLocalStorage();
+    
+    // Make functions globally available
+    window.showInstructorForm = showInstructorForm;
+    window.showAddCourseManually = showAddCourseManually;
+    window.showBuyCourse = showBuyCourse;
+    window.showViewCourses = showViewCourses;
+    window.showFreelancerForm = showFreelancerForm;
+    window.showHireFreelancer = showHireFreelancer;
+    window.buyCourse = buyCourse;
+    window.openChatWithFreelancer = openChatWithFreelancer;
+    window.sendChatMessage = sendChatMessage;
+});
