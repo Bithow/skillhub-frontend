@@ -2,13 +2,10 @@
 
 // ===== CONFIG =====
 // Auto-detect if running on localhost or a real device/network
-var _isLocalhost = (location.hostname === "localhost" || location.hostname === "127.0.0.1");
-var _localNetworkIP = "192.168.137.1"; // Your PC's local IP — update if it changes
-
 var CONFIG = {
     ADMIN_WHATSAPP: "256783999418",
     BUSINESS_WHATSAPP: "256783999418",
-    API_BASE: (_isLocalhost ? "http://localhost:5000" : "http://" + _localNetworkIP + ":5000") + "/api",
+    API_BASE: "https://skillhub-backend-i3dr.onrender.com/api",
     TOKEN_KEY: "skillhub_token",
     SESSION_KEY: "skillhub_user",
     NEWSLETTER_KEY: "skillhub_newsletter",
