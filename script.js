@@ -284,11 +284,15 @@ var CourseManager = {
         if (!course) return;
         var modal = document.getElementById("courseModal");
         var modalBody = document.getElementById("modalBody");
+        var token = localStorage.getItem("skillhub_token");
         modalBody.innerHTML =
             "<h2 style='font-size:1.5rem;margin-bottom:1rem;'>" + Utils.escapeHtml(course.title) + "</h2>" +
             "<p style='margin-bottom:0.5rem;'><strong>Instructor:</strong> " + Utils.escapeHtml(course.instructorName) + "</p>" +
             "<p style='margin-bottom:1rem;'><strong>Description:</strong> " + Utils.escapeHtml(course.description) + "</p>" +
             "<p style='font-size:1.75rem;font-weight:bold;color:#10b981;margin-bottom:1.5rem;'>" + Utils.escapeHtml(String(course.price)) + " ETB</p>" +
+            (token
+                ? "<a href='course.html?id=" + Utils.escapeHtml(String(course.id)) + "' class='btn btn-blue btn-full' style='display:block;text-align:center;text-decoration:none;margin-bottom:0.75rem;'><i class='fas fa-play-circle'></i> View Course Content</a>"
+                : "") +
             "<button id='modalBuyBtn' class='btn btn-green btn-full'><i class='fab fa-whatsapp'></i> Buy via WhatsApp</button>";
         modal.style.display = "flex";
         document.getElementById("modalBuyBtn").addEventListener("click", function() {
