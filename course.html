@@ -261,6 +261,14 @@ function renderCourse(course) {
         return;
     }
 
+    // Add certificate button at bottom of sidebar
+    var certBtn = "<div style='padding:1rem 1.5rem;border-top:2px solid #e2e8f0;margin-top:0.5rem;'>" +
+        "<a href='certificate.html?name=" + encodeURIComponent(document.getElementById("topbarUser").textContent || "Student") +
+        "&course=" + encodeURIComponent(course.title) +
+        "&date=" + encodeURIComponent(new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"})) +
+        "' target='_blank' style='display:block;text-align:center;background:linear-gradient(135deg,#1e3a8a,#2563eb);color:white;padding:0.75rem;border-radius:0.5rem;text-decoration:none;font-weight:600;font-size:0.875rem;'>" +
+        "<i class='fas fa-award'></i> Get Certificate</a></div>";
+
     document.getElementById("lessonsList").innerHTML = lessons.map(function(lesson, i) {
         var icons = "";
         if (lesson.videoUrl) icons += "<i class='fas fa-video'></i>";
@@ -271,7 +279,7 @@ function renderCourse(course) {
             (lesson.duration ? "<p>" + lesson.duration + " min</p>" : "") + "</div>" +
             "<div class='lesson-icons'>" + icons + "</div>" +
             "</div>";
-    }).join("");
+    }).join("") + certBtn;
 
     selectLesson(0);
     loadDiscussion();
