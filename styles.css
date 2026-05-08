@@ -135,12 +135,11 @@ body {
 .logo-icon {
     width: 40px;
     height: 40px;
-    background: var(--gradient-blue);
+    background: transparent;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float {
