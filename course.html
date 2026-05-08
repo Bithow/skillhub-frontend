@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Content - SkillHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+        .topbar {
+            background: #1e3a8a; color: white; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .topbar a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 700; }
+        .topbar-right { font-size: 0.875rem; opacity: 0.8; }
+
+        .layout { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 60px); }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: white; border-right: 1px solid #e2e8f0;
+            overflow-y: auto; max-height: calc(100vh - 60px); position: sticky; top: 60px;
+        }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .sidebar-header h2 { font-size: 1rem; font-weight: 700; color: #1e293b; }
+        .sidebar-header p { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+        .lesson-item {
+            padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+            transition: background 0.2s; display: flex; align-items: center; gap: 0.75rem;
+        }
+        .lesson-item:hover { background: #f8fafc; }
+        .lesson-item.active { background: #eff6ff; border-left: 3px solid #2563eb; }
+        .lesson-num {
+            width: 28px; height: 28px; background: #e2e8f0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+        }
+        .lesson-item.active .lesson-num { background: #2563eb; color: white; }
+        .lesson-info h4 { font-size: 0.875rem; font-weight: 600; }
+        .lesson-info p { font-size: 0.75rem; color: #64748b; margin-top: 0.125rem; }
+        .lesson-icons { margin-left: auto; display: flex; gap: 0.5rem; }
+        .lesson-icons i { font-size: 0.875rem; color: #94a3b8; }
+        .lesson-icons .fa-video { color: #ef4444; }
+        .lesson-icons .fa-file-pdf { color: #f59e0b; }
+
+        /* MAIN CONTENT */
+        .main { padding: 2rem; overflow-y: auto; }
+        .content-tabs {
+            display: flex; gap: 0; margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .content-tab {
+            padding: 0.75rem 1.5rem; border: none; background: none; cursor: pointer;
+            font-size: 0.875rem; font-weight: 600; color: #64748b;
+            border-bottom: 3px solid transparent; margin-bottom: -2px;
+        }
+        .content-tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+
+        /* VIDEO */
+        .video-container {
+            background: #000; border-radius: 0.75rem; overflow: hidden;
+            aspect-ratio: 16/9; margin-bottom: 1.5rem;
+        }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+        .no-video {
+            background: #1e293b; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; color: white; gap: 1rem; aspect-ratio: 16/9;
+            border-radius: 0.75rem; margin-bottom: 1.5rem;
+        }
+        .no-video i { font-size: 3rem; opacity: 0.5; }
+        .no-video p { opacity: 0.7; }
+
+        /* LESSON INFO */
+        .lesson-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .lesson-meta { font-size: 0.875rem; color: #64748b; margin-bottom: 1.5rem; }
+        .lesson-desc { color: #475569; line-height: 1.7; margin-bottom: 1.5rem; }
+
+        /* PDF */
+        .pdf-section { margin-bottom: 1.5rem; }
+        .pdf-link {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: #fef3c7; color: #92400e; padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; text-decoration: none; font-weight: 600;
+            transition: background 0.2s;
+        }
+        .pdf-link:hover { background: #fde68a; }
+
+        /* DISCUSSION */
+        .discussion-section { max-width: 700px; }
+        .discussion-section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+        .comment-form { margin-bottom: 1.5rem; }
+        .comment-input {
+            width: 100%; padding: 0.875rem; border: 2px solid #e2e8f0;
+            border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;
+            min-height: 80px; font-family: inherit;
+        }
+        .comment-input:focus { outline: none; border-color: #2563eb; }
+        .comment-btn {
+            margin-top: 0.5rem; padding: 0.625rem 1.5rem; background: #2563eb;
+            color: white; border: none; border-radius: 0.5rem; cursor: pointer;
+            font-weight: 600; font-size: 0.875rem;
+        }
+        .comment-btn:hover { background: #1d4ed8; }
+        .comment {
+            background: white; padding: 1rem; border-radius: 0.5rem;
+            margin-bottom: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .comment-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .comment-author { font-weight: 600; font-size: 0.875rem; }
+        .comment-date { font-size: 0.75rem; color: #94a3b8; }
+        .comment-text { font-size: 0.875rem; color: #475569; line-height: 1.6; }
+        .no-comments { color: #94a3b8; font-size: 0.875rem; padding: 1rem 0; }
+
+        /* NOT ENROLLED */
+        .not-enrolled {
+            text-align: center; padding: 4rem 2rem; background: white;
+            border-radius: 1rem; max-width: 500px; margin: 2rem auto;
+        }
+        .not-enrolled i { font-size: 3rem; color: #f59e0b; margin-bottom: 1rem; }
+        .not-enrolled h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .not-enrolled p { color: #64748b; margin-bottom: 1.5rem; }
+        .not-enrolled a {
+            display: inline-block; background: #2563eb; color: white;
+            padding: 0.75rem 2rem; border-radius: 0.5rem; text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* LOADING */
+        .loading { text-align: center; padding: 3rem; color: #64748b; }
+        .loading i { font-size: 2rem; display: block; margin-bottom: 1rem; }
+
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { max-height: 300px; position: static; }
+            .main { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <a href="index.html"><i class="fas fa-graduation-cap"></i> SkillHub</a>
+    <span class="topbar-right" id="topbarUser">Loading...</span>
+</div>
+
+<div id="loadingScreen" class="loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    Loading course...
+</div>
+
+<div id="notEnrolled" class="not-enrolled" style="display:none;">
+    <i class="fas fa-lock"></i>
+    <h2>Access Restricted</h2>
+    <p>You need to purchase this course to access the content.</p>
+    <a href="index.html#courses">Browse Courses</a>
+</div>
+
+<div id="courseLayout" class="layout" style="display:none;">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2 id="courseTitle">Course Title</h2>
+            <p id="lessonCount">0 lessons</p>
+        </div>
+        <div id="lessonsList"></div>
+    </div>
+    <div class="main">
+        <div class="content-tabs">
+            <button class="content-tab active" onclick="showContentTab('lesson', this)"><i class="fas fa-play"></i> Lesson</button>
+            <button class="content-tab" onclick="showContentTab('discussion', this)"><i class="fas fa-comments"></i> Discussion</button>
+        </div>
+
+        <div id="lessonContent">
+            <div id="videoArea"></div>
+            <h2 class="lesson-title" id="lessonTitle">Select a lesson</h2>
+            <p class="lesson-meta" id="lessonMeta"></p>
+            <p class="lesson-desc" id="lessonDesc"></p>
+            <div class="pdf-section" id="pdfSection"></div>
+        </div>
+
+        <div id="discussionContent" style="display:none;">
+            <div class="discussion-section">
+                <h3><i class="fas fa-comments"></i> Course Discussion</h3>
+                <div class="comment-form">
+                    <textarea class="comment-input" id="commentInput" placeholder="Ask a question or share your thoughts..."></textarea>
+                    <button class="comment-btn" onclick="postComment()"><i class="fas fa-paper-plane"></i> Post Comment</button>
+                </div>
+                <div id="commentsList"><div class="no-comments">No comments yet. Be the first!</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var API_BASE = "https://skillhub-backend-i3dr.onrender.com/api";
+var token = localStorage.getItem("skillhub_token");
+var courseId = new URLSearchParams(window.location.search).get("id");
+var currentCourse = null;
+var currentLesson = null;
+
+function esc(str) {
+    if (!str) return "";
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+async function init() {
+    if (!courseId) {
+        window.location.href = "index.html#courses";
+        return;
+    }
+
+    // Get user info
+    if (token) {
+        try {
+            var r = await fetch(API_BASE + "/auth/me", { headers: { "Authorization": "Bearer " + token } });
+            var d = await r.json();
+            if (d.success) document.getElementById("topbarUser").textContent = d.user.name;
+        } catch(e) {}
+    }
+
+    // Load course
+    try {
+        var res = await fetch(API_BASE + "/courses/" + courseId);
+        var data = await res.json();
+        if (!data.success) throw new Error("Course not found");
+        currentCourse = data.course;
+        renderCourse(data.course);
+    } catch(e) {
+        document.getElementById("loadingScreen").innerHTML = "<p style='color:red;'>Course not found. <a href='index.html'>Go back</a></p>";
+    }
+}
+
+function renderCourse(course) {
+    document.getElementById("loadingScreen").style.display = "none";
+    document.title = course.title + " - SkillHub";
+
+    // Check if user is enrolled or is instructor/admin
+    var isEnrolled = false;
+    var session = JSON.parse(localStorage.getItem("skillhub_user") || "{}");
+    if (session.role === "admin" || session.role === "instructor") isEnrolled = true;
+    if (course.students && token) {
+        // For MVP — if logged in, allow access (payment verification is manual via WhatsApp)
+        isEnrolled = true;
+    }
+
+    if (!token) {
+        document.getElementById("notEnrolled").style.display = "block";
+        return;
+    }
+
+    document.getElementById("courseLayout").style.display = "grid";
+    document.getElementById("courseTitle").textContent = course.title;
+
+    var lessons = course.lessons || [];
+    document.getElementById("lessonCount").textContent = lessons.length + " lesson" + (lessons.length !== 1 ? "s" : "");
+
+    if (lessons.length === 0) {
+        document.getElementById("lessonsList").innerHTML = "<p style='padding:1rem;color:#94a3b8;font-size:0.875rem;'>No lessons added yet.</p>";
+        document.getElementById("videoArea").innerHTML = "<div class='no-video'><i class='fas fa-video-slash'></i><p>No lessons available yet</p></div>";
+        return;
+    }
+
+    document.getElementById("lessonsList").innerHTML = lessons.map(function(lesson, i) {
+        var icons = "";
+        if (lesson.videoUrl) icons += "<i class='fas fa-video'></i>";
+        if (lesson.pdfUrl) icons += "<i class='fas fa-file-pdf'></i>";
+        return "<div class='lesson-item' id='lesson-" + i + "' onclick='selectLesson(" + i + ")'>" +
+            "<div class='lesson-num'>" + (i + 1) + "</div>" +
+            "<div class='lesson-info'><h4>" + esc(lesson.title || "Lesson " + (i+1)) + "</h4>" +
+            (lesson.duration ? "<p>" + lesson.duration + " min</p>" : "") + "</div>" +
+            "<div class='lesson-icons'>" + icons + "</div>" +
+            "</div>";
+    }).join("");
+
+    selectLesson(0);
+    loadDiscussion();
+}
+
+function selectLesson(index) {
+    var lessons = currentCourse.lessons || [];
+    if (!lessons[index]) return;
+    currentLesson = lessons[index];
+
+    document.querySelectorAll(".lesson-item").forEach(function(el) { el.classList.remove("active"); });
+    var el = document.getElementById("lesson-" + index);
+    if (el) el.classList.add("active");
+
+    document.getElementById("lessonTitle").textContent = currentLesson.title || "Lesson " + (index + 1);
+    document.getElementById("lessonMeta").textContent = currentLesson.duration ? currentLesson.duration + " minutes" : "";
+    document.getElementById("lessonDesc").textContent = currentLesson.description || "";
+
+    // Video
+    var videoArea = document.getElementById("videoArea");
+    if (currentLesson.videoUrl) {
+        var embedUrl = getEmbedUrl(currentLesson.videoUrl);
+        if (embedUrl) {
+            videoArea.innerHTML = "<div class='video-container'><iframe src='" + embedUrl + "' allowfullscreen allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'></iframe></div>";
+        } else {
+            videoArea.innerHTML = "<div class='no-video'><i class='fas fa-video'></i><p><a href='" + esc(currentLesson.videoUrl) + "' target='_blank' style='color:#60a5fa;'>Open video in new tab</a></p></div>";
+        }
+    } else {
+        videoArea.innerHTML = "<div class='no-video'><i class='fas fa-video-slash'></i><p>No video for this lesson</p></div>";
+    }
+
+    // PDF
+    var pdfSection = document.getElementById("pdfSection");
+    if (currentLesson.pdfUrl) {
+        pdfSection.innerHTML = "<a href='" + esc(currentLesson.pdfUrl) + "' target='_blank' class='pdf-link'><i class='fas fa-file-pdf'></i> Download PDF / Notes</a>";
+    } else {
+        pdfSection.innerHTML = "";
+    }
+}
+
+function getEmbedUrl(url) {
+    if (!url) return null;
+    // YouTube
+    var ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (ytMatch) return "https://www.youtube.com/embed/" + ytMatch[1];
+    // Google Drive
+    var driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) return "https://drive.google.com/file/d/" + driveMatch[1] + "/preview";
+    // Vimeo
+    var vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) return "https://player.vimeo.com/video/" + vimeoMatch[1];
+    return null;
+}
+
+function showContentTab(tab, btn) {
+    document.querySelectorAll(".content-tab").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    document.getElementById("lessonContent").style.display = tab === "lesson" ? "block" : "none";
+    document.getElementById("discussionContent").style.display = tab === "discussion" ? "block" : "none";
+    if (tab === "discussion") loadDiscussion();
+}
+
+async function loadDiscussion() {
+    try {
+        var res = await fetch(API_BASE + "/courses/" + courseId + "/discussion");
+        var data = await res.json();
+        if (!data.success) return;
+        renderComments(data.discussion || []);
+    } catch(e) {}
+}
+
+function renderComments(comments) {
+    var el = document.getElementById("commentsList");
+    if (!comments.length) {
+        el.innerHTML = "<div class='no-comments'>No comments yet. Be the first!</div>";
+        return;
+    }
+    el.innerHTML = comments.slice().reverse().map(function(c) {
+        return "<div class='comment'>" +
+            "<div class='comment-header'>" +
+            "<span class='comment-author'>" + esc(c.userName || "User") + "</span>" +
+            "<span class='comment-date'>" + new Date(c.createdAt).toLocaleDateString() + "</span>" +
+            "</div>" +
+            "<p class='comment-text'>" + esc(c.message) + "</p>" +
+            "</div>";
+    }).join("");
+}
+
+async function postComment() {
+    if (!token) { alert("Please login to comment."); return; }
+    var msg = document.getElementById("commentInput").value.trim();
+    if (!msg) return;
+    try {
+        var res = await fetch(API_BASE + "/courses/" + courseId + "/discussion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+            body: JSON.stringify({ message: msg })
+        });
+        var data = await res.json();
+        if (data.success) {
+            document.getElementById("commentInput").value = "";
+            renderComments(data.discussion || []);
+        }
+    } catch(e) { alert("Failed to post comment."); }
+}
+
+init();
+</script>
+</body>
+</html>
