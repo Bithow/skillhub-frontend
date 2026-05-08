@@ -501,6 +501,8 @@ var FormHandlers = {
                 else if (role === "instructor") successMsg += "You can now create and sell courses!";
                 else successMsg += "Start exploring courses today!";
                 UIHelper.showMessage(msgEl, successMsg, "success");
+                // Save country to session
+                StorageManager.saveUserSession({ email: email, name: fullName, role: backendRole, country: country, loggedIn: false });
                 form.reset();
                 document.getElementById("freelancerExtraFields").classList.add("hidden");
                 document.getElementById("instructorExtraFields").classList.add("hidden");

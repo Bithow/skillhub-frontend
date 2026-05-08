@@ -265,6 +265,22 @@ var ADMIN_WHATSAPP = "256783999418";
 var COURSE_COMMISSION = 0.20;
 var FREELANCE_COMMISSION = 0.12;
 
+// Currency conversion rates (approximate, update periodically)
+var CURRENCIES = {
+    UG: { code: "UGX", name: "Ugandan Shilling", rate: 140, symbol: "UGX" },
+    ET: { code: "ETB", name: "Ethiopian Birr", rate: 1, symbol: "ETB" },
+    SS: { code: "SSP", name: "South Sudanese Pound", rate: 4.8, symbol: "SSP" },
+    KE: { code: "KES", name: "Kenyan Shilling", rate: 4.7, symbol: "KES" },
+    TZ: { code: "TZS", name: "Tanzanian Shilling", rate: 88, symbol: "TZS" },
+    OTHER: { code: "USD", name: "US Dollar", rate: 0.018, symbol: "USD" }
+};
+
+// Detect user country from localStorage session
+var session = JSON.parse(localStorage.getItem("skillhub_user") || "{}");
+var userCountry = session.country || "ET";
+var currency = CURRENCIES[userCountry] || CURRENCIES["ET"];
+var convertedPrice = (itemPrice * currency.rate).toFixed(0);
+
 var commission = itemType === "freelance" ? FREELANCE_COMMISSION : COURSE_COMMISSION;
 var commissionAmt = (itemPrice * commission).toFixed(2);
 var earnerAmt = (itemPrice * (1 - commission)).toFixed(2);
@@ -272,7 +288,12 @@ var earnerPct = Math.round((1 - commission) * 100);
 var commissionPct = Math.round(commission * 100);
 
 document.getElementById("itemName").textContent = itemName;
-document.getElementById("itemPrice").textContent = itemPrice + " ETB";
+// Show price in ETB and local currency
+var priceDisplay = itemPrice + " ETB";
+if (userCountry !== "ET" && currency.code !== "ETB") {
+    priceDisplay += " ≈ " + convertedPrice + " " + currency.code;
+}
+document.getElementById("itemPrice").textContent = priceDisplay;
 document.getElementById("itemType").textContent = itemType === "freelance" ? "Freelancer Hire" : "Course Purchase";
 document.getElementById("commissionLabel").textContent = "Platform fee (" + commissionPct + "%)";
 document.getElementById("commissionAmount").textContent = commissionAmt + " ETB";
