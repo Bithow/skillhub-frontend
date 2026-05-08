@@ -258,47 +258,46 @@
 <script>
 var params = new URLSearchParams(window.location.search);
 var itemName = decodeURIComponent(params.get("name") || "Course");
-var itemPrice = parseFloat(params.get("price") || "0");
+var itemPrice = parseFloat(params.get("price") || "0"); // USD price
 var itemType = params.get("type") || "course";
 var itemId = params.get("id") || "";
+var userCountry = params.get("country") || "";
+var localAmount = parseFloat(params.get("localAmount") || "0");
+var localCode = params.get("localCode") || "USD";
 var ADMIN_WHATSAPP = "256783999418";
 var COURSE_COMMISSION = 0.20;
 var FREELANCE_COMMISSION = 0.12;
 
-// Currency conversion rates (approximate, update periodically)
-var CURRENCIES = {
-    UG: { code: "UGX", name: "Ugandan Shilling", rate: 140, symbol: "UGX" },
-    ET: { code: "ETB", name: "Ethiopian Birr", rate: 1, symbol: "ETB" },
-    SS: { code: "SSP", name: "South Sudanese Pound", rate: 4.8, symbol: "SSP" },
-    KE: { code: "KES", name: "Kenyan Shilling", rate: 4.7, symbol: "KES" },
-    TZ: { code: "TZS", name: "Tanzanian Shilling", rate: 88, symbol: "TZS" },
-    OTHER: { code: "USD", name: "US Dollar", rate: 0.018, symbol: "USD" }
+var RATES = {
+    UG: { code: "UGX", rate: 3500 },
+    ET: { code: "ETB", rate: 175 },
+    SS: { code: "SSP", rate: 5400 },
+    KE: { code: "KES", rate: 120 }
 };
 
-// Detect user country from localStorage session
-var session = JSON.parse(localStorage.getItem("skillhub_user") || "{}");
-var userCountry = session.country || "ET";
-var currency = CURRENCIES[userCountry] || CURRENCIES["ET"];
-var convertedPrice = (itemPrice * currency.rate).toFixed(0);
-
 var commission = itemType === "freelance" ? FREELANCE_COMMISSION : COURSE_COMMISSION;
-var commissionAmt = (itemPrice * commission).toFixed(2);
-var earnerAmt = (itemPrice * (1 - commission)).toFixed(2);
+var commissionUSD = (itemPrice * commission).toFixed(2);
+var earnerUSD = (itemPrice * (1 - commission)).toFixed(2);
 var earnerPct = Math.round((1 - commission) * 100);
 var commissionPct = Math.round(commission * 100);
 
-document.getElementById("itemName").textContent = itemName;
-// Show price in ETB and local currency
-var priceDisplay = itemPrice + " ETB";
-if (userCountry !== "ET" && currency.code !== "ETB") {
-    priceDisplay += " ≈ " + convertedPrice + " " + currency.code;
+// Display price
+var priceDisplay = "$" + itemPrice.toFixed(2);
+if (localAmount && localCode !== "USD") {
+    priceDisplay += " = " + localAmount.toLocaleString() + " " + localCode;
 }
+
+// Local commission breakdown
+var localCommission = localAmount ? Math.round(localAmount * commission).toLocaleString() + " " + localCode : "$" + commissionUSD;
+var localEarner = localAmount ? Math.round(localAmount * (1 - commission)).toLocaleString() + " " + localCode : "$" + earnerUSD;
+
+document.getElementById("itemName").textContent = itemName;
 document.getElementById("itemPrice").textContent = priceDisplay;
 document.getElementById("itemType").textContent = itemType === "freelance" ? "Freelancer Hire" : "Course Purchase";
 document.getElementById("commissionLabel").textContent = "Platform fee (" + commissionPct + "%)";
-document.getElementById("commissionAmount").textContent = commissionAmt + " ETB";
+document.getElementById("commissionAmount").textContent = localCommission;
 document.getElementById("earnerLabel").textContent = (itemType === "freelance" ? "Freelancer" : "Instructor") + " earns (" + earnerPct + "%)";
-document.getElementById("earnerAmount").textContent = earnerAmt + " ETB";
+document.getElementById("earnerAmount").textContent = localEarner;
 
 updateWhatsAppLink("Not selected yet");
 
@@ -309,9 +308,13 @@ function selectMethod(el, methodName, number) {
 }
 
 function updateWhatsAppLink(method) {
+    var amountDisplay = "$" + itemPrice.toFixed(2);
+    if (localAmount && localCode !== "USD") {
+        amountDisplay += " (" + localAmount.toLocaleString() + " " + localCode + ")";
+    }
     var msg = "Hi SkillHub! I have made a payment.\n\n" +
         "Item: " + itemName + "\n" +
-        "Amount: " + itemPrice + " ETB\n" +
+        "Amount: " + amountDisplay + "\n" +
         "Payment Method: " + method + "\n" +
         "Type: " + (itemType === "freelance" ? "Freelancer Hire" : "Course Purchase") + "\n\n" +
         "Please find my payment screenshot attached. Kindly confirm my access.\n\n" +

@@ -1,6 +1,45 @@
 // SkillHub Frontend - Version 3.0 - Connected to Backend API
 // Last updated: deployed to Netlify
 
+// ===== CURRENCY UTILITY =====
+var CurrencyUtil = {
+    // All prices in DB are in USD
+    // Rates: 1 USD = X local currency
+    rates: {
+        UG: { code: "UGX", symbol: "UGX", rate: 3500, name: "Uganda" },
+        ET: { code: "ETB", symbol: "ETB", rate: 175,  name: "Ethiopia" },
+        SS: { code: "SSP", symbol: "SSP", rate: 5400, name: "South Sudan" },
+        KE: { code: "KES", symbol: "KES", rate: 120,  name: "Kenya" }
+    },
+    getUserCountry: function() {
+        var session = JSON.parse(localStorage.getItem("skillhub_user") || "{}");
+        return session.country || null;
+    },
+    // Display price in USD on cards
+    displayUSD: function(usdPrice) {
+        return "$" + parseFloat(usdPrice).toFixed(2);
+    },
+    // Convert USD to local currency for payment
+    toLocal: function(usdPrice, countryCode) {
+        var r = this.rates[countryCode];
+        if (!r) return { amount: usdPrice, display: "$" + parseFloat(usdPrice).toFixed(2), code: "USD" };
+        var localAmt = Math.round(usdPrice * r.rate);
+        return { amount: localAmt, display: localAmt.toLocaleString() + " " + r.code, code: r.code };
+    },
+    // Get payment URL with country-converted price
+    paymentUrl: function(name, usdPrice, type, id) {
+        var country = this.getUserCountry();
+        var local = this.toLocal(usdPrice, country);
+        return "payment.html?name=" + encodeURIComponent(name) +
+            "&price=" + usdPrice +
+            "&type=" + (type || "course") +
+            "&id=" + (id || "") +
+            "&country=" + (country || "") +
+            "&localAmount=" + local.amount +
+            "&localCode=" + local.code;
+    }
+};
+
 // ===== CONFIG =====
 // Auto-detect if running on localhost or a real device/network
 var CONFIG = {
@@ -270,7 +309,7 @@ var CourseManager = {
             return "<div class='course-card'>" +
                 "<h3>" + Utils.escapeHtml(c.title) + "</h3>" +
                 "<div class='instructor'><i class='fas fa-chalkboard-user'></i> " + Utils.escapeHtml(c.instructorName) + "</div>" +
-                "<div class='price'>" + Utils.escapeHtml(String(c.price)) + " ETB</div>" +
+                "<div class='price'>" + CurrencyUtil.displayUSD(c.price) + "</div>" +
                 "<button class='btn btn-purple view-course-btn' data-id='" + Utils.escapeHtml(String(c.id)) + "'><i class='fas fa-info-circle'></i> View Details</button>" +
                 "</div>";
         }).join("");
@@ -289,11 +328,14 @@ var CourseManager = {
             "<h2 style='font-size:1.5rem;margin-bottom:1rem;'>" + Utils.escapeHtml(course.title) + "</h2>" +
             "<p style='margin-bottom:0.5rem;'><strong>Instructor:</strong> " + Utils.escapeHtml(course.instructorName) + "</p>" +
             "<p style='margin-bottom:1rem;'><strong>Description:</strong> " + Utils.escapeHtml(course.description) + "</p>" +
-            "<p style='font-size:1.75rem;font-weight:bold;color:#10b981;margin-bottom:1.5rem;'>" + Utils.escapeHtml(String(course.price)) + " ETB</p>" +
+            "<p style='font-size:1.75rem;font-weight:bold;color:#10b981;margin-bottom:0.5rem;'>" + CurrencyUtil.displayUSD(course.price) + "</p>" +
+            (CurrencyUtil.getUserCountry() && CurrencyUtil.rates[CurrencyUtil.getUserCountry()]
+                ? "<p style='font-size:0.875rem;color:#64748b;margin-bottom:1.5rem;'>≈ " + CurrencyUtil.toLocal(course.price, CurrencyUtil.getUserCountry()).display + "</p>"
+                : "<p style='margin-bottom:1.5rem;'></p>") +
             (token
                 ? "<a href='course.html?id=" + Utils.escapeHtml(String(course.id)) + "' class='btn btn-blue btn-full' style='display:block;text-align:center;text-decoration:none;margin-bottom:0.75rem;'><i class='fas fa-play-circle'></i> View Course Content</a>"
                 : "") +
-            "<a href='payment.html?name=" + encodeURIComponent(course.title) + "&price=" + course.price + "&type=course&id=" + Utils.escapeHtml(String(course.id)) + "' class='btn btn-green btn-full' style='display:block;text-align:center;text-decoration:none;'><i class='fas fa-credit-card'></i> Buy This Course</a>";
+            "<a href='" + CurrencyUtil.paymentUrl(course.title, course.price, "course", course.id) + "' class='btn btn-green btn-full' style='display:block;text-align:center;text-decoration:none;'><i class='fas fa-credit-card'></i> Buy This Course</a>";
         modal.style.display = "flex";
     },
     showView: async function() {
@@ -348,13 +390,17 @@ var FreelancerManager = {
         }
         container.innerHTML = filtered.map(function(f) {
             var portfolio = f.portfolio ? "<a href='" + Utils.escapeHtml(f.portfolio) + "' target='_blank' rel='noopener' style='display:inline-block;margin:0.5rem 0;color:#3b82f6;text-decoration:none;'><i class='fas fa-external-link-alt'></i> View Portfolio</a>" : "";
+            var rateDisplay = f.hourlyRate ? CurrencyUtil.displayUSD(f.hourlyRate) + "/hr" : "";
+            var localRate = f.hourlyRate && CurrencyUtil.getUserCountry() && CurrencyUtil.rates[CurrencyUtil.getUserCountry()]
+                ? " <span style='font-size:0.75rem;color:#94a3b8;'>≈ " + CurrencyUtil.toLocal(f.hourlyRate, CurrencyUtil.getUserCountry()).display + "/hr</span>"
+                : "";
             return "<div class='freelancer-card'>" +
                 "<h3>" + Utils.escapeHtml(f.name) + "</h3>" +
                 "<div class='skill'><i class='fas fa-code'></i> " + Utils.escapeHtml(f.skill) + "</div>" +
                 "<p style='color:#6b7280;margin:0.5rem 0;'>" + Utils.escapeHtml(f.services) + "</p>" +
-                (f.hourlyRate ? "<p style='color:#10b981;font-weight:600;margin:0.25rem 0;'><i class='fas fa-dollar-sign'></i> " + f.hourlyRate + " ETB/hr</p>" : "") +
+                (f.hourlyRate ? "<p style='color:#10b981;font-weight:600;margin:0.25rem 0;'><i class='fas fa-dollar-sign'></i> " + rateDisplay + localRate + "</p>" : "") +
                 portfolio +
-                "<a href='payment.html?name=" + encodeURIComponent("Hire: " + f.name) + "&price=" + (f.hourlyRate || 0) + "&type=freelance&id=" + Utils.escapeHtml(String(f.id)) + "' class='btn btn-yellow btn-full' style='margin-top:0.5rem;display:block;text-align:center;text-decoration:none;'><i class='fas fa-handshake'></i> Hire via SkillHub</a>" +
+                "<a href='" + CurrencyUtil.paymentUrl("Hire: " + f.name, f.hourlyRate || 0, "freelance", f.id) + "' class='btn btn-yellow btn-full' style='margin-top:0.5rem;display:block;text-align:center;text-decoration:none;'><i class='fas fa-handshake'></i> Hire via SkillHub</a>" +
                 "<button class='btn btn-indigo btn-full contact-freelancer-btn' style='margin-top:0.5rem;' data-name='" + Utils.escapeHtml(f.name) + "' data-phone='" + Utils.escapeHtml(f.phone) + "' data-skill='" + Utils.escapeHtml(f.skill) + "'><i class='fab fa-whatsapp'></i> Contact Directly</button>" +
                 "</div>";
         }).join("");
