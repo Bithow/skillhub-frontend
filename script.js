@@ -294,6 +294,7 @@ var CourseManager = {
                 ? "<a href='course.html?id=" + Utils.escapeHtml(String(course.id)) + "' class='btn btn-blue btn-full' style='display:block;text-align:center;text-decoration:none;margin-bottom:0.75rem;'><i class='fas fa-play-circle'></i> View Course Content</a>"
                 : "") +
             "<a href='payment.html?name=" + encodeURIComponent(course.title) + "&price=" + course.price + "&type=course&id=" + Utils.escapeHtml(String(course.id)) + "' class='btn btn-green btn-full' style='display:block;text-align:center;text-decoration:none;'><i class='fas fa-credit-card'></i> Buy This Course</a>";
+        modal.style.display = "flex";
     },
     showView: async function() {
         UIHelper.hideAllContainers();
