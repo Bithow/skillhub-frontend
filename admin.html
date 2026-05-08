@@ -205,12 +205,13 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('overview')"><i class="fas fa-chart-bar"></i> Overview</button>
-        <button class="tab-btn" onclick="showTab('users')"><i class="fas fa-users"></i> Users</button>
-        <button class="tab-btn" onclick="showTab('freelancers')"><i class="fas fa-laptop-code"></i> Freelancers</button>
-        <button class="tab-btn" onclick="showTab('courses')"><i class="fas fa-book"></i> Courses</button>
-        <button class="tab-btn" onclick="showTab('transactions')"><i class="fas fa-money-bill"></i> Transactions</button>
-        <button class="tab-btn" onclick="showTab('messages')"><i class="fas fa-envelope"></i> Messages</button>
+        <button class="tab-btn active" onclick="showTab('overview', event)"><i class="fas fa-chart-bar"></i> Overview</button>
+        <button class="tab-btn" onclick="showTab('pending', event)"><i class="fas fa-clock"></i> Pending <span id="pendingCount" style="background:#ef4444;color:white;border-radius:50px;padding:0.1rem 0.4rem;font-size:0.7rem;margin-left:0.25rem;"></span></button>
+        <button class="tab-btn" onclick="showTab('users', event)"><i class="fas fa-users"></i> Users</button>
+        <button class="tab-btn" onclick="showTab('freelancers', event)"><i class="fas fa-laptop-code"></i> Freelancers</button>
+        <button class="tab-btn" onclick="showTab('courses', event)"><i class="fas fa-book"></i> Courses</button>
+        <button class="tab-btn" onclick="showTab('transactions', event)"><i class="fas fa-money-bill"></i> Transactions</button>
+        <button class="tab-btn" onclick="showTab('messages', event)"><i class="fas fa-envelope"></i> Messages</button>
     </div>
 
     <div class="content">
@@ -218,6 +219,17 @@
         <div id="tab-overview" class="tab-content active">
             <div class="stats-grid" id="statsGrid">
                 <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading stats...</div>
+            </div>
+        </div>
+
+        <!-- PENDING APPROVALS TAB -->
+        <div id="tab-pending" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Pending Approvals</h2>
+                    <button class="refresh-btn" onclick="loadPending()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="pendingTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
             </div>
         </div>
 

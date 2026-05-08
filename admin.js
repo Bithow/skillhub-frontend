@@ -35,6 +35,7 @@ async function adminLogin() {
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
         loadOverview();
+        loadPendingCount();
     } catch (err) {
         errEl.textContent = "Cannot reach server. Try again.";
         errEl.style.display = "block";
@@ -82,13 +83,14 @@ async function apiPut(endpoint, body) {
 }
 
 // ===== TABS =====
-function showTab(name) {
+function showTab(name, e) {
     document.querySelectorAll(".tab-content").forEach(function(t) { t.classList.remove("active"); });
     document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
     document.getElementById("tab-" + name).classList.add("active");
-    event.target.classList.add("active");
+    if (e && e.target) e.target.classList.add("active");
 
     if (name === "overview") loadOverview();
+    else if (name === "pending") loadPending();
     else if (name === "users") loadUsers();
     else if (name === "freelancers") loadFreelancers();
     else if (name === "courses") loadCourses();
@@ -96,7 +98,109 @@ function showTab(name) {
     else if (name === "messages") loadMessages();
 }
 
-// ===== OVERVIEW =====
+// ===== PENDING APPROVALS =====
+async function loadPending() {
+    var el = document.getElementById("pendingTable");
+    el.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading...</div>";
+    try {
+        var data = await apiGet("/admin/pending");
+        if (!data.success) { el.innerHTML = "<p style='padding:1rem;'>Failed to load.</p>"; return; }
+
+        var instructors = data.pending.instructors || [];
+        var freelancers = data.pending.freelancers || [];
+        var courses = data.pending.courses || [];
+        var total = instructors.length + freelancers.length + courses.length;
+
+        // Update badge
+        var badge = document.getElementById("pendingCount");
+        if (badge) badge.textContent = total > 0 ? total : "";
+
+        if (total === 0) {
+            el.innerHTML = "<p style='padding:2rem;text-align:center;color:#64748b;'><i class='fas fa-check-circle' style='color:#10b981;font-size:2rem;display:block;margin-bottom:0.5rem;'></i>No pending approvals. All caught up!</p>";
+            return;
+        }
+
+        var html = "";
+
+        if (instructors.length > 0) {
+            html += "<div style='padding:1rem 1.5rem;background:#eff6ff;border-bottom:1px solid #e2e8f0;font-weight:700;color:#1e40af;'><i class='fas fa-chalkboard-teacher'></i> Pending Instructors (" + instructors.length + ")</div>";
+            html += "<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Joined</th><th>Actions</th></tr></thead><tbody>";
+            html += instructors.map(function(u) {
+                return "<tr>" +
+                    "<td>" + esc(u.name) + "</td>" +
+                    "<td>" + esc(u.email) + "</td>" +
+                    "<td>" + esc(u.phone || "-") + "</td>" +
+                    "<td>" + new Date(u.createdAt).toLocaleDateString() + "</td>" +
+                    "<td>" +
+                    "<button class='action-btn btn-approve' onclick='approveUser(\"" + u._id + "\", \"instructor\")'>✓ Approve</button>" +
+                    "<button class='action-btn btn-reject' onclick='rejectUser(\"" + u._id + "\")'>✗ Reject</button>" +
+                    "</td></tr>";
+            }).join("") + "</tbody></table>";
+        }
+
+        if (freelancers.length > 0) {
+            html += "<div style='padding:1rem 1.5rem;background:#f5f3ff;border-bottom:1px solid #e2e8f0;font-weight:700;color:#5b21b6;margin-top:1rem;'><i class='fas fa-laptop-code'></i> Pending Freelancers (" + freelancers.length + ")</div>";
+            html += "<table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Skills</th><th>Joined</th><th>Actions</th></tr></thead><tbody>";
+            html += freelancers.map(function(u) {
+                return "<tr>" +
+                    "<td>" + esc(u.name) + "</td>" +
+                    "<td>" + esc(u.email) + "</td>" +
+                    "<td>" + esc(u.phone || "-") + "</td>" +
+                    "<td>" + esc((u.skills || []).join(", ") || "-") + "</td>" +
+                    "<td>" + new Date(u.createdAt).toLocaleDateString() + "</td>" +
+                    "<td>" +
+                    "<button class='action-btn btn-approve' onclick='approveUser(\"" + u._id + "\", \"freelancer\")'>✓ Approve</button>" +
+                    "<button class='action-btn btn-reject' onclick='rejectUser(\"" + u._id + "\")'>✗ Reject</button>" +
+                    "</td></tr>";
+            }).join("") + "</tbody></table>";
+        }
+
+        if (courses.length > 0) {
+            html += "<div style='padding:1rem 1.5rem;background:#fef3c7;border-bottom:1px solid #e2e8f0;font-weight:700;color:#92400e;margin-top:1rem;'><i class='fas fa-book'></i> Pending Courses (" + courses.length + ")</div>";
+            html += "<table><thead><tr><th>Title</th><th>Instructor</th><th>Price</th><th>Actions</th></tr></thead><tbody>";
+            html += courses.map(function(c) {
+                return "<tr>" +
+                    "<td>" + esc(c.title) + "</td>" +
+                    "<td>" + esc(c.instructorName || "-") + "</td>" +
+                    "<td>$" + (c.price || 0) + "</td>" +
+                    "<td>" +
+                    "<button class='action-btn btn-approve' onclick='approveCourseFromPending(\"" + c._id + "\")'>✓ Approve</button>" +
+                    "<button class='action-btn btn-reject' onclick='rejectCourse(\"" + c._id + "\")'>✗ Reject</button>" +
+                    "</td></tr>";
+            }).join("") + "</tbody></table>";
+        }
+
+        el.innerHTML = html;
+    } catch (err) {
+        el.innerHTML = "<p style='color:red;padding:1rem;'>Error: " + err.message + "</p>";
+    }
+}
+
+async function approveUser(id, role) {
+    try {
+        await apiPut("/admin/approve-user/" + id, { role: role });
+        alert((role === "instructor" ? "Instructor" : "Freelancer") + " approved! They are now active.");
+        loadPending();
+        // Update badge
+        loadOverview();
+    } catch(e) { alert("Error: " + e.message); }
+}
+
+async function rejectUser(id) {
+    var reason = prompt("Reason for rejection (will be shown to user):");
+    if (reason === null) return;
+    try {
+        await apiPut("/admin/reject-user/" + id, { reason: reason || "Application not approved." });
+        alert("User rejected.");
+        loadPending();
+    } catch(e) { alert("Error: " + e.message); }
+}
+
+async function approveCourseFromPending(id) {
+    await apiPut("/admin/approve-course/" + id, {});
+    alert("Course approved and published!");
+    loadPending();
+}
 async function loadOverview() {
     var grid = document.getElementById("statsGrid");
     grid.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading stats...</div>";
@@ -344,3 +448,14 @@ document.addEventListener("keydown", function(e) {
         adminLogin();
     }
 });
+
+// ===== PENDING COUNT BADGE =====
+async function loadPendingCount() {
+    try {
+        var data = await apiGet("/admin/pending");
+        if (!data.success) return;
+        var total = (data.pending.instructors || []).length + (data.pending.freelancers || []).length + (data.pending.courses || []).length;
+        var badge = document.getElementById("pendingCount");
+        if (badge) badge.textContent = total > 0 ? total : "";
+    } catch(e) {}
+}
