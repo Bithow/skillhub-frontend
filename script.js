@@ -102,14 +102,24 @@ var ApiService = {
     changePassword: async function(currentPassword, newPassword) {
         return await this.request("/auth/change-password", "PUT", { currentPassword, newPassword });
     },
-    register: async function(name, email, phone, password, role) {
-        var data = await this.request("/auth/register", "POST", {
+    register: async function(name, email, phone, password, role, country, extraData) {
+        var body = {
             name: name,
             email: email,
             phone: phone,
             password: password,
-            role: role
-        });
+            role: role,
+            country: country || ""
+        };
+        if (extraData) {
+            if (extraData.skills) body.skills = extraData.skills.split(",").map(function(s){ return s.trim(); });
+            if (extraData.hourlyRate) body.hourlyRate = Number(extraData.hourlyRate);
+            if (extraData.portfolio) body.portfolio = extraData.portfolio;
+            if (extraData.profilePicture) body.profilePicture = extraData.profilePicture;
+            if (extraData.bio) body.bio = extraData.bio;
+            if (extraData.expertise) body.expertise = extraData.expertise;
+        }
+        var data = await this.request("/auth/register", "POST", body);
         if (data.token) { this.setToken(data.token); }
         return data;
     },
@@ -469,9 +479,28 @@ var FormHandlers = {
             var backendRole = roleMap[role] || "user";
             UIHelper.showMessage(msgEl, "Creating your account...", "success");
             try {
-                var data = await ApiService.register(fullName, email, phone, password, backendRole);
-                UIHelper.showMessage(msgEl, "Welcome to SkillHub, " + fullName + "! Account created.", "success");
+                var country = document.getElementById("regCountry") ? document.getElementById("regCountry").value : "";
+                var extraData = {};
+                if (role === "freelancer") {
+                    extraData.skills = document.getElementById("regSkills") ? document.getElementById("regSkills").value.trim() : "";
+                    extraData.hourlyRate = document.getElementById("regHourlyRate") ? document.getElementById("regHourlyRate").value : "";
+                    extraData.portfolio = document.getElementById("regPortfolio") ? document.getElementById("regPortfolio").value.trim() : "";
+                    extraData.profilePicture = document.getElementById("regProfilePic") ? document.getElementById("regProfilePic").value.trim() : "";
+                }
+                if (role === "instructor") {
+                    extraData.expertise = document.getElementById("regExpertise") ? document.getElementById("regExpertise").value.trim() : "";
+                    extraData.bio = document.getElementById("regBio") ? document.getElementById("regBio").value.trim() : "";
+                    extraData.profilePicture = document.getElementById("regInstructorProfilePic") ? document.getElementById("regInstructorProfilePic").value.trim() : "";
+                }
+                var data = await ApiService.register(fullName, email, phone, password, backendRole, country, extraData);
+                var successMsg = "Welcome to SkillHub, " + fullName + "! ";
+                if (role === "freelancer") successMsg += "Your freelancer profile is now live!";
+                else if (role === "instructor") successMsg += "You can now create and sell courses!";
+                else successMsg += "Start exploring courses today!";
+                UIHelper.showMessage(msgEl, successMsg, "success");
                 form.reset();
+                document.getElementById("freelancerExtraFields").classList.add("hidden");
+                document.getElementById("instructorExtraFields").classList.add("hidden");
                 setTimeout(function() {
                     var loginTab = document.querySelector(".auth-tab[data-tab='login']");
                     if (loginTab) loginTab.click();
@@ -665,7 +694,11 @@ var AuthUI = {
             btn.addEventListener("click", function() {
                 document.querySelectorAll("#registerForm .role-btn").forEach(function(b) { b.classList.remove("active"); });
                 btn.classList.add("active");
-                document.getElementById("regSelectedRole").value = btn.getAttribute("data-role-reg");
+                var role = btn.getAttribute("data-role-reg");
+                document.getElementById("regSelectedRole").value = role;
+                // Show/hide extra fields based on role
+                document.getElementById("freelancerExtraFields").classList.toggle("hidden", role !== "freelancer");
+                document.getElementById("instructorExtraFields").classList.toggle("hidden", role !== "instructor");
             });
         });
     },

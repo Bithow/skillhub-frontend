@@ -395,6 +395,21 @@
                             </div>
                             <div class="form-group">
                                 <div class="input-icon">
+                                    <i class="fas fa-globe"></i>
+                                    <select id="regCountry">
+                                        <option value="">Select Country</option>
+                                        <option value="UG">Uganda</option>
+                                        <option value="ET">Ethiopia</option>
+                                        <option value="SS">South Sudan</option>
+                                        <option value="KE">Kenya</option>
+                                        <option value="TZ">Tanzania</option>
+                                        <option value="RW">Rwanda</option>
+                                        <option value="OTHER">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-icon">
                                     <i class="fas fa-lock"></i>
                                     <input type="password" id="regPassword" placeholder="Password" required>
                                     <button type="button" class="toggle-password" data-target="regPassword">
@@ -411,6 +426,57 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <!-- Freelancer extra fields -->
+                            <div id="freelancerExtraFields" class="hidden">
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-code"></i>
+                                        <input type="text" id="regSkills" placeholder="Your Skills (e.g. Web Dev, Design, Writing)">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        <input type="number" id="regHourlyRate" placeholder="Hourly Rate (in USD)" min="1">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-link"></i>
+                                        <input type="url" id="regPortfolio" placeholder="Portfolio Link (GitHub / Behance / LinkedIn)">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-image"></i>
+                                        <input type="url" id="regProfilePic" placeholder="Profile Picture URL (optional)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Instructor extra fields -->
+                            <div id="instructorExtraFields" class="hidden">
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-chalkboard"></i>
+                                        <input type="text" id="regExpertise" placeholder="Your Subject / Expertise Area">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-align-left"></i>
+                                        <input type="text" id="regBio" placeholder="Brief Bio (e.g. 5 years teaching web dev)">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-image"></i>
+                                        <input type="url" id="regInstructorProfilePic" placeholder="Profile Picture URL (optional)">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="checkbox-label">
                                     <input type="checkbox" id="agreeTerms" required>
