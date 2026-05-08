@@ -293,11 +293,7 @@ var CourseManager = {
             (token
                 ? "<a href='course.html?id=" + Utils.escapeHtml(String(course.id)) + "' class='btn btn-blue btn-full' style='display:block;text-align:center;text-decoration:none;margin-bottom:0.75rem;'><i class='fas fa-play-circle'></i> View Course Content</a>"
                 : "") +
-            "<button id='modalBuyBtn' class='btn btn-green btn-full'><i class='fab fa-whatsapp'></i> Buy via WhatsApp</button>";
-        modal.style.display = "flex";
-        document.getElementById("modalBuyBtn").addEventListener("click", function() {
-            WhatsAppService.courseInquiry(course.title, course.price, course.instructorName, course.instructorPhone);
-        });
+            "<a href='payment.html?name=" + encodeURIComponent(course.title) + "&price=" + course.price + "&type=course&id=" + Utils.escapeHtml(String(course.id)) + "' class='btn btn-green btn-full' style='display:block;text-align:center;text-decoration:none;'><i class='fas fa-credit-card'></i> Buy This Course</a>";
     },
     showView: async function() {
         UIHelper.hideAllContainers();
@@ -355,8 +351,10 @@ var FreelancerManager = {
                 "<h3>" + Utils.escapeHtml(f.name) + "</h3>" +
                 "<div class='skill'><i class='fas fa-code'></i> " + Utils.escapeHtml(f.skill) + "</div>" +
                 "<p style='color:#6b7280;margin:0.5rem 0;'>" + Utils.escapeHtml(f.services) + "</p>" +
+                (f.hourlyRate ? "<p style='color:#10b981;font-weight:600;margin:0.25rem 0;'><i class='fas fa-dollar-sign'></i> " + f.hourlyRate + " ETB/hr</p>" : "") +
                 portfolio +
-                "<button class='btn btn-yellow btn-full contact-freelancer-btn' style='margin-top:1rem;' data-name='" + Utils.escapeHtml(f.name) + "' data-phone='" + Utils.escapeHtml(f.phone) + "' data-skill='" + Utils.escapeHtml(f.skill) + "'><i class='fab fa-whatsapp'></i> Contact via WhatsApp</button>" +
+                "<a href='payment.html?name=" + encodeURIComponent("Hire: " + f.name) + "&price=" + (f.hourlyRate || 0) + "&type=freelance&id=" + Utils.escapeHtml(String(f.id)) + "' class='btn btn-yellow btn-full' style='margin-top:0.5rem;display:block;text-align:center;text-decoration:none;'><i class='fas fa-handshake'></i> Hire via SkillHub</a>" +
+                "<button class='btn btn-indigo btn-full contact-freelancer-btn' style='margin-top:0.5rem;' data-name='" + Utils.escapeHtml(f.name) + "' data-phone='" + Utils.escapeHtml(f.phone) + "' data-skill='" + Utils.escapeHtml(f.skill) + "'><i class='fab fa-whatsapp'></i> Contact Directly</button>" +
                 "</div>";
         }).join("");
         container.querySelectorAll(".contact-freelancer-btn").forEach(function(btn) {

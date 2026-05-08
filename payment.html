@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - SkillHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+        .topbar {
+            background: #1e3a8a; color: white; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .topbar a { color: white; text-decoration: none; font-size: 1.1rem; font-weight: 700; }
+        .container { max-width: 700px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* ORDER SUMMARY */
+        .order-card {
+            background: white; border-radius: 1rem; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1.5rem;
+            border-left: 4px solid #2563eb;
+        }
+        .order-card h2 { font-size: 1rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+        .order-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; }
+        .order-item-name { font-weight: 600; }
+        .order-item-price { font-size: 1.5rem; font-weight: 800; color: #10b981; }
+        .order-divider { border: none; border-top: 1px solid #e2e8f0; margin: 0.75rem 0; }
+        .commission-note { font-size: 0.75rem; color: #94a3b8; margin-top: 0.5rem; }
+
+        /* PAYMENT METHODS */
+        .methods-card {
+            background: white; border-radius: 1rem; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1.5rem;
+        }
+        .methods-card h2 { font-size: 1rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.25rem; }
+
+        .country-section { margin-bottom: 1.5rem; }
+        .country-label {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.875rem; font-weight: 700; color: #374151;
+            margin-bottom: 0.75rem; padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        .country-flag { font-size: 1.25rem; }
+
+        .payment-method {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;
+            margin-bottom: 0.75rem; cursor: pointer; transition: all 0.2s;
+        }
+        .payment-method:hover { border-color: #2563eb; background: #eff6ff; }
+        .payment-method.selected { border-color: #2563eb; background: #eff6ff; }
+        .method-icon {
+            width: 48px; height: 48px; border-radius: 0.5rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; flex-shrink: 0;
+        }
+        .method-icon.telebirr { background: #fef3c7; color: #d97706; }
+        .method-icon.cbe { background: #dbeafe; color: #1d4ed8; }
+        .method-icon.mtn { background: #fef9c3; color: #ca8a04; }
+        .method-icon.airtel { background: #fee2e2; color: #dc2626; }
+        .method-icon.western { background: #f3e8ff; color: #7c3aed; }
+        .method-info { flex: 1; }
+        .method-name { font-weight: 700; font-size: 0.9rem; }
+        .method-number { font-size: 0.875rem; color: #64748b; margin-top: 0.125rem; }
+        .method-copy {
+            background: #f1f5f9; border: none; padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem; cursor: pointer; font-size: 0.75rem;
+            color: #374151; font-weight: 600; transition: background 0.2s;
+        }
+        .method-copy:hover { background: #e2e8f0; }
+        .method-copy.copied { background: #d1fae5; color: #065f46; }
+
+        /* STEPS */
+        .steps-card {
+            background: white; border-radius: 1rem; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1.5rem;
+        }
+        .steps-card h2 { font-size: 1rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.25rem; }
+        .step { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start; }
+        .step-num {
+            width: 32px; height: 32px; background: #2563eb; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.875rem; flex-shrink: 0;
+        }
+        .step-text h4 { font-size: 0.875rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .step-text p { font-size: 0.8rem; color: #64748b; line-height: 1.5; }
+
+        /* WHATSAPP BUTTON */
+        .whatsapp-btn {
+            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+            width: 100%; padding: 1.25rem; background: #25d366; color: white;
+            border: none; border-radius: 0.75rem; font-size: 1.1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s; text-decoration: none;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+        .whatsapp-btn:hover { background: #128c7e; transform: translateY(-2px); }
+        .whatsapp-btn i { font-size: 1.5rem; }
+
+        .note {
+            background: #fef3c7; border: 1px solid #fde68a; border-radius: 0.5rem;
+            padding: 0.875rem 1rem; font-size: 0.8rem; color: #92400e;
+            margin-top: 1rem; display: flex; gap: 0.5rem; align-items: flex-start;
+        }
+        .note i { flex-shrink: 0; margin-top: 0.125rem; }
+
+        @media (max-width: 640px) {
+            .container { padding: 0 0.75rem; }
+            .payment-method { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <a href="index.html"><i class="fas fa-graduation-cap"></i> SkillHub</a>
+    <span style="font-size:0.875rem;opacity:0.8;">Secure Payment</span>
+</div>
+
+<div class="container">
+
+    <!-- ORDER SUMMARY -->
+    <div class="order-card">
+        <h2><i class="fas fa-shopping-cart"></i> Order Summary</h2>
+        <div class="order-item">
+            <span class="order-item-name" id="itemName">Loading...</span>
+            <span class="order-item-price" id="itemPrice">-</span>
+        </div>
+        <hr class="order-divider">
+        <div class="order-item">
+            <span style="font-size:0.875rem;color:#64748b;">Type</span>
+            <span id="itemType" style="font-size:0.875rem;font-weight:600;color:#374151;">-</span>
+        </div>
+        <div class="order-item">
+            <span style="font-size:0.875rem;color:#64748b;" id="commissionLabel">Platform fee (20%)</span>
+            <span id="commissionAmount" style="font-size:0.875rem;font-weight:600;color:#ef4444;">-</span>
+        </div>
+        <div class="order-item">
+            <span style="font-size:0.875rem;color:#64748b;" id="earnerLabel">Instructor earns (80%)</span>
+            <span id="earnerAmount" style="font-size:0.875rem;font-weight:600;color:#10b981;">-</span>
+        </div>
+        <p class="commission-note"><i class="fas fa-info-circle"></i> Full amount goes to SkillHub first, then forwarded to the instructor/freelancer.</p>
+    </div>
+
+    <!-- PAYMENT METHODS -->
+    <div class="methods-card">
+        <h2><i class="fas fa-credit-card"></i> Choose Payment Method</h2>
+
+        <!-- Ethiopia -->
+        <div class="country-section">
+            <div class="country-label"><span class="country-flag">🇪🇹</span> Ethiopia</div>
+            <div class="payment-method" onclick="selectMethod(this, 'Telebirr', '0989616976')">
+                <div class="method-icon telebirr"><i class="fas fa-mobile-alt"></i></div>
+                <div class="method-info">
+                    <div class="method-name">Telebirr</div>
+                    <div class="method-number">0989616976</div>
+                </div>
+                <button class="method-copy" onclick="copyNumber(event, '0989616976', this)">Copy</button>
+            </div>
+            <div class="payment-method" onclick="selectMethod(this, 'CBE Birr', '1000600549085')">
+                <div class="method-icon cbe"><i class="fas fa-university"></i></div>
+                <div class="method-info">
+                    <div class="method-name">CBE Birr / Bank Transfer</div>
+                    <div class="method-number">Account: 1000600549085</div>
+                </div>
+                <button class="method-copy" onclick="copyNumber(event, '1000600549085', this)">Copy</button>
+            </div>
+        </div>
+
+        <!-- Uganda -->
+        <div class="country-section">
+            <div class="country-label"><span class="country-flag">🇺🇬</span> Uganda</div>
+            <div class="payment-method" onclick="selectMethod(this, 'MTN Mobile Money', '0783999418')">
+                <div class="method-icon mtn"><i class="fas fa-mobile-alt"></i></div>
+                <div class="method-info">
+                    <div class="method-name">MTN Mobile Money</div>
+                    <div class="method-number">0783999418</div>
+                </div>
+                <button class="method-copy" onclick="copyNumber(event, '0783999418', this)">Copy</button>
+            </div>
+        </div>
+
+        <!-- South Sudan -->
+        <div class="country-section">
+            <div class="country-label"><span class="country-flag">🇸🇸</span> South Sudan</div>
+            <div class="payment-method" onclick="selectMethod(this, 'MTN (via Uganda)', '0783999418')">
+                <div class="method-icon mtn"><i class="fas fa-mobile-alt"></i></div>
+                <div class="method-info">
+                    <div class="method-name">MTN Mobile Money</div>
+                    <div class="method-number">Send to Uganda: 0783999418</div>
+                </div>
+                <button class="method-copy" onclick="copyNumber(event, '0783999418', this)">Copy</button>
+            </div>
+        </div>
+
+        <!-- International -->
+        <div class="country-section">
+            <div class="country-label"><span class="country-flag">🌍</span> International</div>
+            <div class="payment-method" onclick="selectMethod(this, 'Western Union / WorldRemit', '0783999418')">
+                <div class="method-icon western"><i class="fas fa-globe"></i></div>
+                <div class="method-info">
+                    <div class="method-name">Western Union / WorldRemit</div>
+                    <div class="method-number">Send to Uganda MTN: 0783999418</div>
+                </div>
+                <button class="method-copy" onclick="copyNumber(event, '0783999418', this)">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEPS -->
+    <div class="steps-card">
+        <h2><i class="fas fa-list-ol"></i> How to Pay</h2>
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">
+                <h4>Choose your payment method above</h4>
+                <p>Select the method that works in your country and copy the number.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">
+                <h4>Send the exact amount</h4>
+                <p>Transfer the amount shown in your order summary. Use your name as the reference.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">
+                <h4>Take a screenshot of the payment confirmation</h4>
+                <p>Save the confirmation screen or receipt from your mobile money app.</p>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-text">
+                <h4>Send screenshot to SkillHub via WhatsApp</h4>
+                <p>Click the button below to open WhatsApp. Send your screenshot and we'll confirm your access within 24 hours.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHATSAPP CONFIRM BUTTON -->
+    <a id="whatsappBtn" href="#" class="whatsapp-btn" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        Send Payment Screenshot via WhatsApp
+    </a>
+
+    <div class="note">
+        <i class="fas fa-clock"></i>
+        <span>Access is granted within <strong>24 hours</strong> after payment confirmation. For faster processing, send your screenshot immediately after paying.</span>
+    </div>
+
+    <div style="height:2rem;"></div>
+</div>
+
+<script>
+var params = new URLSearchParams(window.location.search);
+var itemName = decodeURIComponent(params.get("name") || "Course");
+var itemPrice = parseFloat(params.get("price") || "0");
+var itemType = params.get("type") || "course";
+var itemId = params.get("id") || "";
+var ADMIN_WHATSAPP = "256783999418";
+var COURSE_COMMISSION = 0.20;
+var FREELANCE_COMMISSION = 0.12;
+
+var commission = itemType === "freelance" ? FREELANCE_COMMISSION : COURSE_COMMISSION;
+var commissionAmt = (itemPrice * commission).toFixed(2);
+var earnerAmt = (itemPrice * (1 - commission)).toFixed(2);
+var earnerPct = Math.round((1 - commission) * 100);
+var commissionPct = Math.round(commission * 100);
+
+document.getElementById("itemName").textContent = itemName;
+document.getElementById("itemPrice").textContent = itemPrice + " ETB";
+document.getElementById("itemType").textContent = itemType === "freelance" ? "Freelancer Hire" : "Course Purchase";
+document.getElementById("commissionLabel").textContent = "Platform fee (" + commissionPct + "%)";
+document.getElementById("commissionAmount").textContent = commissionAmt + " ETB";
+document.getElementById("earnerLabel").textContent = (itemType === "freelance" ? "Freelancer" : "Instructor") + " earns (" + earnerPct + "%)";
+document.getElementById("earnerAmount").textContent = earnerAmt + " ETB";
+
+updateWhatsAppLink("Not selected yet");
+
+function selectMethod(el, methodName, number) {
+    document.querySelectorAll(".payment-method").forEach(function(m) { m.classList.remove("selected"); });
+    el.classList.add("selected");
+    updateWhatsAppLink(methodName + " (" + number + ")");
+}
+
+function updateWhatsAppLink(method) {
+    var msg = "Hi SkillHub! I have made a payment.\n\n" +
+        "Item: " + itemName + "\n" +
+        "Amount: " + itemPrice + " ETB\n" +
+        "Payment Method: " + method + "\n" +
+        "Type: " + (itemType === "freelance" ? "Freelancer Hire" : "Course Purchase") + "\n\n" +
+        "Please find my payment screenshot attached. Kindly confirm my access.\n\n" +
+        "Thank you!";
+    document.getElementById("whatsappBtn").href = "https://wa.me/" + ADMIN_WHATSAPP + "?text=" + encodeURIComponent(msg);
+}
+
+function copyNumber(event, number, btn) {
+    event.stopPropagation();
+    navigator.clipboard.writeText(number).then(function() {
+        btn.textContent = "Copied!";
+        btn.classList.add("copied");
+        setTimeout(function() { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 2000);
+    }).catch(function() {
+        prompt("Copy this number:", number);
+    });
+}
+</script>
+</body>
+</html>
