@@ -9,10 +9,10 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Segoe UI',sans-serif; background:#f1f5f9; color:#1e293b; }
-        .topbar { background:#1e3a8a; color:white; padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; }
+        .topbar { background:#1e3a8a; color:white; padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
         .topbar a { color:white; text-decoration:none; display:flex; align-items:center; gap:0.5rem; font-weight:700; font-size:1.1rem; }
         .topbar a img { width:32px; height:32px; object-fit:contain; }
-        .topbar-right { display:flex; align-items:center; gap:1rem; }
+        .topbar-right { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
         .topbar-right span { font-size:0.875rem; opacity:0.8; }
         .logout-btn { background:rgba(255,255,255,0.2); color:white; border:none; padding:0.4rem 0.9rem; border-radius:50px; cursor:pointer; font-size:0.8rem; transition:background 0.2s; }
         .logout-btn:hover { background:rgba(255,255,255,0.35); }
@@ -20,25 +20,28 @@
         .profile-grid { display:grid; grid-template-columns:300px 1fr; gap:1.5rem; }
         @media(max-width:768px){ .profile-grid { grid-template-columns:1fr; } }
 
-        /* ── LEFT CARD ── */
+        /* LEFT CARD */
         .profile-card { background:white; border-radius:1rem; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; position:sticky; top:1rem; height:fit-content; }
         .avatar-wrap { position:relative; display:inline-block; margin-bottom:1rem; }
-        .avatar { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:white; overflow:hidden; margin:0 auto; }
+        .avatar { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:white; overflow:hidden; margin:0 auto; cursor:pointer; }
         .avatar img { width:100%; height:100%; object-fit:cover; }
-        .avatar-edit { position:absolute; bottom:0; right:0; background:#2563eb; color:white; border:none; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center; }
+        .avatar-edit { position:absolute; bottom:0; right:0; background:#2563eb; color:white; border:none; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center; transition:background 0.2s; }
+        .avatar-edit:hover { background:#1d4ed8; }
         .profile-name { font-size:1.25rem; font-weight:700; margin-bottom:0.25rem; }
         .role-badge { display:inline-block; padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:600; margin-bottom:1rem; }
         .role-user { background:#dbeafe; color:#1e40af; }
         .role-freelancer { background:#ede9fe; color:#5b21b6; }
         .role-instructor { background:#d1fae5; color:#065f46; }
-        .profile-meta { text-align:left; margin-bottom:1.25rem; }
-        .meta-row { display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; color:#64748b; margin-bottom:0.5rem; }
+        .role-admin { background:#fee2e2; color:#991b1b; }
+        .profile-meta { text-align:left; margin:1rem 0; }
+        .meta-row { display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; color:#64748b; margin-bottom:0.5rem; word-break:break-word; }
         .meta-row i { width:16px; color:#2563eb; }
-        .meta-row span { word-break:break-all; }
+        .meta-row a { color:#2563eb; text-decoration:none; }
+        .meta-row a:hover { text-decoration:underline; }
         .status-badge { display:inline-flex; align-items:center; gap:0.4rem; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:600; margin-bottom:1rem; }
         .status-active { background:#d1fae5; color:#065f46; }
         .status-pending { background:#fef3c7; color:#92400e; }
-        .edit-profile-btn { width:100%; padding:0.625rem; background:#2563eb; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600; font-size:0.875rem; transition:background 0.2s; }
+        .edit-profile-btn { width:100%; padding:0.625rem; background:#2563eb; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600; font-size:0.875rem; transition:background 0.2s; margin-top:1rem; }
         .edit-profile-btn:hover { background:#1d4ed8; }
         .skill-tags { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.75rem; justify-content:center; }
         .skill-tag { background:#eff6ff; color:#1e40af; padding:0.2rem 0.6rem; border-radius:50px; font-size:0.7rem; font-weight:600; }
@@ -46,23 +49,25 @@
         .fstat { background:#f8fafc; border-radius:0.5rem; padding:0.75rem; text-align:center; }
         .fstat-num { font-size:1.1rem; font-weight:700; color:#2563eb; }
         .fstat-label { font-size:0.7rem; color:#64748b; }
+        .profile-bio { font-size:0.85rem; color:#64748b; margin-top:0.5rem; padding-top:0.5rem; border-top:1px solid #e2e8f0; text-align:left; }
 
-        /* ── TABS ── */
+        /* TABS */
         .tabs-panel { background:white; border-radius:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; }
-        .tabs-nav { display:flex; border-bottom:2px solid #f1f5f9; overflow-x:auto; }
+        .tabs-nav { display:flex; border-bottom:2px solid #f1f5f9; overflow-x:auto; gap:0; }
         .tab-btn { padding:1rem 1.25rem; border:none; background:none; cursor:pointer; font-size:0.875rem; font-weight:600; color:#64748b; white-space:nowrap; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; }
+        .tab-btn:hover { color:#2563eb; background:#f8fafc; }
         .tab-btn.active { color:#2563eb; border-bottom-color:#2563eb; }
         .tab-btn i { margin-right:0.4rem; }
         .tab-content { display:none; padding:1.5rem; }
         .tab-content.active { display:block; }
 
-        /* ── COURSES ── */
+        /* COURSES */
         .course-item { display:flex; gap:1rem; padding:1rem; border:1px solid #f1f5f9; border-radius:0.75rem; margin-bottom:0.75rem; align-items:flex-start; transition:box-shadow 0.2s; }
         .course-item:hover { box-shadow:0 4px 12px rgba(0,0,0,0.08); }
         .course-thumb { width:56px; height:56px; border-radius:0.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); display:flex; align-items:center; justify-content:center; color:white; font-size:1.25rem; flex-shrink:0; }
         .course-thumb.done { background:linear-gradient(135deg,#10b981,#059669); }
         .course-info { flex:1; min-width:0; }
-        .course-title { font-weight:700; font-size:0.9rem; margin-bottom:0.25rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .course-title { font-weight:700; font-size:0.9rem; margin-bottom:0.25rem; }
         .course-instructor { font-size:0.75rem; color:#64748b; margin-bottom:0.5rem; }
         .progress-bar { height:6px; background:#e2e8f0; border-radius:3px; overflow:hidden; margin-bottom:0.25rem; }
         .progress-fill { height:100%; border-radius:3px; background:#3b82f6; transition:width 0.3s; }
@@ -75,8 +80,9 @@
         .btn-cert { background:#10b981; color:white; }
         .empty-state { text-align:center; padding:3rem 1rem; color:#94a3b8; }
         .empty-state i { font-size:2.5rem; display:block; margin-bottom:0.75rem; }
+        .loading { text-align:center; padding:3rem 1rem; color:#94a3b8; }
 
-        /* ── PAYMENT TABLE ── */
+        /* PAYMENT TABLE */
         .pay-table-wrap { overflow-x:auto; }
         table { width:100%; border-collapse:collapse; font-size:0.875rem; }
         th { background:#f8fafc; padding:0.75rem 1rem; text-align:left; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:#64748b; }
@@ -87,7 +93,7 @@
         .status-pending { background:#fef3c7; color:#92400e; }
         .status-failed { background:#fee2e2; color:#991b1b; }
 
-        /* ── SETTINGS ── */
+        /* SETTINGS */
         .settings-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.25rem; }
         .settings-card { background:#f8fafc; border-radius:0.75rem; padding:1.25rem; border:1px solid #e2e8f0; }
         .settings-card h4 { font-size:0.9rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; color:#1e293b; }
@@ -102,36 +108,40 @@
         .msg.success { background:#d1fae5; color:#065f46; display:block; }
         .msg.error { background:#fee2e2; color:#991b1b; display:block; }
 
-        /* ── EDIT MODAL ── */
+        /* MODAL */
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
         .modal-overlay.open { display:flex; }
-        .modal-box { background:white; border-radius:1rem; padding:2rem; width:90%; max-width:480px; max-height:90vh; overflow-y:auto; }
+        .modal-box { background:white; border-radius:1rem; padding:2rem; width:90%; max-width:480px; max-height:90vh; overflow-y:auto; position:relative; }
+        .modal-close { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; cursor:pointer; color:#64748b; transition:color 0.2s; }
+        .modal-close:hover { color:#1e293b; }
         .modal-box h3 { font-size:1.1rem; font-weight:700; margin-bottom:1.25rem; }
-        .modal-close { float:right; background:none; border:none; font-size:1.5rem; cursor:pointer; color:#64748b; margin-top:-0.25rem; }
 
-        /* ── FREELANCER SERVICES ── */
-        .service-detail { background:#f8fafc; border-radius:0.75rem; padding:1.25rem; margin-bottom:1rem; border:1px solid #e2e8f0; }
-        .service-detail h4 { font-size:0.875rem; font-weight:700; color:#374151; margin-bottom:0.5rem; }
-        .service-detail p { font-size:0.875rem; color:#64748b; }
-        .avail-toggle { display:flex; gap:0.75rem; margin-top:0.75rem; }
-        .avail-btn { flex:1; padding:0.5rem; border:2px solid #e2e8f0; border-radius:0.5rem; background:white; cursor:pointer; font-size:0.8rem; font-weight:600; color:#64748b; transition:all 0.2s; }
-        .avail-btn.active-avail { border-color:#10b981; background:#d1fae5; color:#065f46; }
-        .avail-btn.active-busy { border-color:#f59e0b; background:#fef3c7; color:#92400e; }
-
-        /* ── HIRE REQUESTS ── */
-        .hire-req { display:flex; gap:1rem; padding:1rem; border:1px solid #f1f5f9; border-radius:0.75rem; margin-bottom:0.75rem; align-items:flex-start; }
+        /* HIRE REQUESTS */
+        .hire-req { display:flex; gap:1rem; padding:1rem; border:1px solid #f1f5f9; border-radius:0.75rem; margin-bottom:0.75rem; align-items:flex-start; background:white; }
         .hire-req-icon { width:40px; height:40px; border-radius:50%; background:#ede9fe; display:flex; align-items:center; justify-content:center; color:#7c3aed; font-size:1rem; flex-shrink:0; }
+        .hire-req-info { flex:1; }
         .hire-req-info h4 { font-size:0.875rem; font-weight:700; margin-bottom:0.25rem; }
         .hire-req-info p { font-size:0.75rem; color:#64748b; }
         .hire-req-info .hire-date { font-size:0.7rem; color:#94a3b8; margin-top:0.25rem; }
-        .wa-reply-btn { margin-top:0.5rem; padding:0.35rem 0.75rem; background:#25d366; color:white; border:none; border-radius:0.375rem; font-size:0.75rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:0.3rem; }
+        .wa-reply-btn { margin-top:0.5rem; padding:0.35rem 0.75rem; background:#25d366; color:white; border:none; border-radius:0.375rem; font-size:0.75rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:0.3rem; transition:opacity 0.2s; }
+        .wa-reply-btn:hover { opacity:0.85; }
+
+        /* SERVICE ITEMS */
+        .service-item { background:#f8fafc; border-radius:0.75rem; padding:1.25rem; margin-bottom:1rem; border:1px solid #e2e8f0; }
+        .service-item h4 { font-size:0.875rem; font-weight:700; color:#374151; margin-bottom:0.5rem; }
+        .service-item p { font-size:0.875rem; color:#64748b; margin-bottom:0.5rem; }
+        .service-rate { font-size:1rem; font-weight:700; color:#2563eb; margin-top:0.5rem; }
+        .availability-toggle { display:flex; gap:0.75rem; margin-top:0.75rem; }
+        .avail-option { flex:1; padding:0.5rem; border:2px solid #e2e8f0; border-radius:0.5rem; background:white; cursor:pointer; font-size:0.8rem; font-weight:600; color:#64748b; transition:all 0.2s; text-align:center; }
+        .avail-option.active { border-color:#10b981; background:#d1fae5; color:#065f46; }
+        .avail-option.busy.active { border-color:#f59e0b; background:#fef3c7; color:#92400e; }
     </style>
 </head>
 <body>
 
 <!-- TOPBAR -->
 <div class="topbar">
-    <a href="index.html"><img src="logo.png" alt="SkillHub"> SkillHub</a>
+    <a href="index.html"><img src="logo.png" alt="SkillHub" onerror="this.style.display='none'"> SkillHub</a>
     <div class="topbar-right">
         <span id="topbarName">My Profile</span>
         <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -143,7 +153,7 @@
     <i class="fas fa-lock" style="font-size:3rem;color:#f59e0b;display:block;margin-bottom:1rem;"></i>
     <h2 style="margin-bottom:0.5rem;">Login Required</h2>
     <p style="color:#64748b;margin-bottom:1.5rem;">Please log in to view your profile.</p>
-    <a href="index.html#login-register" style="background:#2563eb;color:white;padding:0.75rem 2rem;border-radius:0.5rem;text-decoration:none;font-weight:600;">Login / Register</a>
+    <a href="index.html#login-register" style="background:#2563eb;color:white;padding:0.75rem 2rem;border-radius:0.5rem;text-decoration:none;font-weight:600;display:inline-block;">Login / Register</a>
 </div>
 
 <!-- MAIN PROFILE -->
@@ -151,7 +161,7 @@
 <div class="container">
 <div class="profile-grid">
 
-    <!-- ═══ LEFT: PROFILE CARD ═══ -->
+    <!-- LEFT: PROFILE CARD -->
     <div class="profile-card">
         <div class="avatar-wrap">
             <div class="avatar" id="profileAvatar"><i class="fas fa-user"></i></div>
@@ -165,6 +175,10 @@
             <div class="meta-row"><i class="fas fa-phone"></i><span id="profilePhone">—</span></div>
             <div class="meta-row"><i class="fas fa-globe"></i><span id="profileCountry">—</span></div>
         </div>
+        <div id="profileBioContainer" style="display:none;" class="profile-bio">
+            <i class="fas fa-info-circle"></i> <span id="profileBio"></span>
+        </div>
+        
         <!-- Freelancer extras -->
         <div id="freelancerLeftExtras" style="display:none;">
             <div class="meta-row"><i class="fas fa-dollar-sign"></i><span id="profileRate">—</span></div>
@@ -175,18 +189,16 @@
                 <div class="fstat"><div class="fstat-num" id="fstatRating">—</div><div class="fstat-label">Rating</div></div>
             </div>
         </div>
-        <button class="edit-profile-btn" id="openEditModal" style="margin-top:1rem;"><i class="fas fa-user-edit"></i> Edit Profile</button>
+        <button class="edit-profile-btn" id="openEditModal"><i class="fas fa-user-edit"></i> Edit Profile</button>
     </div>
 
-    <!-- ═══ RIGHT: TABS ═══ -->
+    <!-- RIGHT: TABS -->
     <div class="tabs-panel">
-        <div class="tabs-nav" id="tabsNav">
-            <!-- tabs injected by JS based on role -->
-        </div>
+        <div class="tabs-nav" id="tabsNav"></div>
 
         <!-- LEARNER: My Courses -->
-        <div class="tab-content active" id="tab-courses">
-            <div id="coursesList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading courses...</p></div></div>
+        <div class="tab-content" id="tab-courses">
+            <div id="coursesList"><div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading courses...</p></div></div>
         </div>
 
         <!-- FREELANCER: My Services -->
@@ -201,7 +213,7 @@
 
         <!-- SHARED: Payment History -->
         <div class="tab-content" id="tab-payments">
-            <div id="paymentsList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading payments...</p></div></div>
+            <div id="paymentsList"><div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading payments...</p></div></div>
         </div>
 
         <!-- SHARED: Account Settings -->
@@ -250,9 +262,9 @@
         </div>
     </div>
 
-</div><!-- /profile-grid -->
-</div><!-- /container -->
-</div><!-- /profileMain -->
+</div>
+</div>
+</div>
 
 <!-- EDIT PROFILE MODAL -->
 <div class="modal-overlay" id="editModal">
@@ -261,7 +273,7 @@
         <h3 id="editModalTitle">Edit Profile</h3>
         <form id="editProfileForm">
             <div class="form-group"><label>Full Name</label><input type="text" id="editName" placeholder="Full Name"></div>
-            <div class="form-group"><label>Bio</label><input type="text" id="editBio" placeholder="Short bio about yourself"></div>
+            <div class="form-group"><label>Bio</label><textarea id="editBio" placeholder="Short bio about yourself" rows="3" style="width:100%;padding:0.625rem;border:2px solid #e2e8f0;border-radius:0.5rem;font-family:inherit;"></textarea></div>
             <div class="form-group"><label>Profile Picture URL</label><input type="url" id="editPic" placeholder="https://..."></div>
             <!-- Freelancer extras -->
             <div id="editFreelancerExtras" style="display:none;">
@@ -274,225 +286,569 @@
         </form>
     </div>
 </div>
+
 <script>
-var API="https://skillhub-backend-i3dr.onrender.com/api";
-var token=localStorage.getItem("skillhub_token");
-var userData=null;
-var COUNTRIES={ET:"🇪🇹 Ethiopia",SS:"🇸🇸 South Sudan",KE:"🇰🇪 Kenya",UG:"🇺🇬 Uganda",OTHER:"🌍 Other"};
+const API = "https://skillhub-backend-i3dr.onrender.com/api";
+let token = localStorage.getItem("skillhub_token");
+let userData = null;
+let currentTab = "courses";
 
-function esc(s){if(!s)return"";return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">");}
-
-async function req(endpoint,method,body){
-var h={"Content-Type":"application/json"};
-if(token)h["Authorization"]="Bearer "+token;
-var opts={method:method||"GET",headers:h};
-if(body)opts.body=JSON.stringify(body);
-var r=await fetch(API+endpoint,opts);
-var d=await r.json();
-if(!r.ok)throw new Error(d.message||"Request failed");
-return d;
-}
-
-function showMsg(id,msg,type){
-var el=document.getElementById(id);
-if(!el)return;
-el.textContent=msg;
-el.className="msg "+type;
-setTimeout(function(){el.className="msg";},5000);
-}
-
-function renderAvatar(el,user,size){
-if(user.profilePicture){
-el.innerHTML="<img src='"+esc(user.profilePicture)+"' alt='avatar'>";
-}else{
-var ini=(user.name||"U").split(" ").map(function(n){return n[0];}).join("").toUpperCase().slice(0,2);
-el.textContent=ini;
-el.style.cssText="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;display:flex;align-items:center;justify-content:center;font-size:"+(size||"2rem")+";font-weight:700;";
-}
-}
-
-function switchTab(name,el){
-document.querySelectorAll(".tab-content").forEach(function(t){t.classList.remove("active");});
-document.querySelectorAll(".sidebar-nav a").forEach(function(a){a.classList.remove("active");});
-var tab=document.getElementById("tab-"+name);
-if(tab)tab.classList.add("active");
-if(el)el.classList.add("active");
-if(name==="courses")loadCourses();
-if(name==="services")loadServices();
-if(name==="payments")loadPayments();
-}
-
-async function init(){
-if(!token){document.getElementById("notLogged").style.display="flex";return;}
-document.getElementById("profileLayout").style.display="grid";
-try{
-var d=await req("/auth/me");
-userData=d.user;
-renderSidebar(userData);
-renderProfileView(userData);
-if(userData.role==="user"){document.getElementById("navCourses").style.display="block";}
-if(userData.role==="freelancer"){
-document.getElementById("navServices").style.display="block";
-document.getElementById("navHireReqs").style.display="block";
-document.getElementById("freelancerInfoBlock").style.display="block";
-document.getElementById("freelancerEditBlock").style.display="block";
-}
-}catch(e){
-document.getElementById("notLogged").style.display="flex";
-document.getElementById("profileLayout").style.display="none";
-}
-}
-
-function renderSidebar(u){
-renderAvatar(document.getElementById("sideAvatar"),u,"2rem");
-document.getElementById("sideName").textContent=u.name||"User";
-var roleMap={user:"Learner",instructor:"Instructor",freelancer:"Freelancer",admin:"Admin"};
-var roleClass={user:"role-user",instructor:"role-instructor",freelancer:"role-freelancer",admin:"role-user"};
-var rb=document.getElementById("sideRole");
-rb.textContent=roleMap[u.role]||u.role;
-rb.className="role-badge "+(roleClass[u.role]||"role-user");
-var st=document.getElementById("sideStatus");
-st.textContent=(u.status||"pending").charAt(0).toUpperCase()+(u.status||"pending").slice(1);
-st.className="status-text status-"+(u.status||"pending");
-}
-
-function renderProfileView(u){
-document.getElementById("pName").textContent=u.name||"—";
-document.getElementById("pEmail").textContent=u.email||"—";
-document.getElementById("pPhone").textContent=u.phone||"—";
-document.getElementById("pCountry").textContent=COUNTRIES[u.country]||u.country||"—";
-if(u.bio){document.getElementById("pBio").textContent=u.bio;document.getElementById("pBioRow").style.display="flex";}
-if(u.role==="freelancer"&&u.freelancerProfile){
-var fp=u.freelancerProfile;
-document.getElementById("pRate").textContent=fp.hourlyRate?"$"+fp.hourlyRate+"/hr":"—";
-var portEl=document.getElementById("pPortfolio");
-if(fp.portfolio&&fp.portfolio[0]&&fp.portfolio[0].projectUrl){
-portEl.innerHTML="<a href='"+esc(fp.portfolio[0].projectUrl)+"' target='_blank' style='color:#2563eb'>View Portfolio</a>";
-}else{portEl.textContent="—";}
-var avail=fp.availability||"available";
-var availColors={available:"avail-available",busy:"avail-busy",looking:"avail-looking",not_available:"avail-busy"};
-var availLabels={available:"Available",busy:"Busy",looking:"Looking for work",not_available:"Not Available"};
-document.getElementById("pAvailWrap").innerHTML="<span class='avail-btn "+(availColors[avail]||"avail-available")+"'><i class='fas fa-circle' style='font-size:.5rem'></i> "+(availLabels[avail]||avail)+"</span>";
-var skills=fp.skills||[];
-document.getElementById("pSkills").innerHTML=skills.length?skills.map(function(s){return"<span class='skill-tag'>"+esc(s)+"</span>";}).join(""):"—";
-}
-// Pre-fill edit form
-document.getElementById("editName").value=u.name||"";
-document.getElementById("editBio").value=u.bio||"";
-document.getElementById("editPic").value=u.profilePicture||"";
-if(u.role==="freelancer"&&u.freelancerProfile){
-var fp=u.freelancerProfile;
-document.getElementById("editSkills").value=(fp.skills||[]).join(", ");
-document.getElementById("editRate").value=fp.hourlyRate||"";
-document.getElementById("editPortfolio").value=(fp.portfolio&&fp.portfolio[0])?fp.portfolio[0].projectUrl:"";
-document.getElementById("editAvailability").value=fp.availability||"available";
-}
-// Pre-fill settings
-document.getElementById("newPhone").value=u.phone||"";
-document.getElementById("newCountry").value=u.country||"";
-}
-
-function toggleEdit(){
-var v=document.getElementById("profileView");
-var e=document.getElementById("profileEdit");
-if(e.style.display==="none"){e.style.display="block";v
-=skills.split(",").map(function(s){return s.trim();}).filter(Boolean);
-body.hourlyRate=Number(document.getElementById("editRate").value)||0;
-body.portfolio=document.getElementById("editPortfolio").value.trim();
-body.availability=document.getElementById("editAvailability").value;
-}
-showMsg("editMsg","Saving...","success");
-try{
-var updated=awaits ("/auth/profile","PUT",body);
-if(updated&&updated.user){
-userData=Object.assign(userData||{},updated.user);
-renderSidebar(userData);
-renderProfileView(userData);
-}
-showMsg("editMsg","Profile updated successfully!","success");
-toggleEdit();
-}catch(e){showMsg("editMsg",e.message,"error");}
+const COUNTRIES = {
+    ET: "🇪🇹 Ethiopia",
+    SS: "🇸🇸 South Sudan",
+    KE: "🇰🇪 Kenya",
+    UG: "🇺🇬 Uganda",
+    OTHER: "🌍 Other"
 };
-async function loadCourses(){
-var el=document.getElementById("coursesList");
-el.innerHTML="<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading courses...</div>";
-try{
-var d=await req("/courses/enrolled/me");
-var courses=d.courses||[];
-if(!courses.length){el.innerHTML="<div class='empty-state'><i class='fas fa-book-open'></i><p>No courses yet. <a href='index.html#courses' style='color:#2563eb'>Browse courses</a> to get started!</p></div>";return;}
-el.innerHTML=courses.map(function(c){
-var prog=c.progress||0;
-var done=prog>=100||c.completed;
-var id=c._id||c.id||"";
-var btn=done?"<a href='certificate.html?id="+id+"&name="+encodeURIComponent(userData.name||"")+"&course="+encodeURIComponent(c.title||"")+"' class='btn btn-green btn-sm'><i class='fas fa-certificate'></i> Get Certificate</a>":"<a href='course.html?id="+id+"' class='btn btn-primary btn-sm'><i class='fas fa-play-circle'></i> Continue Learning</a>";
-return "<div class='course-item'><div class='course-thumb"+(done?" done":"")+"'><i class='fas "+(done?"fa-check-circle":"fa-play-circle")+"'></i></div><div class='course-info'><h4>"+esc(c.title||"Untitled")+"</h4><p class='meta'>"+esc(c.instructorName||"")+(c.category?" &bull; "+esc(c.category):"")+"</p><div class='progress-bar'><div class='progress-fill"+(done?" done":"")+"' style='width:"+prog+"%;'></div></div><span class='progress-pct'>"+prog+"% complete</span></div><div class='course-actions'>"+btn+"</div></div>";
-}).join("");
-}catch(e){el.innerHTML="<div class='empty-state'><i class='fas fa-wifi-slash'></i><p>Could not load courses.</p></div>";}
+
+function esc(s) {
+    if (!s) return "";
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-async function loadServices(){
-var el=document.getElementById("servicesList");
-el.innerHTML="<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading...</div>";
-try{
-var d=await req("/freelancers/me");
-var fp=d.freelancer;
-if(!fp){el.innerHTML="<div class='empty-state'><i class='fas fa-briefcase'></i><p>No freelancer profile found.</p></div>";return;}
-el.innerHTML="<div class='info-row'><i class='fas fa-heading'></i><span class='info-label'>Title</span><span class='info-value'>"+esc(fp.title||"—")+"</span></div><div class='info-row'><i class='fas fa-tags'></i><span class='info-label'>Skills</span><span class='info-value'>"+(fp.skills||[]).map(function(s){return"<span class='skill-tag'>"+esc(s)+"</span>";}).join("")+"</span></div><div class='info-row'><i class='fas fa-dollar-sign'></i><span class='info-label'>Hourly Rate</span><span class='info-value'>"+(fp.hourlyRate?"$"+fp.hourlyRate+"/hr":"—")+"</span></div><div class='info-row'><i class='fas fa-circle'></i><span class='info-label'>Availability</span><span class='info-value'>"+esc(fp.availability||"available")+"</span></div>";
-}catch(e){el.innerHTML="<div class='empty-state'><i class='fas fa-wifi-slash'></i><p>Could not load services.</p></div>";}
+
+async function req(endpoint, method, body) {
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = "Bearer " + token;
+    const opts = { method: method || "GET", headers: headers };
+    if (body) opts.body = JSON.stringify(body);
+    
+    const response = await fetch(API + endpoint, opts);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Request failed");
+    return data;
 }
-async function loadPayments(){
-var el=document.getElementById("paymentsList");
-el.innerHTML="<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading payments...</div>";
-try{
-var d=await req("/payments/transactions");
-var txns=d.transactions||[];
-if(!txns.length){el.innerHTML="<div class='empty-state'><i class='fas fa-receipt'></i><p>No payment history yet.</p></div>";return;}
-var typeLabels={course_purchase:"Course Purchase",withdrawal:"Withdrawal",deposit:"Deposit",referral_bonus:"Referral Bonus",freelance_hire:"Freelance Hire"};
-var statusColors={completed:"badge-completed",pending:"badge-pending",failed:"badge-failed"};
-el.innerHTML="<div class='pay-table-wrap'><table class='pay-table'><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead><tbody>"+txns.map(function(t){
-var date=t.createdAt?new Date(t.createdAt).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—";
-var label=typeLabels[t.type]||t.type||"Transaction";
-var amount=(t.amount||0).toLocaleString()+" ETB";
-var status=t.status||"pending";
-return"<tr><td>"+date+"</td><td>"+esc(label)+"</td><td>"+amount+"</td><td><span class='badge "+(statusColors[status]||"badge-pending")+"'>"+status.charAt(0).toUpperCase()+status.slice(1)+"</span></td></tr>";
-}).join("")+"</tbody></table></div>";
-}catch(e){el.innerHTML="<div class='empty-state'><i class='fas fa-wifi-slash'></i><p>Could not load payments.</p></div>";}
+
+function showMsg(id, msg, type) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = "msg " + type;
+    setTimeout(() => {
+        if (el) el.className = "msg";
+    }, 5000);
 }
-document.getElementById("pwdForm").addEventListener("submit",async function(ev){
-ev.preventDefault();
-var cur=document.getElementById("curPwd").value;
-var np=document.getElementById("newPwd").value;
-var cp=document.getElementById("confPwd").value;
-if(np!==cp){showMsg("pwdMsg","Passwords do not match","error");return;}
-if(np.length<6){showMsg("pwdMsg","Password must be at least 6 characters","error");return;}
-showMsg("pwdMsg","Updating...","success");
-try{await req("/auth/change-password","PUT",{currentPassword:cur,newPassword:np});showMsg("pwdMsg","Password updated!","success");ev.target.reset();}
-catch(e){showMsg("pwdMsg",e.message,"error");}
+
+function renderAvatar(avatarEl, user) {
+    if (!avatarEl) return;
+    if (user.profilePicture) {
+        avatarEl.innerHTML = "<img src='" + esc(user.profilePicture) + "' alt='avatar' style='width:100%;height:100%;object-fit:cover;'>";
+    } else {
+        const initials = (user.name || "U").split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+        avatarEl.textContent = initials;
+        avatarEl.style.cssText = "background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;";
+    }
+}
+
+function setupTabs(userRole) {
+    const tabsNav = document.getElementById("tabsNav");
+    const tabs = [
+        { id: "courses", label: "My Courses", icon: "fa-book", showFor: ["user", "instructor"] },
+        { id: "services", label: "My Services", icon: "fa-briefcase", showFor: ["freelancer"] },
+        { id: "requests", label: "Hire Requests", icon: "fa-envelope", showFor: ["freelancer"] },
+        { id: "payments", label: "Payment History", icon: "fa-credit-card", showFor: ["user", "freelancer", "instructor"] },
+        { id: "settings", label: "Settings", icon: "fa-cog", showFor: ["user", "freelancer", "instructor", "admin"] }
+    ];
+    
+    const visibleTabs = tabs.filter(tab => tab.showFor.includes(userRole));
+    tabsNav.innerHTML = visibleTabs.map((tab, idx) => `
+        <button class="tab-btn ${idx === 0 ? 'active' : ''}" data-tab="${tab.id}">
+            <i class="fas ${tab.icon}"></i> ${tab.label}
+        </button>
+    `).join("");
+    
+    // Hide all tab contents first
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Show first tab content
+    if (visibleTabs.length > 0) {
+        const firstTab = document.getElementById(`tab-${visibleTabs[0].id}`);
+        if (firstTab) firstTab.classList.add('active');
+        currentTab = visibleTabs[0].id;
+    }
+    
+    // Add click handlers
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const tabId = btn.getAttribute('data-tab');
+            switchTab(tabId, btn);
+        });
+    });
+}
+
+function switchTab(tabId, clickedBtn) {
+    // Update active states
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    const selectedTab = document.getElementById(`tab-${tabId}`);
+    if (selectedTab) selectedTab.classList.add('active');
+    if (clickedBtn) clickedBtn.classList.add('active');
+    
+    currentTab = tabId;
+    
+    // Load data based on tab
+    if (tabId === "courses") loadCourses();
+    else if (tabId === "services") loadServices();
+    else if (tabId === "requests") loadHireRequests();
+    else if (tabId === "payments") loadPayments();
+}
+
+async function loadCourses() {
+    const el = document.getElementById("coursesList");
+    if (!el) return;
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading courses...</p></div>';
+    
+    try {
+        const data = await req("/courses/enrolled/me", "GET");
+        const courses = data.courses || [];
+        
+        if (!courses.length) {
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-book-open"></i><p>No courses yet. <a href="index.html#courses" style="color:#2563eb">Browse courses</a> to get started!</p></div>';
+            return;
+        }
+        
+        el.innerHTML = courses.map(course => {
+            const progress = course.progress || 0;
+            const isDone = progress >= 100 || course.completed;
+            const courseId = course._id || course.id || "";
+            const btn = isDone ? 
+                `<a href="certificate.html?id=${courseId}&name=${encodeURIComponent(userData?.name || "")}&course=${encodeURIComponent(course.title || "")}" class="btn-sm btn-cert"><i class="fas fa-certificate"></i> Get Certificate</a>` :
+                `<a href="course.html?id=${courseId}" class="btn-sm btn-continue"><i class="fas fa-play-circle"></i> Continue Learning</a>`;
+            
+            return `
+                <div class="course-item">
+                    <div class="course-thumb ${isDone ? 'done' : ''}">
+                        <i class="fas ${isDone ? 'fa-check-circle' : 'fa-play-circle'}"></i>
+                    </div>
+                    <div class="course-info">
+                        <div class="course-title">${esc(course.title || "Untitled")}</div>
+                        <div class="course-instructor">${esc(course.instructorName || "Unknown Instructor")} ${course.category ? `• ${esc(course.category)}` : ''}</div>
+                        <div class="progress-bar"><div class="progress-fill ${isDone ? 'done' : ''}" style="width: ${progress}%;"></div></div>
+                        <div class="progress-text">${progress}% complete</div>
+                    </div>
+                    <div class="course-actions">${btn}</div>
+                </div>
+            `;
+        }).join("");
+    } catch (error) {
+        console.error("Error loading courses:", error);
+        el.innerHTML = '<div class="empty-state"><i class="fas fa-wifi-slash"></i><p>Could not load courses. Please try again later.</p></div>';
+    }
+}
+
+async function loadServices() {
+    const el = document.getElementById("servicesList");
+    if (!el) return;
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading services...</p></div>';
+    
+    try {
+        const data = await req("/freelancers/me", "GET");
+        const fp = data.freelancer;
+        
+        if (!fp) {
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-briefcase"></i><p>No freelancer profile found. Complete your profile to start offering services!</p></div>';
+            return;
+        }
+        
+        const skills = fp.skills || [];
+        const availability = fp.availability || "available";
+        
+        el.innerHTML = `
+            <div class="service-item">
+                <h4><i class="fas fa-heading"></i> Professional Title</h4>
+                <p>${esc(fp.title || "Not specified")}</p>
+                
+                <h4><i class="fas fa-tags"></i> Skills</h4>
+                <div class="skill-tags" style="justify-content:flex-start; margin-top:0;">
+                    ${skills.length ? skills.map(s => `<span class="skill-tag">${esc(s)}</span>`).join("") : "<p>—</p>"}
+                </div>
+                
+                <div class="service-rate"><i class="fas fa-dollar-sign"></i> ${fp.hourlyRate ? `$${fp.hourlyRate}/hour` : "Rate not set"}</div>
+                
+                <h4><i class="fas fa-calendar-alt"></i> Availability Status</h4>
+                <div class="availability-toggle">
+                    <div class="avail-option ${availability === 'available' ? 'active' : ''}" data-avail="available">
+                        <i class="fas fa-check-circle"></i> Available
+                    </div>
+                    <div class="avail-option busy ${availability === 'busy' ? 'active' : ''}" data-avail="busy">
+                        <i class="fas fa-clock"></i> Busy
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add availability toggle functionality
+        document.querySelectorAll('.avail-option').forEach(opt => {
+            opt.addEventListener('click', async () => {
+                const newStatus = opt.getAttribute('data-avail');
+                try {
+                    await req("/freelancers/profile", "PUT", { availability: newStatus });
+                    showMsg("servicesList", "Availability updated!", "success");
+                    setTimeout(() => loadServices(), 1000);
+                } catch (error) {
+                    showMsg("servicesList", error.message, "error");
+                }
+            });
+        });
+    } catch (error) {
+        console.error("Error loading services:", error);
+        el.innerHTML = '<div class="empty-state"><i class="fas fa-wifi-slash"></i><p>Could not load services. Please try again later.</p></div>';
+    }
+}
+
+async function loadHireRequests() {
+    const el = document.getElementById("requestsList");
+    if (!el) return;
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading requests...</p></div>';
+    
+    try {
+        const data = await req("/freelancers/hire-requests", "GET");
+        const requests = data.requests || [];
+        
+        if (!requests.length) {
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No hire requests yet. Share your profile to get hired!</p></div>';
+            return;
+        }
+        
+        el.innerHTML = requests.map(req => `
+            <div class="hire-req">
+                <div class="hire-req-icon"><i class="fas fa-user"></i></div>
+                <div class="hire-req-info">
+                    <h4>${esc(req.clientName || "Client")}</h4>
+                    <p>${esc(req.message || "Interested in hiring you for a project")}</p>
+                    <div class="hire-date"><i class="fas fa-calendar"></i> ${new Date(req.createdAt).toLocaleDateString()}</div>
+                    <button class="wa-reply-btn" data-phone="${req.clientPhone || ''}">
+                        <i class="fab fa-whatsapp"></i> Reply on WhatsApp
+                    </button>
+                </div>
+            </div>
+        `).join("");
+        
+        // Add WhatsApp reply functionality
+        document.querySelectorAll('.wa-reply-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const phone = btn.getAttribute('data-phone');
+                if (phone) {
+                    window.open(`https://wa.me/${phone}`, '_blank');
+                } else {
+                    alert("Phone number not available");
+                }
+            });
+        });
+    } catch (error) {
+        console.error("Error loading hire requests:", error);
+        el.innerHTML = '<div class="empty-state"><i class="fas fa-wifi-slash"></i><p>Could not load hire requests.</p></div>';
+    }
+}
+
+async function loadPayments() {
+    const el = document.getElementById("paymentsList");
+    if (!el) return;
+    el.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading payments...</p></div>';
+    
+    try {
+        const data = await req("/payments/transactions", "GET");
+        const transactions = data.transactions || [];
+        
+        if (!transactions.length) {
+            el.innerHTML = '<div class="empty-state"><i class="fas fa-receipt"></i><p>No payment history yet.</p></div>';
+            return;
+        }
+        
+        const typeLabels = {
+            course_purchase: "Course Purchase",
+            withdrawal: "Withdrawal",
+            deposit: "Deposit",
+            referral_bonus: "Referral Bonus",
+            freelance_hire: "Freelance Hire"
+        };
+        
+        el.innerHTML = `
+            <div class="pay-table-wrap">
+                <table>
+                    <thead>
+                        <tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        ${transactions.map(t => {
+                            const date = t.createdAt ? new Date(t.createdAt).toLocaleDateString("en-GB", {day:"2-digit", month:"short", year:"numeric"}) : "—";
+                            const label = typeLabels[t.type] || t.type || "Transaction";
+                            const amount = (t.amount || 0).toLocaleString() + " ETB";
+                            const statusClass = t.status === 'completed' ? 'status-completed' : (t.status === 'failed' ? 'status-failed' : 'status-pending');
+                            return `
+                                <tr>
+                                    <td>${date}</td>
+                                    <td>${esc(label)}</td>
+                                    <td>${amount}</td>
+                                    <td><span class="status-pill ${statusClass}">${t.status}</span></td>
+                                </tr>
+                            `;
+                        }).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } catch (error) {
+        console.error("Error loading payments:", error);
+        el.innerHTML = '<div class="empty-state"><i class="fas fa-wifi-slash"></i><p>Could not load payment history.</p></div>';
+    }
+}
+
+function renderProfileView(user) {
+    if (!user) return;
+    
+    document.getElementById("profileName").textContent = user.name || "—";
+    document.getElementById("profileEmail").textContent = user.email || "—";
+    document.getElementById("profilePhone").textContent = user.phone || "Not provided";
+    document.getElementById("profileCountry").textContent = COUNTRIES[user.country] || user.country || "Not set";
+    
+    const roleMap = { user: "Learner", instructor: "Instructor", freelancer: "Freelancer", admin: "Admin" };
+    const roleClass = { user: "role-user", instructor: "role-instructor", freelancer: "role-freelancer", admin: "role-admin" };
+    const roleBadge = document.getElementById("profileRoleBadge");
+    roleBadge.textContent = roleMap[user.role] || user.role;
+    roleBadge.className = `role-badge ${roleClass[user.role] || "role-user"}`;
+    
+    const statusBadge = document.getElementById("profileStatusBadge");
+    const isActive = user.status === "active";
+    statusBadge.className = `status-badge ${isActive ? "status-active" : "status-pending"}`;
+    statusBadge.innerHTML = `<i class="fas fa-circle" style="font-size:0.5rem;"></i> ${isActive ? "Active" : "Pending"}`;
+    
+    // Bio
+    if (user.bio) {
+        document.getElementById("profileBio").textContent = user.bio;
+        document.getElementById("profileBioContainer").style.display = "block";
+    } else {
+        document.getElementById("profileBioContainer").style.display = "none";
+    }
+    
+    // Freelancer-specific data
+    if (user.role === "freelancer" && user.freelancerProfile) {
+        const fp = user.freelancerProfile;
+        document.getElementById("freelancerLeftExtras").style.display = "block";
+        document.getElementById("profileRate").textContent = fp.hourlyRate ? `$${fp.hourlyRate}/hr` : "Not set";
+        
+        const portfolioEl = document.getElementById("profilePortfolio");
+        if (fp.portfolio && fp.portfolio.length > 0 && fp.portfolio[0].projectUrl) {
+            portfolioEl.href = fp.portfolio[0].projectUrl;
+            portfolioEl.textContent = "View Portfolio";
+            portfolioEl.style.display = "inline-flex";
+        } else {
+            portfolioEl.textContent = "—";
+            portfolioEl.href = "#";
+        }
+        
+        const skills = fp.skills || [];
+        const skillsContainer = document.getElementById("profileSkillTags");
+        skillsContainer.innerHTML = skills.length ? skills.map(s => `<span class="skill-tag">${esc(s)}</span>`).join("") : "<span>—</span>";
+        
+        // Mock stats (would come from backend)
+        document.getElementById("fstatJobs").textContent = fp.jobsCompleted || 0;
+        document.getElementById("fstatRating").textContent = fp.rating ? `★ ${fp.rating}` : "—";
+    } else {
+        document.getElementById("freelancerLeftExtras").style.display = "none";
+    }
+    
+    // Pre-fill edit form
+    document.getElementById("editName").value = user.name || "";
+    document.getElementById("editBio").value = user.bio || "";
+    document.getElementById("editPic").value = user.profilePicture || "";
+    
+    if (user.role === "freelancer" && user.freelancerProfile) {
+        const fp = user.freelancerProfile;
+        document.getElementById("editFreelancerExtras").style.display = "block";
+        document.getElementById("editSkills").value = (fp.skills || []).join(", ");
+        document.getElementById("editRate").value = fp.hourlyRate || "";
+        document.getElementById("editPortfolio").value = (fp.portfolio && fp.portfolio[0]) ? fp.portfolio[0].projectUrl : "";
+    } else {
+        document.getElementById("editFreelancerExtras").style.display = "none";
+    }
+    
+    // Pre-fill settings forms
+    document.getElementById("newPhone").value = user.phone || "";
+    document.getElementById("newCountry").value = user.country || "";
+    
+    // Render avatar
+    renderAvatar(document.getElementById("profileAvatar"), user);
+}
+
+async function init() {
+    token = localStorage.getItem("skillhub_token");
+    
+    if (!token) {
+        document.getElementById("notLoggedIn").style.display = "block";
+        document.getElementById("profileMain").style.display = "none";
+        return;
+    }
+    
+    try {
+        const data = await req("/auth/me", "GET");
+        userData = data.user;
+        
+        if (!userData) throw new Error("No user data");
+        
+        document.getElementById("notLoggedIn").style.display = "none";
+        document.getElementById("profileMain").style.display = "block";
+        document.getElementById("topbarName").textContent = userData.name || "My Profile";
+        
+        renderProfileView(userData);
+        setupTabs(userData.role);
+        
+        // Load initial tab data
+        if (currentTab === "courses") loadCourses();
+        else if (currentTab === "services") loadServices();
+        else if (currentTab === "payments") loadPayments();
+        
+    } catch (error) {
+        console.error("Init error:", error);
+        if (error.message.includes("Invalid token") || error.message.includes("Unauthorized")) {
+            localStorage.removeItem("skillhub_token");
+            localStorage.removeItem("skillhub_user");
+            document.getElementById("notLoggedIn").style.display = "block";
+            document.getElementById("profileMain").style.display = "none";
+        } else {
+            document.getElementById("notLoggedIn").style.display = "block";
+            document.getElementById("profileMain").style.display = "none";
+            const errorDiv = document.getElementById("notLoggedIn");
+            errorDiv.innerHTML = `<div style="color:red;"><i class="fas fa-exclamation-triangle"></i> Error: ${error.message}</div>` + errorDiv.innerHTML;
+        }
+    }
+}
+
+// Event Listeners
+document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    localStorage.removeItem("skillhub_token");
+    localStorage.removeItem("skillhub_user");
+    window.location.href = "index.html";
 });
-document.getElementById("phoneForm").addEventListener("submit",async function(ev){
-ev.preventDefault();
-var phone=document.getElementById("newPhone").value.trim();
-if(!phone){showMsg("phoneMsg","Please enter a phone number","error");return;}
-showMsg("phoneMsg","Updating...","success");
-try{await req("/auth/profile","PUT",{phone:phone});showMsg("phoneMsg","Phone updated!","success");}
-catch(e){showMsg("phoneMsg",e.message,"error");}
+
+document.getElementById("openEditModal")?.addEventListener("click", () => {
+    document.getElementById("editModal").classList.add("open");
 });
-document.getElementById("countryForm").addEventListener("submit",async function(ev){
-ev.preventDefault();
-var country=document.getElementById("newCountry").value;
-if(!country){showMsg("countryMsg","Please select a country","error");return;}
-showMsg("countryMsg","Saving...","success");
-try{
-await req("/auth/profile","PUT",{country:country});
-var session=JSON.parse(localStorage.getItem("skillhub_user")||"{}");
-if(session){session.country=country;localStorage.setItem("skillhub_user",JSON.stringify(session));}
-showMsg("countryMsg","Country updated!","success");
-}catch(e){showMsg("countryMsg",e.message,"error");}
+
+document.getElementById("closeEditModal")?.addEventListener("click", () => {
+    document.getElementById("editModal").classList.remove("open");
 });
-function doLogout(){
-localStorage.removeItem("skillhub_token");
-localStorage.removeItem("skillhub_user");
-window.location.href="index.html";
-}
+
+document.getElementById("avatarEditBtn")?.addEventListener("click", () => {
+    const url = prompt("Enter image URL for your profile picture:");
+    if (url && url.trim()) {
+        document.getElementById("editPic").value = url.trim();
+        document.getElementById("openEditModal").click();
+    }
+});
+
+// Edit Profile Form
+document.getElementById("editProfileForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const body = {
+        name: document.getElementById("editName").value.trim(),
+        bio: document.getElementById("editBio").value.trim(),
+        profilePicture: document.getElementById("editPic").value.trim()
+    };
+    
+    if (userData && userData.role === "freelancer") {
+        const skillsRaw = document.getElementById("editSkills").value.trim();
+        if (skillsRaw) body.skills = skillsRaw.split(",").map(s => s.trim()).filter(Boolean);
+        const rate = document.getElementById("editRate").value;
+        if (rate) body.hourlyRate = Number(rate);
+        const portfolio = document.getElementById("editPortfolio").value.trim();
+        if (portfolio) body.portfolio = portfolio;
+    }
+    
+    showMsg("editMsg", "Saving...", "success");
+    try {
+        const updated = await req("/auth/profile", "PUT", body);
+        if (updated && updated.user) {
+            userData = Object.assign(userData || {}, updated.user);
+            renderProfileView(userData);
+            showMsg("editMsg", "Profile updated successfully!", "success");
+            setTimeout(() => {
+                document.getElementById("editModal").classList.remove("open");
+            }, 1500);
+        }
+    } catch (error) {
+        showMsg("editMsg", error.message, "error");
+    }
+});
+
+// Change Password Form
+document.getElementById("pwdForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const current = document.getElementById("currentPwd").value;
+    const newPwd = document.getElementById("newPwd").value;
+    const confirm = document.getElementById("confirmPwd").value;
+    
+    if (newPwd !== confirm) {
+        showMsg("pwdMsg", "Passwords do not match", "error");
+        return;
+    }
+    if (newPwd.length < 6) {
+        showMsg("pwdMsg", "Password must be at least 6 characters", "error");
+        return;
+    }
+    
+    showMsg("pwdMsg", "Updating password...", "success");
+    try {
+        await req("/auth/change-password", "PUT", { currentPassword: current, newPassword: newPwd });
+        showMsg("pwdMsg", "Password updated successfully!", "success");
+        e.target.reset();
+    } catch (error) {
+        showMsg("pwdMsg", error.message, "error");
+    }
+});
+
+// Update Phone Form
+document.getElementById("phoneForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const phone = document.getElementById("newPhone").value.trim();
+    if (!phone) {
+        showMsg("phoneMsg", "Please enter a phone number", "error");
+        return;
+    }
+    showMsg("phoneMsg", "Updating phone...", "success");
+    try {
+        await req("/auth/profile", "PUT", { phone: phone });
+        showMsg("phoneMsg", "Phone number updated!", "success");
+        if (userData) userData.phone = phone;
+        document.getElementById("profilePhone").textContent = phone;
+    } catch (error) {
+        showMsg("phoneMsg", error.message, "error");
+    }
+});
+
+// Update Country Form
+document.getElementById("countryForm")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const country = document.getElementById("newCountry").value;
+    if (!country) {
+        showMsg("countryMsg", "Please select a country", "error");
+        return;
+    }
+    showMsg("countryMsg", "Saving country...", "success");
+    try {
+        await req("/auth/profile", "PUT", { country: country });
+        showMsg("countryMsg", "Country updated!", "success");
+        if (userData) userData.country = country;
+        document.getElementById("profileCountry").textContent = COUNTRIES[country] || country;
+    } catch (error) {
+        showMsg("countryMsg", error.message, "error");
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById("editModal")?.addEventListener("click", (e) => {
+    if (e.target === document.getElementById("editModal")) {
+        document.getElementById("editModal").classList.remove("open");
+    }
+});
+
+// Initialize the app
 init();
 </script>
 </body>
