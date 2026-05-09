@@ -396,5 +396,104 @@ function toggleEdit(){
 var v=document.getElementById("profileView");
 var e=document.getElementById("profileEdit");
 if(e.style.display==="none"){e.style.display="block";v
-
+=skills.split(",").map(function(s){return s.trim();}).filter(Boolean);
+body.hourlyRate=Number(document.getElementById("editRate").value)||0;
+body.portfolio=document.getElementById("editPortfolio").value.trim();
+body.availability=document.getElementById("editAvailability").value;
+}
+showMsg("editMsg","Saving...","success");
+try{
+var updated=awaits ("/auth/profile","PUT",body);
+if(updated&&updated.user){
+userData=Object.assign(userData||{},updated.user);
+renderSidebar(userData);
+renderProfileView(userData);
+}
+showMsg("editMsg","Profile updated successfully!","success");
+toggleEdit();
+}catch(e){showMsg("editMsg",e.message,"error");}
+};
+async function loadCourses(){
+var el=document.getElementById("coursesList");
+el.innerHTML="<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading courses...</div>";
+try{
+var d=await req("/courses/enrolled/me");
+var courses=d.courses||[];
+if(!courses.length){el.innerHTML="<div class='empty-state'><i class='fas fa-book-open'></i><p>No courses yet. <a href='index.html#courses' style='color:#2563eb'>Browse courses</a> to get started!</p></div>";return;}
+el.innerHTML=courses.map(function(c){
+var prog=c.progress||0;
+var done=prog>=100||c.completed;
+var id=c._id||c.id||"";
+var btn=done?"<a href='certificate.html?id="+id+"&name="+encodeURIComponent(userData.name||"")+"&course="+encodeURIComponent(c.title||"")+"' class='btn btn-green btn-sm'><i class='fas fa-certificate'></i> Get Certificate</a>":"<a href='course.html?id="+id+"' class='btn btn-primary btn-sm'><i class='fas fa-play-circle'></i> Continue Learning</a>";
+return "<div class='course-item'><div class='course-thumb"+(done?" done":"")+"'><i class='fas "+(done?"fa-check-circle":"fa-play-circle")+"'></i></div><div class='course-info'><h4>"+esc(c.title||"Untitled")+"</h4><p class='meta'>"+esc(c.instructorName||"")+(c.category?" &bull; "+esc(c.category):"")+"</p><div class='progress-bar'><div class='progress-fill"+(done?" done":"")+"' style='width:"+prog+"%;'></div></div><span class='progress-pct'>"+prog+"% complete</span></div><div class='course-actions'>"+btn+"</div></div>";
+}).join("");
+}catch(e){el.innerHTML="<div class='empty-state'><i class='fas fa-wifi-slash'></i><p>Could not load courses.</p></div>";}
+}
+async function loadServices(){
+var el=document.getElementById("servicesList");
+el.innerHTML="<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading...</div>";
+try{
+var d=await req("/freelancers/me");
+var fp=d.freelancer;
+if(!fp){el.innerHTML="<div class='empty-state'><i class='fas fa-briefcase'></i><p>No freelancer profile found.</p></div>";return;}
+el.innerHTML="<div class='info-row'><i class='fas fa-heading'></i><span class='info-label'>Title</span><span class='info-value'>"+esc(fp.title||"—")+"</span></div><div class='info-row'><i class='fas fa-tags'></i><span class='info-label'>Skills</span><span class='info-value'>"+(fp.skills||[]).map(function(s){return"<span class='skill-tag'>"+esc(s)+"</span>";}).join("")+"</span></div><div class='info-row'><i class='fas fa-dollar-sign'></i><span class='info-label'>Hourly Rate</span><span class='info-value'>"+(fp.hourlyRate?"$"+fp.hourlyRate+"/hr":"—")+"</span></div><div class='info-row'><i class='fas fa-circle'></i><span class='info-label'>Availability</span><span class='info-value'>"+esc(fp.availability||"available")+"</span></div>";
+}catch(e){el.innerHTML="<div class='empty-state'><i class='fas fa-wifi-slash'></i><p>Could not load services.</p></div>";}
+}
+async function loadPayments(){
+var el=document.getElementById("paymentsList");
+el.innerHTML="<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading payments...</div>";
+try{
+var d=await req("/payments/transactions");
+var txns=d.transactions||[];
+if(!txns.length){el.innerHTML="<div class='empty-state'><i class='fas fa-receipt'></i><p>No payment history yet.</p></div>";return;}
+var typeLabels={course_purchase:"Course Purchase",withdrawal:"Withdrawal",deposit:"Deposit",referral_bonus:"Referral Bonus",freelance_hire:"Freelance Hire"};
+var statusColors={completed:"badge-completed",pending:"badge-pending",failed:"badge-failed"};
+el.innerHTML="<div class='pay-table-wrap'><table class='pay-table'><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead><tbody>"+txns.map(function(t){
+var date=t.createdAt?new Date(t.createdAt).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—";
+var label=typeLabels[t.type]||t.type||"Transaction";
+var amount=(t.amount||0).toLocaleString()+" ETB";
+var status=t.status||"pending";
+return"<tr><td>"+date+"</td><td>"+esc(label)+"</td><td>"+amount+"</td><td><span class='badge "+(statusColors[status]||"badge-pending")+"'>"+status.charAt(0).toUpperCase()+status.slice(1)+"</span></td></tr>";
+}).join("")+"</tbody></table></div>";
+}catch(e){el.innerHTML="<div class='empty-state'><i class='fas fa-wifi-slash'></i><p>Could not load payments.</p></div>";}
+}
+document.getElementById("pwdForm").addEventListener("submit",async function(ev){
+ev.preventDefault();
+var cur=document.getElementById("curPwd").value;
+var np=document.getElementById("newPwd").value;
+var cp=document.getElementById("confPwd").value;
+if(np!==cp){showMsg("pwdMsg","Passwords do not match","error");return;}
+if(np.length<6){showMsg("pwdMsg","Password must be at least 6 characters","error");return;}
+showMsg("pwdMsg","Updating...","success");
+try{await req("/auth/change-password","PUT",{currentPassword:cur,newPassword:np});showMsg("pwdMsg","Password updated!","success");ev.target.reset();}
+catch(e){showMsg("pwdMsg",e.message,"error");}
+});
+document.getElementById("phoneForm").addEventListener("submit",async function(ev){
+ev.preventDefault();
+var phone=document.getElementById("newPhone").value.trim();
+if(!phone){showMsg("phoneMsg","Please enter a phone number","error");return;}
+showMsg("phoneMsg","Updating...","success");
+try{await req("/auth/profile","PUT",{phone:phone});showMsg("phoneMsg","Phone updated!","success");}
+catch(e){showMsg("phoneMsg",e.message,"error");}
+});
+document.getElementById("countryForm").addEventListener("submit",async function(ev){
+ev.preventDefault();
+var country=document.getElementById("newCountry").value;
+if(!country){showMsg("countryMsg","Please select a country","error");return;}
+showMsg("countryMsg","Saving...","success");
+try{
+await req("/auth/profile","PUT",{country:country});
+var session=JSON.parse(localStorage.getItem("skillhub_user")||"{}");
+if(session){session.country=country;localStorage.setItem("skillhub_user",JSON.stringify(session));}
+showMsg("countryMsg","Country updated!","success");
+}catch(e){showMsg("countryMsg",e.message,"error");}
+});
+function doLogout(){
+localStorage.removeItem("skillhub_token");
+localStorage.removeItem("skillhub_user");
+window.location.href="index.html";
+}
+init();
 </script>
+</body>
+</html>
