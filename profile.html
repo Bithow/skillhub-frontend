@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SkillHub</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI',sans-serif; background:#f1f5f9; color:#1e293b; }
+        .topbar { background:#1e3a8a; color:white; padding:1rem 2rem; display:flex; justify-content:space-between; align-items:center; }
+        .topbar a { color:white; text-decoration:none; display:flex; align-items:center; gap:0.5rem; font-weight:700; font-size:1.1rem; }
+        .topbar a img { width:32px; height:32px; object-fit:contain; }
+        .topbar-right { display:flex; align-items:center; gap:1rem; }
+        .topbar-right span { font-size:0.875rem; opacity:0.8; }
+        .logout-btn { background:rgba(255,255,255,0.2); color:white; border:none; padding:0.4rem 0.9rem; border-radius:50px; cursor:pointer; font-size:0.8rem; transition:background 0.2s; }
+        .logout-btn:hover { background:rgba(255,255,255,0.35); }
+        .container { max-width:1100px; margin:0 auto; padding:2rem 1rem; }
+        .profile-grid { display:grid; grid-template-columns:300px 1fr; gap:1.5rem; }
+        @media(max-width:768px){ .profile-grid { grid-template-columns:1fr; } }
+
+        /* ── LEFT CARD ── */
+        .profile-card { background:white; border-radius:1rem; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); text-align:center; position:sticky; top:1rem; height:fit-content; }
+        .avatar-wrap { position:relative; display:inline-block; margin-bottom:1rem; }
+        .avatar { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#3b82f6,#8b5cf6); display:flex; align-items:center; justify-content:center; font-size:2rem; font-weight:700; color:white; overflow:hidden; margin:0 auto; }
+        .avatar img { width:100%; height:100%; object-fit:cover; }
+        .avatar-edit { position:absolute; bottom:0; right:0; background:#2563eb; color:white; border:none; width:26px; height:26px; border-radius:50%; cursor:pointer; font-size:0.7rem; display:flex; align-items:center; justify-content:center; }
+        .profile-name { font-size:1.25rem; font-weight:700; margin-bottom:0.25rem; }
+        .role-badge { display:inline-block; padding:0.25rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:600; margin-bottom:1rem; }
+        .role-user { background:#dbeafe; color:#1e40af; }
+        .role-freelancer { background:#ede9fe; color:#5b21b6; }
+        .role-instructor { background:#d1fae5; color:#065f46; }
+        .profile-meta { text-align:left; margin-bottom:1.25rem; }
+        .meta-row { display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; color:#64748b; margin-bottom:0.5rem; }
+        .meta-row i { width:16px; color:#2563eb; }
+        .meta-row span { word-break:break-all; }
+        .status-badge { display:inline-flex; align-items:center; gap:0.4rem; padding:0.3rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:600; margin-bottom:1rem; }
+        .status-active { background:#d1fae5; color:#065f46; }
+        .status-pending { background:#fef3c7; color:#92400e; }
+        .edit-profile-btn { width:100%; padding:0.625rem; background:#2563eb; color:white; border:none; border-radius:0.5rem; cursor:pointer; font-weight:600; font-size:0.875rem; transition:background 0.2s; }
+        .edit-profile-btn:hover { background:#1d4ed8; }
+        .skill-tags { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.75rem; justify-content:center; }
+        .skill-tag { background:#eff6ff; color:#1e40af; padding:0.2rem 0.6rem; border-radius:50px; font-size:0.7rem; font-weight:600; }
+        .freelancer-stats { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-top:1rem; }
+        .fstat { background:#f8fafc; border-radius:0.5rem; padding:0.75rem; text-align:center; }
+        .fstat-num { font-size:1.1rem; font-weight:700; color:#2563eb; }
+        .fstat-label { font-size:0.7rem; color:#64748b; }
+
+        /* ── TABS ── */
+        .tabs-panel { background:white; border-radius:1rem; box-shadow:0 2px 8px rgba(0,0,0,0.06); overflow:hidden; }
+        .tabs-nav { display:flex; border-bottom:2px solid #f1f5f9; overflow-x:auto; }
+        .tab-btn { padding:1rem 1.25rem; border:none; background:none; cursor:pointer; font-size:0.875rem; font-weight:600; color:#64748b; white-space:nowrap; border-bottom:3px solid transparent; margin-bottom:-2px; transition:all 0.2s; }
+        .tab-btn.active { color:#2563eb; border-bottom-color:#2563eb; }
+        .tab-btn i { margin-right:0.4rem; }
+        .tab-content { display:none; padding:1.5rem; }
+        .tab-content.active { display:block; }
+
+        /* ── COURSES ── */
+        .course-item { display:flex; gap:1rem; padding:1rem; border:1px solid #f1f5f9; border-radius:0.75rem; margin-bottom:0.75rem; align-items:flex-start; transition:box-shadow 0.2s; }
+        .course-item:hover { box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+        .course-thumb { width:56px; height:56px; border-radius:0.5rem; background:linear-gradient(135deg,#3b82f6,#1d4ed8); display:flex; align-items:center; justify-content:center; color:white; font-size:1.25rem; flex-shrink:0; }
+        .course-thumb.done { background:linear-gradient(135deg,#10b981,#059669); }
+        .course-info { flex:1; min-width:0; }
+        .course-title { font-weight:700; font-size:0.9rem; margin-bottom:0.25rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .course-instructor { font-size:0.75rem; color:#64748b; margin-bottom:0.5rem; }
+        .progress-bar { height:6px; background:#e2e8f0; border-radius:3px; overflow:hidden; margin-bottom:0.25rem; }
+        .progress-fill { height:100%; border-radius:3px; background:#3b82f6; transition:width 0.3s; }
+        .progress-fill.done { background:#10b981; }
+        .progress-text { font-size:0.7rem; color:#64748b; }
+        .course-actions { display:flex; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap; }
+        .btn-sm { padding:0.35rem 0.75rem; border:none; border-radius:0.375rem; font-size:0.75rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem; transition:opacity 0.2s; }
+        .btn-sm:hover { opacity:0.85; }
+        .btn-continue { background:#2563eb; color:white; }
+        .btn-cert { background:#10b981; color:white; }
+        .empty-state { text-align:center; padding:3rem 1rem; color:#94a3b8; }
+        .empty-state i { font-size:2.5rem; display:block; margin-bottom:0.75rem; }
+
+        /* ── PAYMENT TABLE ── */
+        .pay-table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; font-size:0.875rem; }
+        th { background:#f8fafc; padding:0.75rem 1rem; text-align:left; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:#64748b; }
+        td { padding:0.75rem 1rem; border-top:1px solid #f1f5f9; }
+        tr:hover td { background:#fafafa; }
+        .status-pill { display:inline-block; padding:0.2rem 0.6rem; border-radius:50px; font-size:0.7rem; font-weight:600; }
+        .status-completed { background:#d1fae5; color:#065f46; }
+        .status-pending { background:#fef3c7; color:#92400e; }
+        .status-failed { background:#fee2e2; color:#991b1b; }
+
+        /* ── SETTINGS ── */
+        .settings-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.25rem; }
+        .settings-card { background:#f8fafc; border-radius:0.75rem; padding:1.25rem; border:1px solid #e2e8f0; }
+        .settings-card h4 { font-size:0.9rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; color:#1e293b; }
+        .settings-card h4 i { color:#2563eb; }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { display:block; font-size:0.75rem; font-weight:600; color:#374151; margin-bottom:0.4rem; }
+        .form-group input, .form-group select { width:100%; padding:0.625rem 0.875rem; border:2px solid #e2e8f0; border-radius:0.5rem; font-size:0.875rem; font-family:inherit; transition:border-color 0.2s; }
+        .form-group input:focus, .form-group select:focus { outline:none; border-color:#2563eb; }
+        .save-btn { width:100%; padding:0.625rem; background:#2563eb; color:white; border:none; border-radius:0.5rem; font-weight:600; font-size:0.875rem; cursor:pointer; transition:background 0.2s; }
+        .save-btn:hover { background:#1d4ed8; }
+        .msg { font-size:0.8rem; margin-top:0.5rem; padding:0.4rem 0.75rem; border-radius:0.375rem; display:none; }
+        .msg.success { background:#d1fae5; color:#065f46; display:block; }
+        .msg.error { background:#fee2e2; color:#991b1b; display:block; }
+
+        /* ── EDIT MODAL ── */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+        .modal-overlay.open { display:flex; }
+        .modal-box { background:white; border-radius:1rem; padding:2rem; width:90%; max-width:480px; max-height:90vh; overflow-y:auto; }
+        .modal-box h3 { font-size:1.1rem; font-weight:700; margin-bottom:1.25rem; }
+        .modal-close { float:right; background:none; border:none; font-size:1.5rem; cursor:pointer; color:#64748b; margin-top:-0.25rem; }
+
+        /* ── FREELANCER SERVICES ── */
+        .service-detail { background:#f8fafc; border-radius:0.75rem; padding:1.25rem; margin-bottom:1rem; border:1px solid #e2e8f0; }
+        .service-detail h4 { font-size:0.875rem; font-weight:700; color:#374151; margin-bottom:0.5rem; }
+        .service-detail p { font-size:0.875rem; color:#64748b; }
+        .avail-toggle { display:flex; gap:0.75rem; margin-top:0.75rem; }
+        .avail-btn { flex:1; padding:0.5rem; border:2px solid #e2e8f0; border-radius:0.5rem; background:white; cursor:pointer; font-size:0.8rem; font-weight:600; color:#64748b; transition:all 0.2s; }
+        .avail-btn.active-avail { border-color:#10b981; background:#d1fae5; color:#065f46; }
+        .avail-btn.active-busy { border-color:#f59e0b; background:#fef3c7; color:#92400e; }
+
+        /* ── HIRE REQUESTS ── */
+        .hire-req { display:flex; gap:1rem; padding:1rem; border:1px solid #f1f5f9; border-radius:0.75rem; margin-bottom:0.75rem; align-items:flex-start; }
+        .hire-req-icon { width:40px; height:40px; border-radius:50%; background:#ede9fe; display:flex; align-items:center; justify-content:center; color:#7c3aed; font-size:1rem; flex-shrink:0; }
+        .hire-req-info h4 { font-size:0.875rem; font-weight:700; margin-bottom:0.25rem; }
+        .hire-req-info p { font-size:0.75rem; color:#64748b; }
+        .hire-req-info .hire-date { font-size:0.7rem; color:#94a3b8; margin-top:0.25rem; }
+        .wa-reply-btn { margin-top:0.5rem; padding:0.35rem 0.75rem; background:#25d366; color:white; border:none; border-radius:0.375rem; font-size:0.75rem; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:0.3rem; }
+    </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+    <a href="index.html"><img src="logo.png" alt="SkillHub"> SkillHub</a>
+    <div class="topbar-right">
+        <span id="topbarName">My Profile</span>
+        <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+</div>
+
+<!-- NOT LOGGED IN -->
+<div id="notLoggedIn" style="display:none;text-align:center;padding:4rem 2rem;">
+    <i class="fas fa-lock" style="font-size:3rem;color:#f59e0b;display:block;margin-bottom:1rem;"></i>
+    <h2 style="margin-bottom:0.5rem;">Login Required</h2>
+    <p style="color:#64748b;margin-bottom:1.5rem;">Please log in to view your profile.</p>
+    <a href="index.html#login-register" style="background:#2563eb;color:white;padding:0.75rem 2rem;border-radius:0.5rem;text-decoration:none;font-weight:600;">Login / Register</a>
+</div>
+
+<!-- MAIN PROFILE -->
+<div id="profileMain" style="display:none;">
+<div class="container">
+<div class="profile-grid">
+
+    <!-- ═══ LEFT: PROFILE CARD ═══ -->
+    <div class="profile-card">
+        <div class="avatar-wrap">
+            <div class="avatar" id="profileAvatar"><i class="fas fa-user"></i></div>
+            <button class="avatar-edit" id="avatarEditBtn" title="Change picture"><i class="fas fa-camera"></i></button>
+        </div>
+        <div class="profile-name" id="profileName">—</div>
+        <div class="role-badge" id="profileRoleBadge">Learner</div>
+        <div class="status-badge" id="profileStatusBadge"><i class="fas fa-circle" style="font-size:0.5rem;"></i> Active</div>
+        <div class="profile-meta">
+            <div class="meta-row"><i class="fas fa-envelope"></i><span id="profileEmail">—</span></div>
+            <div class="meta-row"><i class="fas fa-phone"></i><span id="profilePhone">—</span></div>
+            <div class="meta-row"><i class="fas fa-globe"></i><span id="profileCountry">—</span></div>
+        </div>
+        <!-- Freelancer extras -->
+        <div id="freelancerLeftExtras" style="display:none;">
+            <div class="meta-row"><i class="fas fa-dollar-sign"></i><span id="profileRate">—</span></div>
+            <div class="meta-row"><i class="fas fa-link"></i><a id="profilePortfolio" href="#" target="_blank" style="color:#2563eb;font-size:0.8rem;word-break:break-all;">—</a></div>
+            <div class="skill-tags" id="profileSkillTags"></div>
+            <div class="freelancer-stats">
+                <div class="fstat"><div class="fstat-num" id="fstatJobs">0</div><div class="fstat-label">Jobs Done</div></div>
+                <div class="fstat"><div class="fstat-num" id="fstatRating">—</div><div class="fstat-label">Rating</div></div>
+            </div>
+        </div>
+        <button class="edit-profile-btn" id="openEditModal" style="margin-top:1rem;"><i class="fas fa-user-edit"></i> Edit Profile</button>
+    </div>
+
+    <!-- ═══ RIGHT: TABS ═══ -->
+    <div class="tabs-panel">
+        <div class="tabs-nav" id="tabsNav">
+            <!-- tabs injected by JS based on role -->
+        </div>
+
+        <!-- LEARNER: My Courses -->
+        <div class="tab-content active" id="tab-courses">
+            <div id="coursesList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading courses...</p></div></div>
+        </div>
+
+        <!-- FREELANCER: My Services -->
+        <div class="tab-content" id="tab-services">
+            <div id="servicesList"></div>
+        </div>
+
+        <!-- FREELANCER: Hire Requests -->
+        <div class="tab-content" id="tab-requests">
+            <div id="requestsList"><div class="empty-state"><i class="fas fa-inbox"></i><p>No hire requests yet. Share your profile to get hired!</p></div></div>
+        </div>
+
+        <!-- SHARED: Payment History -->
+        <div class="tab-content" id="tab-payments">
+            <div id="paymentsList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Loading payments...</p></div></div>
+        </div>
+
+        <!-- SHARED: Account Settings -->
+        <div class="tab-content" id="tab-settings">
+            <div class="settings-grid">
+                <!-- Change Password -->
+                <div class="settings-card">
+                    <h4><i class="fas fa-lock"></i> Change Password</h4>
+                    <form id="pwdForm">
+                        <div class="form-group"><label>Current Password</label><input type="password" id="currentPwd" placeholder="Current password" required></div>
+                        <div class="form-group"><label>New Password</label><input type="password" id="newPwd" placeholder="Min 6 characters" required></div>
+                        <div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPwd" placeholder="Repeat new password" required></div>
+                        <button type="submit" class="save-btn"><i class="fas fa-shield-alt"></i> Update Password</button>
+                        <div class="msg" id="pwdMsg"></div>
+                    </form>
+                </div>
+                <!-- Update Phone -->
+                <div class="settings-card">
+                    <h4><i class="fas fa-phone-alt"></i> Update Phone Number</h4>
+                    <form id="phoneForm">
+                        <div class="form-group"><label>New Phone Number</label><input type="tel" id="newPhone" placeholder="e.g. 0912345678" required></div>
+                        <button type="submit" class="save-btn"><i class="fas fa-save"></i> Update Phone</button>
+                        <div class="msg" id="phoneMsg"></div>
+                    </form>
+                </div>
+                <!-- Change Country -->
+                <div class="settings-card">
+                    <h4><i class="fas fa-globe-africa"></i> Change Country</h4>
+                    <form id="countryForm">
+                        <div class="form-group">
+                            <label>Select Country</label>
+                            <select id="newCountry" required>
+                                <option value="">— Select —</option>
+                                <option value="ET">🇪🇹 Ethiopia (ETB)</option>
+                                <option value="UG">🇺🇬 Uganda (UGX)</option>
+                                <option value="SS">🇸🇸 South Sudan (SSP)</option>
+                                <option value="KE">🇰🇪 Kenya (KES)</option>
+                                <option value="OTHER">🌍 Other</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="save-btn"><i class="fas fa-save"></i> Save Country</button>
+                        <div class="msg" id="countryMsg"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /profile-grid -->
+</div><!-- /container -->
+</div><!-- /profileMain -->
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+        <button class="modal-close" id="closeEditModal">&times;</button>
+        <h3 id="editModalTitle">Edit Profile</h3>
+        <form id="editProfileForm">
+            <div class="form-group"><label>Full Name</label><input type="text" id="editName" placeholder="Full Name"></div>
+            <div class="form-group"><label>Bio</label><input type="text" id="editBio" placeholder="Short bio about yourself"></div>
+            <div class="form-group"><label>Profile Picture URL</label><input type="url" id="editPic" placeholder="https://..."></div>
+            <!-- Freelancer extras -->
+            <div id="editFreelancerExtras" style="display:none;">
+                <div class="form-group"><label>Skills (comma separated)</label><input type="text" id="editSkills" placeholder="e.g. Web Dev, Design, Writing"></div>
+                <div class="form-group"><label>Hourly Rate (USD)</label><input type="number" id="editRate" placeholder="e.g. 15" min="1"></div>
+                <div class="form-group"><label>Portfolio Link</label><input type="url" id="editPortfolio" placeholder="https://github.com/..."></div>
+            </div>
+            <button type="submit" class="save-btn"><i class="fas fa-save"></i> Save Changes</button>
+            <div class="msg" id="editMsg"></div>
+        </form>
+    </div>
+</div>
+<script>
+var API="https://skillhub-backend-i3dr.onrender.com/api";
+var token=localStorage.getItem("skillhub_token");
+var userData=null;
+var COUNTRIES={ET:"🇪🇹 Ethiopia",SS:"🇸🇸 South Sudan",KE:"🇰🇪 Kenya",UG:"🇺🇬 Uganda",OTHER:"🌍 Other"};
+
+function esc(s){if(!s)return"";return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">");}
+
+async function req(endpoint,method,body){
+var h={"Content-Type":"application/json"};
+if(token)h["Authorization"]="Bearer "+token;
+var opts={method:method||"GET",headers:h};
+if(body)opts.body=JSON.stringify(body);
+var r=await fetch(API+endpoint,opts);
+var d=await r.json();
+if(!r.ok)throw new Error(d.message||"Request failed");
+return d;
+}
+
+function showMsg(id,msg,type){
+var el=document.getElementById(id);
+if(!el)return;
+el.textContent=msg;
+el.className="msg "+type;
+setTimeout(function(){el.className="msg";},5000);
+}
+
+function renderAvatar(el,user,size){
+if(user.profilePicture){
+el.innerHTML="<img src='"+esc(user.profilePicture)+"' alt='avatar'>";
+}else{
+var ini=(user.name||"U").split(" ").map(function(n){return n[0];}).join("").toUpperCase().slice(0,2);
+el.textContent=ini;
+el.style.cssText="background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;display:flex;align-items:center;justify-content:center;font-size:"+(size||"2rem")+";font-weight:700;";
+}
+}
+
+function switchTab(name,el){
+document.querySelectorAll(".tab-content").forEach(function(t){t.classList.remove("active");});
+document.querySelectorAll(".sidebar-nav a").forEach(function(a){a.classList.remove("active");});
+var tab=document.getElementById("tab-"+name);
+if(tab)tab.classList.add("active");
+if(el)el.classList.add("active");
+if(name==="courses")loadCourses();
+if(name==="services")loadServices();
+if(name==="payments")loadPayments();
+}
+
+async function init(){
+if(!token){document.getElementById("notLogged").style.display="flex";return;}
+document.getElementById("profileLayout").style.display="grid";
+try{
+var d=await req("/auth/me");
+userData=d.user;
+renderSidebar(userData);
+renderProfileView(userData);
+if(userData.role==="user"){document.getElementById("navCourses").style.display="block";}
+if(userData.role==="freelancer"){
+document.getElementById("navServices").style.display="block";
+document.getElementById("navHireReqs").style.display="block";
+document.getElementById("freelancerInfoBlock").style.display="block";
+document.getElementById("freelancerEditBlock").style.display="block";
+}
+}catch(e){
+document.getElementById("notLogged").style.display="flex";
+document.getElementById("profileLayout").style.display="none";
+}
+}
+
+function renderSidebar(u){
+renderAvatar(document.getElementById("sideAvatar"),u,"2rem");
+document.getElementById("sideName").textContent=u.name||"User";
+var roleMap={user:"Learner",instructor:"Instructor",freelancer:"Freelancer",admin:"Admin"};
+var roleClass={user:"role-user",instructor:"role-instructor",freelancer:"role-freelancer",admin:"role-user"};
+var rb=document.getElementById("sideRole");
+rb.textContent=roleMap[u.role]||u.role;
+rb.className="role-badge "+(roleClass[u.role]||"role-user");
+var st=document.getElementById("sideStatus");
+st.textContent=(u.status||"pending").charAt(0).toUpperCase()+(u.status||"pending").slice(1);
+st.className="status-text status-"+(u.status||"pending");
+}
+
+function renderProfileView(u){
+document.getElementById("pName").textContent=u.name||"—";
+document.getElementById("pEmail").textContent=u.email||"—";
+document.getElementById("pPhone").textContent=u.phone||"—";
+document.getElementById("pCountry").textContent=COUNTRIES[u.country]||u.country||"—";
+if(u.bio){document.getElementById("pBio").textContent=u.bio;document.getElementById("pBioRow").style.display="flex";}
+if(u.role==="freelancer"&&u.freelancerProfile){
+var fp=u.freelancerProfile;
+document.getElementById("pRate").textContent=fp.hourlyRate?"$"+fp.hourlyRate+"/hr":"—";
+var portEl=document.getElementById("pPortfolio");
+if(fp.portfolio&&fp.portfolio[0]&&fp.portfolio[0].projectUrl){
+portEl.innerHTML="<a href='"+esc(fp.portfolio[0].projectUrl)+"' target='_blank' style='color:#2563eb'>View Portfolio</a>";
+}else{portEl.textContent="—";}
+var avail=fp.availability||"available";
+var availColors={available:"avail-available",busy:"avail-busy",looking:"avail-looking",not_available:"avail-busy"};
+var availLabels={available:"Available",busy:"Busy",looking:"Looking for work",not_available:"Not Available"};
+document.getElementById("pAvailWrap").innerHTML="<span class='avail-btn "+(availColors[avail]||"avail-available")+"'><i class='fas fa-circle' style='font-size:.5rem'></i> "+(availLabels[avail]||avail)+"</span>";
+var skills=fp.skills||[];
+document.getElementById("pSkills").innerHTML=skills.length?skills.map(function(s){return"<span class='skill-tag'>"+esc(s)+"</span>";}).join(""):"—";
+}
+// Pre-fill edit form
+document.getElementById("editName").value=u.name||"";
+document.getElementById("editBio").value=u.bio||"";
+document.getElementById("editPic").value=u.profilePicture||"";
+if(u.role==="freelancer"&&u.freelancerProfile){
+var fp=u.freelancerProfile;
+document.getElementById("editSkills").value=(fp.skills||[]).join(", ");
+document.getElementById("editRate").value=fp.hourlyRate||"";
+document.getElementById("editPortfolio").value=(fp.portfolio&&fp.portfolio[0])?fp.portfolio[0].projectUrl:"";
+document.getElementById("editAvailability").value=fp.availability||"available";
+}
+// Pre-fill settings
+document.getElementById("newPhone").value=u.phone||"";
+document.getElementById("newCountry").value=u.country||"";
+}
+
+function toggleEdit(){
+var v=document.getElementById("profileView");
+var e=document.getElementById("profileEdit");
+if(e.style.display==="none"){e.style.display="block";v
+
+</script>
