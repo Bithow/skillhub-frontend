@@ -543,6 +543,8 @@
   <!-- ==================== DASHBOARD SECTION ==================== -->
     <section id="dashboard" class="dashboard-section hidden">
         <div class="container">
+
+            <!-- ── Dashboard Header ── -->
             <div class="dashboard-header">
                 <div class="dashboard-welcome">
                     <div class="dashboard-avatar" id="dashAvatar">
@@ -558,7 +560,7 @@
                 </button>
             </div>
 
-            <!-- Stats Row -->
+            <!-- ── Stats Row ── -->
             <div class="dash-stats-row">
                 <div class="dash-stat-card">
                     <i class="fas fa-book-open"></i>
@@ -590,21 +592,115 @@
                 </div>
             </div>
 
-            <!-- Tabs -->
+            <!-- ── Tabs ── -->
             <div class="dash-tabs">
-                <button class="dash-tab active" data-dash="my-courses">
+                <button class="dash-tab active" data-dash="profile-overview">
+                    <i class="fas fa-id-card"></i> Profile
+                </button>
+                <button class="dash-tab" data-dash="my-courses">
                     <i class="fas fa-graduation-cap"></i> My Courses
                 </button>
-                <button class="dash-tab" data-dash="profile">
-                    <i class="fas fa-user-edit"></i> Edit Profile
+                <button class="dash-tab" data-dash="payment-history">
+                    <i class="fas fa-receipt"></i> Payments
                 </button>
-                <button class="dash-tab" data-dash="change-password">
-                    <i class="fas fa-lock"></i> Change Password
+                <button class="dash-tab" data-dash="account-settings">
+                    <i class="fas fa-cog"></i> Settings
                 </button>
             </div>
 
-            <!-- My Courses Tab -->
-            <div id="dashTab-my-courses" class="dash-tab-content active">
+            <!-- ══════════════════════════════════════════
+                 TAB 1 — PROFILE OVERVIEW
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-profile-overview" class="dash-tab-content active">
+                <div class="profile-overview-grid">
+
+                    <!-- Profile Card -->
+                    <div class="profile-card">
+                        <!-- Avatar / Picture -->
+                        <div class="profile-avatar-wrap">
+                            <div class="profile-avatar-lg" id="profileAvatarLg">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <button class="profile-avatar-edit-btn" id="profileAvatarEditBtn" title="Change profile picture">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="profile-info-block">
+                            <h3 class="profile-full-name" id="profileFullName">—</h3>
+                            <p class="profile-meta-row"><i class="fas fa-envelope"></i> <span id="profileEmail">—</span></p>
+                            <p class="profile-meta-row"><i class="fas fa-phone"></i> <span id="profilePhone">—</span></p>
+                            <p class="profile-meta-row"><i class="fas fa-globe"></i> <span id="profileCountry">—</span></p>
+                        </div>
+
+                        <!-- Edit Profile Button -->
+                        <button class="btn btn-primary btn-sm profile-edit-btn" id="profileEditToggleBtn">
+                            <i class="fas fa-user-edit"></i> Edit Profile
+                        </button>
+
+                        <!-- Inline Edit Form (hidden by default) -->
+                        <div id="profileEditForm" class="profile-edit-form hidden">
+                            <form id="dashProfileForm">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="dashProfileName" placeholder="Full Name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Profile Picture URL</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-image"></i>
+                                        <input type="url" id="dashProfilePic" placeholder="https://...">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Bio</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                        <textarea id="dashProfileBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Skills (comma separated)</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-code"></i>
+                                        <input type="text" id="dashProfileSkills" placeholder="e.g. Web Dev, Design, Marketing">
+                                    </div>
+                                </div>
+                                <div class="profile-edit-actions">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-save"></i> Save
+                                    </button>
+                                    <button type="button" class="btn btn-gray btn-sm" id="profileEditCancelBtn">
+                                        Cancel
+                                    </button>
+                                </div>
+                                <p id="dashProfileMsg" class="form-message"></p>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats / Bio side panel -->
+                    <div class="profile-side-panel">
+                        <div class="profile-bio-card">
+                            <h4><i class="fas fa-info-circle"></i> About Me</h4>
+                            <p id="profileBioText" class="profile-bio-text">No bio added yet.</p>
+                            <div id="profileSkillsWrap" class="profile-skills-wrap hidden">
+                                <h4><i class="fas fa-tags"></i> Skills</h4>
+                                <div id="profileSkillsTags" class="profile-skills-tags"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════
+                 TAB 2 — MY COURSES
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-my-courses" class="dash-tab-content">
                 <div id="dashCoursesList" class="dash-courses-grid">
                     <div class="dash-empty-state">
                         <i class="fas fa-book-open"></i>
@@ -613,71 +709,124 @@
                 </div>
             </div>
 
-            <!-- Edit Profile Tab -->
-            <div id="dashTab-profile" class="dash-tab-content">
-                <div class="dash-form-card">
-                    <form id="dashProfileForm">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <div class="input-icon">
-                                <i class="fas fa-user"></i>
-                                <input type="text" id="dashProfileName" placeholder="Full Name">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Bio</label>
-                            <div class="input-icon">
-                                <i class="fas fa-info-circle"></i>
-                                <textarea id="dashProfileBio" rows="3" placeholder="Tell us about yourself..."></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Skills (comma separated)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-code"></i>
-                                <input type="text" id="dashProfileSkills" placeholder="e.g. Web Dev, Design, Marketing">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Changes
-                        </button>
-                        <p id="dashProfileMsg" class="form-message"></p>
-                    </form>
+            <!-- ══════════════════════════════════════════
+                 TAB 3 — PAYMENT HISTORY
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-payment-history" class="dash-tab-content">
+                <div class="dash-section-header">
+                    <h3><i class="fas fa-receipt"></i> Payment History</h3>
+                    <button class="btn btn-sm btn-outline-blue" id="refreshPaymentsBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="paymentHistoryList" class="payment-history-list">
+                    <div class="dash-empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading payments...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Change Password Tab -->
-            <div id="dashTab-change-password" class="dash-tab-content">
-                <div class="dash-form-card">
-                    <form id="dashPasswordForm">
-                        <div class="form-group">
-                            <label>Current Password</label>
-                            <div class="input-icon">
-                                <i class="fas fa-lock"></i>
-                                <input type="password" id="dashCurrentPwd" placeholder="Current password" required>
-                            </div>
+            <!-- ══════════════════════════════════════════
+                 TAB 4 — ACCOUNT SETTINGS
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-account-settings" class="dash-tab-content">
+                <div class="settings-grid">
+
+                    <!-- Change Password -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <i class="fas fa-lock"></i>
+                            <h4>Change Password</h4>
                         </div>
-                        <div class="form-group">
-                            <label>New Password</label>
-                            <div class="input-icon">
-                                <i class="fas fa-key"></i>
-                                <input type="password" id="dashNewPwd" placeholder="New password (min 6 chars)" required>
+                        <form id="dashPasswordForm">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="dashCurrentPwd" placeholder="Current password" required>
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Confirm New Password</label>
-                            <div class="input-icon">
-                                <i class="fas fa-check-circle"></i>
-                                <input type="password" id="dashConfirmPwd" placeholder="Confirm new password" required>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-key"></i>
+                                    <input type="password" id="dashNewPwd" placeholder="New password (min 6 chars)" required>
+                                </div>
                             </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                    <input type="password" id="dashConfirmPwd" placeholder="Confirm new password" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-shield-alt"></i> Update Password
+                            </button>
+                            <p id="dashPasswordMsg" class="form-message"></p>
+                        </form>
+                    </div>
+
+                    <!-- Update Phone -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <i class="fas fa-phone-alt"></i>
+                            <h4>Update Phone Number</h4>
                         </div>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-shield-alt"></i> Update Password
-                        </button>
-                        <p id="dashPasswordMsg" class="form-message"></p>
-                    </form>
+                        <form id="dashPhoneForm">
+                            <div class="form-group">
+                                <label>New Phone Number</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="dashNewPhone" placeholder="e.g. 0912345678" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Current Password (to confirm)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="dashPhoneConfirmPwd" placeholder="Enter your password" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Phone
+                            </button>
+                            <p id="dashPhoneMsg" class="form-message"></p>
+                        </form>
+                    </div>
+
+                    <!-- Change Country -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <i class="fas fa-globe-africa"></i>
+                            <h4>Change Country</h4>
+                        </div>
+                        <form id="dashCountryForm">
+                            <div class="form-group">
+                                <label>Select Country</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-globe"></i>
+                                    <select id="dashNewCountry" required>
+                                        <option value="">— Select Country —</option>
+                                        <option value="ET">🇪🇹 Ethiopia (ETB)</option>
+                                        <option value="SS">🇸🇸 South Sudan (SSP)</option>
+                                        <option value="KE">🇰🇪 Kenya (KES)</option>
+                                        <option value="UG">🇺🇬 Uganda (UGX)</option>
+                                        <option value="OTHER">🌍 Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Country
+                            </button>
+                            <p id="dashCountryMsg" class="form-message"></p>
+                        </form>
+                    </div>
+
                 </div>
             </div>
+
         </div>
     </section>
 
