@@ -96,6 +96,7 @@ function showTab(name, e) {
     else if (name === "courses") loadCourses();
     else if (name === "transactions") loadTransactions();
     else if (name === "messages") loadMessages();
+    else if (name === "chats") loadAllChats();
 }
 
 // ===== PENDING APPROVALS =====
@@ -458,4 +459,123 @@ async function loadPendingCount() {
         var badge = document.getElementById("pendingCount");
         if (badge) badge.textContent = total > 0 ? total : "";
     } catch(e) {}
+}
+
+// ===== LIVE CHATS (Admin view of all conversations) =====
+
+async function loadAllChats() {
+    var el = document.getElementById("chatsContainer");
+    el.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading conversations...</div>";
+    try {
+        var res = await fetch(API_BASE + "/chat/admin/all", {
+            headers: { "Authorization": "Bearer " + adminToken }
+        });
+        var data = await res.json();
+        if (!data.success) throw new Error(data.message || "Failed to load chats");
+
+        var convs = data.conversations || [];
+        if (!convs.length) {
+            el.innerHTML = "<p style='padding:2rem;text-align:center;color:#64748b;'><i class='fas fa-comment-slash' style='font-size:2rem;display:block;margin-bottom:0.5rem;opacity:0.3;'></i>No conversations yet.</p>";
+            return;
+        }
+
+        var html = "<table><thead><tr>" +
+            "<th>Participant 1</th><th>Participant 2</th>" +
+            "<th>Last Message</th><th>Messages</th><th>Time</th><th>Action</th>" +
+            "</tr></thead><tbody>";
+
+        html += convs.map(function(c) {
+            var u1 = c.user1 || {};
+            var u2 = c.user2 || {};
+            var lastMsg = c.lastMessage || {};
+            var preview = (lastMsg.content || "").substring(0, 50) + (lastMsg.content && lastMsg.content.length > 50 ? "…" : "");
+            var time = lastMsg.createdAt ? new Date(lastMsg.createdAt).toLocaleString() : "-";
+            return "<tr>" +
+                "<td><strong>" + esc(u1.name || "Unknown") + "</strong><br><small style='color:#64748b;'>" + esc(u1.role || "") + "</small></td>" +
+                "<td><strong>" + esc(u2.name || "Unknown") + "</strong><br><small style='color:#64748b;'>" + esc(u2.role || "") + "</small></td>" +
+                "<td style='max-width:200px;'>" + esc(preview) + "</td>" +
+                "<td><span class='chat-msg-count'>" + (c.messageCount || 0) + "</span></td>" +
+                "<td style='font-size:0.78rem;color:#64748b;'>" + time + "</td>" +
+                "<td><button class='action-btn btn-view' onclick='viewAdminChat(\"" + esc(c.conversationId) + "\", \"" + esc(u1.name || "User") + "\", \"" + esc(u2.name || "User") + "\")'>" +
+                "<i class='fas fa-eye'></i> View</button></td>" +
+                "</tr>";
+        }).join("");
+
+        html += "</tbody></table>";
+        el.innerHTML = html;
+
+    } catch(err) {
+        el.innerHTML = "<p style='color:red;padding:1rem;'>Error: " + err.message + "</p>";
+    }
+}
+
+async function viewAdminChat(conversationId, name1, name2) {
+    var panel = document.getElementById("chatViewerPanel");
+    var title = document.getElementById("chatViewerTitle");
+    var msgArea = document.getElementById("chatViewerMessages");
+
+    title.innerHTML = "<i class='fas fa-comments' style='color:#2563eb;'></i> " + esc(name1) + " &harr; " + esc(name2);
+    msgArea.innerHTML = "<div class='loading'><i class='fas fa-spinner fa-spin'></i> Loading...</div>";
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth" });
+
+    try {
+        var res = await fetch(API_BASE + "/chat/admin/conversation/" + encodeURIComponent(conversationId), {
+            headers: { "Authorization": "Bearer " + adminToken }
+        });
+        var data = await res.json();
+        if (!data.success) throw new Error(data.message || "Failed to load");
+
+        var messages = data.messages || [];
+        if (!messages.length) {
+            msgArea.innerHTML = "<p style='text-align:center;color:#94a3b8;padding:2rem;'>No messages in this conversation.</p>";
+            return;
+        }
+
+        var html = "";
+        var lastDate = null;
+
+        messages.forEach(function(msg) {
+            var d = new Date(msg.createdAt);
+            var dateStr = d.toDateString();
+            if (dateStr !== lastDate) {
+                html += "<div class='admin-date-sep'>" + d.toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" }) + "</div>";
+                lastDate = dateStr;
+            }
+
+            var sender = msg.senderId || {};
+            var receiver = msg.receiverId || {};
+            var senderName = sender.name || "User";
+            var initials = senderName.split(" ").map(function(n){ return n[0]; }).join("").toUpperCase().slice(0,2);
+            var time = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+            var isRight = messages.indexOf(msg) % 2 === 0; // alternate for visual variety — actual direction based on sender
+
+            // Determine direction: we'll use index-based alternation for admin view
+            // Actually use sender name to keep consistent
+            var direction = (senderName === name1) ? "left" : "right";
+
+            var bubbleContent = "";
+            if (msg.type === "image" && msg.fileUrl) {
+                bubbleContent = "<img src='" + esc(msg.fileUrl) + "' style='max-width:180px;border-radius:8px;display:block;margin-bottom:4px;' />";
+                if (msg.content && msg.content !== msg.fileName) bubbleContent += esc(msg.content);
+            } else {
+                bubbleContent = esc(msg.content || "");
+            }
+
+            html += "<div class='admin-msg-row " + direction + "'>" +
+                "<div class='chat-avatar' style='width:30px;height:30px;font-size:0.7rem;flex-shrink:0;'>" + initials + "</div>" +
+                "<div>" +
+                    "<div class='admin-msg-sender'>" + esc(senderName) + " → " + esc(receiver.name || "User") + "</div>" +
+                    "<div class='admin-bubble'>" + bubbleContent + "</div>" +
+                    "<div class='admin-msg-time'>" + time + (msg.read ? " · Read ✓✓" : "") + "</div>" +
+                "</div>" +
+            "</div>";
+        });
+
+        msgArea.innerHTML = html;
+        msgArea.scrollTop = msgArea.scrollHeight;
+
+    } catch(err) {
+        msgArea.innerHTML = "<p style='color:red;padding:1rem;'>Error: " + err.message + "</p>";
+    }
 }

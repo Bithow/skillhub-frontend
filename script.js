@@ -117,6 +117,10 @@ var ApiService = {
     getEnrolledCourses: async function() {
         return await this.request("/courses/enrolled/me", "GET");
     },
+    getTransactions: async function(params) {
+        var query = params ? "?" + new URLSearchParams(params).toString() : "";
+        return await this.request("/payments/transactions" + query, "GET");
+    },
     getStats: async function() {
         // Stats endpoint is at /api/stats — API_BASE already has /api so use full URL
         try {
@@ -357,7 +361,22 @@ var FreelancerManager = {
             var data = await ApiService.getFreelancers({ limit: 50 });
             if (data.freelancers && data.freelancers.length > 0) {
                 this.freelancers = data.freelancers.map(function(f) {
-                    return { id: f._id, name: f.userId ? f.userId.name : "Freelancer", skill: f.skills ? f.skills.join(", ") : "", portfolio: f.portfolio && f.portfolio[0] ? f.portfolio[0].projectUrl : "", phone: f.userId ? f.userId.phone : "", services: f.title || "Freelance services" };
+                    return {
+                        id: f._id,
+                        name: f.userId ? f.userId.name : "Freelancer",
+                        skill: f.skills ? f.skills.join(", ") : "",
+                        portfolio: f.portfolio && f.portfolio[0] ? f.portfolio[0].projectUrl : "",
+                        phone: f.userId ? f.userId.phone : "",
+                        services: f.title || "Freelance services",
+                        hourlyRate: f.hourlyRate || 0,
+                        bio: f.userId ? f.userId.bio : "",
+                        profilePicture: f.userId ? f.userId.profilePicture : null,
+                        rating: f.rating || 0,
+                        completedJobs: f.completedJobs || 0,
+                        availability: f.availability || "available",
+                        isVerified: f.isVerified || false,
+                        experience: f.experience || "junior"
+                    };
                 });
             } else {
                 // Database empty — show sample freelancers
@@ -385,27 +404,54 @@ var FreelancerManager = {
             filtered = filtered.filter(function(f) { return f.skill.toLowerCase().includes(filterSkill.toLowerCase()); });
         }
         if (filtered.length === 0) {
-            container.innerHTML = "<div style='text-align:center;padding:3rem;'>No freelancers found" + (filterSkill ? " matching \"" + Utils.escapeHtml(filterSkill) + "\"" : "") + "</div>";
+            container.innerHTML = "<div style='text-align:center;padding:3rem;grid-column:1/-1;'>No freelancers found" + (filterSkill ? " matching \"" + Utils.escapeHtml(filterSkill) + "\"" : "") + "</div>";
             return;
         }
         container.innerHTML = filtered.map(function(f) {
-            var portfolio = f.portfolio ? "<a href='" + Utils.escapeHtml(f.portfolio) + "' target='_blank' rel='noopener' style='display:inline-block;margin:0.5rem 0;color:#3b82f6;text-decoration:none;'><i class='fas fa-external-link-alt'></i> View Portfolio</a>" : "";
+            var initials = (f.name || "F").split(" ").map(function(n){ return n[0]; }).join("").toUpperCase().slice(0,2);
+            var avatarHtml = f.profilePicture
+                ? "<img src='" + Utils.escapeHtml(f.profilePicture) + "' alt='" + Utils.escapeHtml(f.name) + "'>"
+                : "<span>" + initials + "</span>";
+            var availClass = { available:"avail-green", busy:"avail-yellow", not_available:"avail-red", looking:"avail-blue" }[f.availability] || "avail-green";
+            var availLabel = { available:"Available", busy:"Busy", not_available:"Unavailable", looking:"Open to Work" }[f.availability] || "Available";
+            var verifiedBadge = f.isVerified ? "<span class='verified-badge'><i class='fas fa-check-circle'></i> Verified</span>" : "";
+            var skillTags = (f.skill || "").split(",").slice(0,4).map(function(s){ return "<span class='fl-skill-tag'>" + Utils.escapeHtml(s.trim()) + "</span>"; }).join("");
             var rateDisplay = f.hourlyRate ? CurrencyUtil.displayUSD(f.hourlyRate) + "/hr" : "";
-            var localRate = f.hourlyRate && CurrencyUtil.getUserCountry() && CurrencyUtil.rates[CurrencyUtil.getUserCountry()]
-                ? " <span style='font-size:0.75rem;color:#94a3b8;'>≈ " + CurrencyUtil.toLocal(f.hourlyRate, CurrencyUtil.getUserCountry()).display + "/hr</span>"
-                : "";
-            return "<div class='freelancer-card'>" +
-                "<h3>" + Utils.escapeHtml(f.name) + "</h3>" +
-                "<div class='skill'><i class='fas fa-code'></i> " + Utils.escapeHtml(f.skill) + "</div>" +
-                "<p style='color:#6b7280;margin:0.5rem 0;'>" + Utils.escapeHtml(f.services) + "</p>" +
-                (f.hourlyRate ? "<p style='color:#10b981;font-weight:600;margin:0.25rem 0;'><i class='fas fa-dollar-sign'></i> " + rateDisplay + localRate + "</p>" : "") +
-                portfolio +
-                "<a href='" + CurrencyUtil.paymentUrl("Hire: " + f.name, f.hourlyRate || 0, "freelance", f.id) + "' class='btn btn-yellow btn-full' style='margin-top:0.5rem;display:block;text-align:center;text-decoration:none;'><i class='fas fa-handshake'></i> Hire via SkillHub</a>" +
-                "<button class='btn btn-indigo btn-full contact-freelancer-btn' style='margin-top:0.5rem;' data-name='" + Utils.escapeHtml(f.name) + "' data-phone='" + Utils.escapeHtml(f.phone) + "' data-skill='" + Utils.escapeHtml(f.skill) + "'><i class='fab fa-whatsapp'></i> Contact Directly</button>" +
-                "</div>";
+            var portfolio = f.portfolio ? "<a href='" + Utils.escapeHtml(f.portfolio) + "' target='_blank' rel='noopener' class='fl-portfolio-link'><i class='fas fa-external-link-alt'></i> Portfolio</a>" : "";
+            var rating = f.rating ? "<span class='fl-rating'><i class='fas fa-star'></i> " + parseFloat(f.rating).toFixed(1) + "</span>" : "";
+            var jobs = f.completedJobs ? "<span class='fl-jobs'><i class='fas fa-briefcase'></i> " + f.completedJobs + " jobs</span>" : "";
+            return "<div class='freelancer-card-pro'>" +
+                "<div class='fl-card-top'>" +
+                    "<div class='fl-avatar'>" + avatarHtml + "</div>" +
+                    "<div class='fl-card-info'>" +
+                        "<div class='fl-name-row'>" +
+                            "<h3>" + Utils.escapeHtml(f.name) + "</h3>" +
+                            verifiedBadge +
+                        "</div>" +
+                        "<div class='fl-title'>" + Utils.escapeHtml(f.services || f.skill) + "</div>" +
+                        "<div class='fl-meta-row'>" +
+                            "<span class='fl-avail " + availClass + "'><i class='fas fa-circle'></i> " + availLabel + "</span>" +
+                            (rateDisplay ? "<span class='fl-rate'>" + rateDisplay + "</span>" : "") +
+                        "</div>" +
+                    "</div>" +
+                "</div>" +
+                (f.bio ? "<p class='fl-bio'>" + Utils.escapeHtml(f.bio.slice(0, 100)) + (f.bio.length > 100 ? "…" : "") + "</p>" : "") +
+                "<div class='fl-skills-row'>" + skillTags + "</div>" +
+                "<div class='fl-stats-row'>" + rating + jobs + portfolio + "</div>" +
+                "<div class='fl-actions'>" +
+                    "<button class='fl-btn-msg contact-freelancer-btn' data-name='" + Utils.escapeHtml(f.name) + "' data-phone='" + Utils.escapeHtml(f.phone) + "' data-skill='" + Utils.escapeHtml(f.skill) + "' data-userid='" + Utils.escapeHtml(String(f.id || "")) + "'>" +
+                        "<i class='fab fa-whatsapp'></i> Message" +
+                    "</button>" +
+                    "<a href='" + CurrencyUtil.paymentUrl("Hire: " + f.name, f.hourlyRate || 0, "freelance", f.id) + "' class='fl-btn-hire'>" +
+                        "<i class='fas fa-handshake'></i> Hire" +
+                    "</a>" +
+                "</div>" +
+            "</div>";
         }).join("");
         container.querySelectorAll(".contact-freelancer-btn").forEach(function(btn) {
-            btn.addEventListener("click", function() { WhatsAppService.contactFreelancer(btn.dataset.name, btn.dataset.phone, btn.dataset.skill); });
+            btn.addEventListener("click", function() {
+                MessagingManager.open(btn.dataset.name, btn.dataset.phone, btn.dataset.skill, btn.dataset.userid);
+            });
         });
     },
     showHire: async function() {
@@ -499,9 +545,10 @@ var FormHandlers = {
             UIHelper.showMessage(msgEl, "Logging in...", "success");
             try {
                 var data = await ApiService.login(email, password);
-                StorageManager.saveUserSession({ email: email, name: data.user.name, role: data.user.role, loggedIn: true, rememberMe: rememberMe });
+                StorageManager.saveUserSession({ email: email, name: data.user.name, role: data.user.role, loggedIn: true, rememberMe: rememberMe, country: data.user.country });
                 UIHelper.showMessage(msgEl, "Welcome back, " + data.user.name + "!", "success");
                 NavbarUser.update();
+                NotificationManager.add("Welcome back, " + data.user.name + "!", "success", "Login Successful");
                 form.reset();
                 setTimeout(function() { DashboardManager.show(); }, 800);
             } catch (err) { UIHelper.showMessage(msgEl, err.message, "error"); }
@@ -543,8 +590,8 @@ var FormHandlers = {
                 }
                 var data = await ApiService.register(fullName, email, phone, password, backendRole, country, extraData);
                 var successMsg = "Welcome to SkillHub, " + fullName + "! ";
-                if (role === "freelancer") successMsg += "Your freelancer profile is now live!";
-                else if (role === "instructor") successMsg += "You can now create and sell courses!";
+                if (role === "freelancer") successMsg += "Your freelancer profile is pending admin review.";
+                else if (role === "instructor") successMsg += "Your instructor account is pending admin review.";
                 else successMsg += "Start exploring courses today!";
                 UIHelper.showMessage(msgEl, successMsg, "success");
                 // Save country to session
@@ -552,11 +599,13 @@ var FormHandlers = {
                 form.reset();
                 document.getElementById("freelancerExtraFields").classList.add("hidden");
                 document.getElementById("instructorExtraFields").classList.add("hidden");
+                // Show welcome modal
+                WelcomeManager.show(fullName, role);
                 setTimeout(function() {
                     var loginTab = document.querySelector(".auth-tab[data-tab='login']");
                     if (loginTab) loginTab.click();
                     document.getElementById("loginEmail").value = email;
-                }, 2000);
+                }, 2500);
             } catch (err) { UIHelper.showMessage(msgEl, err.message, "error"); }
         });
     }
@@ -776,23 +825,288 @@ var AuthUI = {
 // ===== BUTTON HANDLERS =====
 var ButtonHandlers = {
     init: function() {
+        // ── Hero buttons ──────────────────────────────────────────────
+        var heroBadge = document.getElementById("heroBadge");
+        if (heroBadge) heroBadge.addEventListener("click", function() {
+            var target = document.getElementById("login-register");
+            if (target) { var navH = (document.querySelector(".navbar") || {}).offsetHeight || 0; window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navH, behavior: "smooth" }); }
+        });
+        var heroGetStarted = document.getElementById("heroGetStarted");
+        if (heroGetStarted) heroGetStarted.addEventListener("click", function(e) {
+            e.preventDefault();
+            var session = StorageManager.getUserSession();
+            if (session && session.loggedIn) { DashboardManager.show(); }
+            else { var target = document.getElementById("login-register"); if (target) { var navH = (document.querySelector(".navbar") || {}).offsetHeight || 0; window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navH, behavior: "smooth" }); } }
+        });
+        var heroExploreCourses = document.getElementById("heroExploreCourses");
+        if (heroExploreCourses) heroExploreCourses.addEventListener("click", function(e) {
+            e.preventDefault();
+            var target = document.getElementById("courses");
+            if (target) { var navH = (document.querySelector(".navbar") || {}).offsetHeight || 0; window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navH, behavior: "smooth" }); }
+        });
+
+        // ── Courses section ───────────────────────────────────────────
         var showInstructorBtn = document.getElementById("showInstructorFormBtn");
-        if (showInstructorBtn) showInstructorBtn.addEventListener("click", function() { UIHelper.hideAllContainers(); document.getElementById("instructorFormCard").classList.remove("hidden"); });
+        if (showInstructorBtn) showInstructorBtn.addEventListener("click", function() {
+            var session = StorageManager.getUserSession();
+            if (session && session.loggedIn) {
+                // Already logged in — go to dashboard
+                DashboardManager.show();
+                NotificationManager.add("To become an instructor, update your role in Settings.", "info");
+            } else {
+                // Not logged in — redirect to register with instructor pre-selected
+                var target = document.getElementById("login-register");
+                if (target) { var navH = (document.querySelector(".navbar") || {}).offsetHeight || 0; window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navH, behavior: "smooth" }); }
+                // Pre-select instructor role in register tab
+                setTimeout(function() {
+                    var regTab = document.querySelector(".auth-tab[data-tab='register']");
+                    if (regTab) regTab.click();
+                    var instrBtn = document.querySelector("#registerForm .role-btn[data-role-reg='instructor']");
+                    if (instrBtn) instrBtn.click();
+                }, 400);
+            }
+        });
+
         var buyCourseBtn = document.getElementById("buyCourseRedirectBtn");
         if (buyCourseBtn) buyCourseBtn.addEventListener("click", function() { WhatsAppService.generalCourseInquiry(); });
+
         var viewCoursesBtn = document.getElementById("viewCoursesBtn");
         if (viewCoursesBtn) viewCoursesBtn.addEventListener("click", function() { CourseManager.showView(); });
+
+        // ── Earn section ──────────────────────────────────────────────
         var showFreelancerBtn = document.getElementById("showFreelancerFormBtn");
-        if (showFreelancerBtn) showFreelancerBtn.addEventListener("click", function() { UIHelper.hideAllContainers(); document.getElementById("freelancerFormCard").classList.remove("hidden"); });
+        if (showFreelancerBtn) showFreelancerBtn.addEventListener("click", function() {
+            var session = StorageManager.getUserSession();
+            if (session && session.loggedIn) {
+                DashboardManager.show();
+                NotificationManager.add("To become a freelancer, update your role in Settings.", "info");
+            } else {
+                var target = document.getElementById("login-register");
+                if (target) { var navH = (document.querySelector(".navbar") || {}).offsetHeight || 0; window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navH, behavior: "smooth" }); }
+                setTimeout(function() {
+                    var regTab = document.querySelector(".auth-tab[data-tab='register']");
+                    if (regTab) regTab.click();
+                    var freeBtn = document.querySelector("#registerForm .role-btn[data-role-reg='freelancer']");
+                    if (freeBtn) freeBtn.click();
+                }, 400);
+            }
+        });
+
         var hireBtn = document.getElementById("hireFreelancerBtn");
         if (hireBtn) hireBtn.addEventListener("click", function() { FreelancerManager.showHire(); });
+
         var filterBtn = document.getElementById("filterSkillBtn");
         if (filterBtn) filterBtn.addEventListener("click", function() { FreelancerManager.filter(document.getElementById("skillFilterInput").value); });
+
         var resetBtn = document.getElementById("resetFilterBtn");
         if (resetBtn) resetBtn.addEventListener("click", function() { document.getElementById("skillFilterInput").value = ""; FreelancerManager.resetFilter(); });
+
+        // ── Course modal ──────────────────────────────────────────────
         var modalClose = document.querySelector(".modal-close");
         if (modalClose) modalClose.addEventListener("click", function() { document.getElementById("courseModal").style.display = "none"; });
         window.addEventListener("click", function(e) { var modal = document.getElementById("courseModal"); if (e.target === modal) modal.style.display = "none"; });
+    }
+};
+
+// ===== NOTIFICATION MANAGER =====
+var NotificationManager = {
+    notifications: [],
+    init: function() {
+        this.notifications = JSON.parse(localStorage.getItem("skillhub_notifs") || "[]");
+        this.renderBell();
+        var btn = document.getElementById("navNotifBtn");
+        var dropdown = document.getElementById("notifDropdown");
+        if (btn) btn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle("hidden");
+            NotificationManager.markAllRead();
+        });
+        document.addEventListener("click", function(e) {
+            if (dropdown && !dropdown.contains(e.target) && e.target !== btn) {
+                dropdown.classList.add("hidden");
+            }
+        });
+        var clearBtn = document.getElementById("notifClearBtn");
+        if (clearBtn) clearBtn.addEventListener("click", function(e) {
+            e.stopPropagation();
+            NotificationManager.clearAll();
+        });
+    },
+    add: function(message, type, title) {
+        var notif = {
+            id: Date.now(),
+            message: message,
+            type: type || "info",
+            title: title || "",
+            read: false,
+            time: new Date().toISOString()
+        };
+        this.notifications.unshift(notif);
+        if (this.notifications.length > 20) this.notifications = this.notifications.slice(0, 20);
+        localStorage.setItem("skillhub_notifs", JSON.stringify(this.notifications));
+        this.renderBell();
+        this.renderList();
+        this.showToast(message, type);
+    },
+    markAllRead: function() {
+        this.notifications.forEach(function(n) { n.read = true; });
+        localStorage.setItem("skillhub_notifs", JSON.stringify(this.notifications));
+        this.renderBell();
+        this.renderList();
+    },
+    clearAll: function() {
+        this.notifications = [];
+        localStorage.setItem("skillhub_notifs", JSON.stringify([]));
+        this.renderBell();
+        this.renderList();
+    },
+    renderBell: function() {
+        var dot = document.getElementById("notifDot");
+        if (!dot) return;
+        var unread = this.notifications.filter(function(n) { return !n.read; }).length;
+        if (unread > 0) {
+            dot.classList.remove("hidden");
+            dot.textContent = unread > 9 ? "9+" : unread;
+        } else {
+            dot.classList.add("hidden");
+        }
+    },
+    renderList: function() {
+        var list = document.getElementById("notifList");
+        if (!list) return;
+        if (!this.notifications.length) {
+            list.innerHTML = "<div class='notif-empty'><i class='fas fa-bell-slash'></i><p>No notifications yet</p></div>";
+            return;
+        }
+        var icons = { info: "fa-info-circle", success: "fa-check-circle", warning: "fa-exclamation-triangle", error: "fa-times-circle" };
+        list.innerHTML = this.notifications.map(function(n) {
+            var icon = icons[n.type] || "fa-info-circle";
+            var timeAgo = NotificationManager._timeAgo(n.time);
+            return "<div class='notif-item" + (n.read ? "" : " unread") + "'>" +
+                "<div class='notif-item-icon notif-" + n.type + "'><i class='fas " + icon + "'></i></div>" +
+                "<div class='notif-item-body'>" +
+                    (n.title ? "<div class='notif-item-title'>" + Utils.escapeHtml(n.title) + "</div>" : "") +
+                    "<div class='notif-item-msg'>" + Utils.escapeHtml(n.message) + "</div>" +
+                    "<div class='notif-item-time'>" + timeAgo + "</div>" +
+                "</div>" +
+            "</div>";
+        }).join("");
+    },
+    showToast: function(message, type) {
+        var existing = document.getElementById("skToast");
+        if (existing) existing.remove();
+        var toast = document.createElement("div");
+        toast.id = "skToast";
+        toast.className = "sk-toast sk-toast-" + (type || "info");
+        var icons = { info: "fa-info-circle", success: "fa-check-circle", warning: "fa-exclamation-triangle", error: "fa-times-circle" };
+        toast.innerHTML = "<i class='fas " + (icons[type] || "fa-info-circle") + "'></i><span>" + Utils.escapeHtml(message) + "</span>";
+        document.body.appendChild(toast);
+        setTimeout(function() { toast.classList.add("show"); }, 10);
+        setTimeout(function() { toast.classList.remove("show"); setTimeout(function() { if (toast.parentNode) toast.remove(); }, 400); }, 4000);
+    },
+    _timeAgo: function(iso) {
+        var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+        if (diff < 60) return "just now";
+        if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+        if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+        return Math.floor(diff / 86400) + "d ago";
+    }
+};
+
+// ===== WELCOME MANAGER =====
+var WelcomeManager = {
+    show: function(name, role) {
+        var modal = document.getElementById("welcomeModal");
+        if (!modal) return;
+        var roleConfig = {
+            learner: {
+                icon: "fa-graduation-cap",
+                title: "Welcome, " + name + "! 🎓",
+                subtitle: "Your learning journey starts now.",
+                msg: "Explore hundreds of courses taught by expert instructors. Learn at your own pace and earn certificates.",
+                actions: [
+                    { label: "Explore Courses", icon: "fa-book-open", href: "#courses", cls: "btn-primary" },
+                    { label: "View Profile", icon: "fa-user", href: "#dashboard", cls: "btn-secondary-outline" }
+                ]
+            },
+            instructor: {
+                icon: "fa-chalkboard-teacher",
+                title: "Welcome, Instructor " + name + "! 👨‍🏫",
+                subtitle: "Your application is under review.",
+                msg: "Our admin team will review your instructor application within 24 hours. You'll receive a WhatsApp notification once approved.",
+                actions: [
+                    { label: "View Dashboard", icon: "fa-th-large", href: "#dashboard", cls: "btn-primary" },
+                    { label: "Explore Platform", icon: "fa-compass", href: "#how-it-works", cls: "btn-secondary-outline" }
+                ]
+            },
+            freelancer: {
+                icon: "fa-laptop-code",
+                title: "Welcome, " + name + "! 💼",
+                subtitle: "Your freelancer profile is pending review.",
+                msg: "Admin will verify your profile within 24 hours. Once approved, clients can find and hire you directly.",
+                actions: [
+                    { label: "View Dashboard", icon: "fa-th-large", href: "#dashboard", cls: "btn-primary" },
+                    { label: "Browse Freelancers", icon: "fa-users", href: "#earn", cls: "btn-secondary-outline" }
+                ]
+            }
+        };
+        var cfg = roleConfig[role] || roleConfig.learner;
+        var iconEl = document.getElementById("welcomeIcon");
+        var titleEl = document.getElementById("welcomeTitle");
+        var subtitleEl = document.getElementById("welcomeSubtitle");
+        var msgEl = document.getElementById("welcomeMsg");
+        var actionsEl = document.getElementById("welcomeActions");
+        if (iconEl) iconEl.innerHTML = "<i class='fas " + cfg.icon + "'></i>";
+        if (titleEl) titleEl.textContent = cfg.title;
+        if (subtitleEl) subtitleEl.textContent = cfg.subtitle;
+        if (msgEl) msgEl.textContent = cfg.msg;
+        if (actionsEl) {
+            actionsEl.innerHTML = cfg.actions.map(function(a) {
+                return "<a href='" + a.href + "' class='welcome-action-btn " + a.cls + "' onclick='document.getElementById(\"welcomeModal\").style.display=\"none\"'>" +
+                    "<i class='fas " + a.icon + "'></i> " + a.label + "</a>";
+            }).join("");
+        }
+        modal.style.display = "flex";
+        this._spawnConfetti();
+        var closeBtn = document.getElementById("welcomeCloseBtn");
+        if (closeBtn) closeBtn.onclick = function() { modal.style.display = "none"; };
+        modal.addEventListener("click", function(e) { if (e.target === modal) modal.style.display = "none"; });
+    },
+    _spawnConfetti: function() {
+        var container = document.getElementById("welcomeConfetti");
+        if (!container) return;
+        container.innerHTML = "";
+        var colors = ["#2563eb", "#fbbf24", "#10b981", "#8b5cf6", "#f59e0b"];
+        for (var i = 0; i < 30; i++) {
+            var dot = document.createElement("div");
+            dot.className = "confetti-dot";
+            dot.style.cssText = "left:" + Math.random() * 100 + "%;background:" + colors[Math.floor(Math.random() * colors.length)] + ";animation-delay:" + (Math.random() * 0.8) + "s;animation-duration:" + (1 + Math.random()) + "s;";
+            container.appendChild(dot);
+        }
+    }
+};
+
+// ===== MESSAGING MANAGER =====
+var MessagingManager = {
+    open: function(name, phone, skill, userId) {
+        // If we have a userId, open the internal chat page
+        if (userId) {
+            window.location.href = 'chat.html?userId=' + encodeURIComponent(userId) + '&userName=' + encodeURIComponent(name);
+            return;
+        }
+        // Fallback: open chat page without userId (user can search)
+        var token = localStorage.getItem('skillhub_token');
+        if (token) {
+            window.location.href = 'chat.html';
+        } else {
+            // Not logged in — redirect to login first
+            var target = document.getElementById('login-register');
+            if (target) {
+                var navH = (document.querySelector('.navbar') || {}).offsetHeight || 0;
+                window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - navH, behavior: 'smooth' });
+            }
+            NotificationManager.add('Please log in to send messages.', 'info');
+        }
     }
 };
 
@@ -839,6 +1153,10 @@ var DashboardManager = {
         this.initTabs();
         this.initProfileForm();
         this.initPasswordForm();
+        this.initPhoneForm();
+        this.initCountryForm();
+        this.initProfileEditToggle();
+        this.initRefreshPayments();
         var logoutBtn = document.getElementById("dashLogoutBtn");
         if (logoutBtn) {
             logoutBtn.addEventListener("click", function() {
@@ -869,6 +1187,7 @@ var DashboardManager = {
             if (!data.success) return;
             this.user = data.user;
             this.renderHeader(data.user);
+            this.renderProfileOverview(data.user);
             this.prefillProfile(data.user);
 
             // Load courses based on role
@@ -883,6 +1202,9 @@ var DashboardManager = {
                     this.renderEnrolledCourses([]);
                 }
             }
+
+            // Load payment history
+            this.loadPaymentHistory();
         } catch (e) {
             var session = StorageManager.getUserSession();
             if (session) this.renderHeaderFromSession(session);
@@ -918,20 +1240,56 @@ var DashboardManager = {
             enrolledEl.textContent = enrolled;
         }
         if (avatarEl) {
-            if (user.profilePicture) {
-                avatarEl.innerHTML = "<img src='" + user.profilePicture + "' alt='Avatar'>";
-            } else {
-                var initials = (user.name || "U").split(" ").map(function(n) { return n[0]; }).join("").toUpperCase().slice(0, 2);
-                avatarEl.innerHTML = "<span>" + initials + "</span>";
-                avatarEl.style.background = "linear-gradient(135deg, #3b82f6, #8b5cf6)";
-                avatarEl.style.color = "white";
-                avatarEl.style.display = "flex";
-                avatarEl.style.alignItems = "center";
-                avatarEl.style.justifyContent = "center";
-                avatarEl.style.fontSize = "1.4rem";
-                avatarEl.style.fontWeight = "700";
-            }
+            this._renderAvatar(avatarEl, user, "1.4rem");
         }
+    },
+    _renderAvatar: function(el, user, fontSize) {
+        if (user.profilePicture) {
+            el.innerHTML = "<img src='" + Utils.escapeHtml(user.profilePicture) + "' alt='Avatar' style='width:100%;height:100%;object-fit:cover;border-radius:50%;'>";
+        } else {
+            var initials = (user.name || "U").split(" ").map(function(n) { return n[0]; }).join("").toUpperCase().slice(0, 2);
+            el.innerHTML = "<span>" + initials + "</span>";
+            el.style.background = "linear-gradient(135deg, #3b82f6, #8b5cf6)";
+            el.style.color = "white";
+            el.style.display = "flex";
+            el.style.alignItems = "center";
+            el.style.justifyContent = "center";
+            el.style.fontSize = fontSize || "1.4rem";
+            el.style.fontWeight = "700";
+        }
+    },
+    renderProfileOverview: function(user) {
+        var lgAvatar = document.getElementById("profileAvatarLg");
+        if (lgAvatar) this._renderAvatar(lgAvatar, user, "2.5rem");
+
+        var countryNames = { ET: "🇪🇹 Ethiopia", SS: "🇸🇸 South Sudan", KE: "🇰🇪 Kenya", UG: "🇺🇬 Uganda" };
+        var setEl = function(id, val) { var el = document.getElementById(id); if (el) el.textContent = val || "—"; };
+        setEl("profileFullName", user.name);
+        setEl("profileEmail", user.email);
+        setEl("profilePhone", user.phone);
+        setEl("profileCountry", countryNames[user.country] || user.country || "—");
+
+        var bioEl = document.getElementById("profileBioText");
+        if (bioEl) bioEl.textContent = user.bio || "No bio added yet.";
+
+        var skillsWrap = document.getElementById("profileSkillsWrap");
+        var skillsTags = document.getElementById("profileSkillsTags");
+        if (user.skills && user.skills.length > 0) {
+            if (skillsWrap) skillsWrap.classList.remove("hidden");
+            if (skillsTags) {
+                skillsTags.innerHTML = user.skills.map(function(s) {
+                    return "<span class='skill-tag'>" + Utils.escapeHtml(s) + "</span>";
+                }).join("");
+            }
+        } else {
+            if (skillsWrap) skillsWrap.classList.add("hidden");
+        }
+
+        var countrySelect = document.getElementById("dashNewCountry");
+        if (countrySelect && user.country) countrySelect.value = user.country;
+
+        var phoneInput = document.getElementById("dashNewPhone");
+        if (phoneInput && user.phone) phoneInput.value = user.phone;
     },
     renderHeaderFromSession: function(session) {
         var nameEl = document.getElementById("dashName");
@@ -984,36 +1342,137 @@ var DashboardManager = {
         }
         container.innerHTML = courses.map(function(c) {
             var progress = c.progress || 0;
-            var progressColor = progress >= 100 ? "#10b981" : "#3b82f6";
+            var isCompleted = progress >= 100 || c.completed;
+            var progressColor = isCompleted ? "#10b981" : "#3b82f6";
+            var courseId = Utils.escapeHtml(String(c._id || c.id || ""));
+            var actionBtn = isCompleted
+                ? "<a href='certificate.html?id=" + courseId + "' class='btn btn-sm btn-green dash-course-action-btn'><i class='fas fa-certificate'></i> Get Certificate</a>"
+                : "<a href='course.html?id=" + courseId + "' class='btn btn-sm btn-primary dash-course-action-btn'><i class='fas fa-play-circle'></i> Continue Learning</a>";
             return "<div class='dash-course-card'>" +
-                "<div class='dash-course-thumb' style='background:linear-gradient(135deg,#10b981,#059669);'>" +
-                "<i class='fas fa-play-circle'></i></div>" +
+                "<div class='dash-course-thumb' style='background:linear-gradient(135deg," + (isCompleted ? "#10b981,#059669" : "#3b82f6,#1d4ed8") + ");'>" +
+                "<i class='fas " + (isCompleted ? "fa-check-circle" : "fa-play-circle") + "'></i></div>" +
                 "<div class='dash-course-info'>" +
                 "<h4>" + Utils.escapeHtml(c.title || "Untitled") + "</h4>" +
-                "<p>" + Utils.escapeHtml(c.instructorName || "") + " • " + Utils.escapeHtml(c.category || "") + "</p>" +
-                "<div class='dash-progress-bar'>" +
+                "<p>" + Utils.escapeHtml(c.instructorName || "") + (c.category ? " • " + Utils.escapeHtml(c.category) : "") + "</p>" +
+                "<div class='dash-progress-bar' title='" + progress + "% complete'>" +
                 "<div class='dash-progress-fill' style='width:" + progress + "%;background:" + progressColor + ";'></div>" +
                 "</div>" +
                 "<span style='font-size:0.75rem;color:#64748b;'>" + progress + "% complete</span>" +
                 "</div>" +
-                "<div class='dash-course-price' style='color:" + (c.completed ? "#10b981" : "#64748b") + ";'>" +
-                (c.completed ? "✓ Done" : "In Progress") +
-                "</div>" +
+                "<div class='dash-course-actions'>" + actionBtn + "</div>" +
                 "</div>";
         }).join("");
+    },
+    loadPaymentHistory: async function() {
+        var container = document.getElementById("paymentHistoryList");
+        if (!container) return;
+        UIHelper.showLoading(container, "Loading payment history...");
+        try {
+            var data = await ApiService.getTransactions();
+            this.renderPaymentHistory(data.transactions || []);
+        } catch (e) {
+            container.innerHTML = "<div class='dash-empty-state'><i class='fas fa-wifi-slash'></i><p>Could not load payments. Make sure the backend is running.</p></div>";
+        }
+    },
+    renderPaymentHistory: function(transactions) {
+        var container = document.getElementById("paymentHistoryList");
+        if (!container) return;
+        if (!transactions || transactions.length === 0) {
+            container.innerHTML = "<div class='dash-empty-state'><i class='fas fa-receipt'></i><p>No payment history yet.</p></div>";
+            return;
+        }
+        var typeLabels = {
+            course_purchase: "Course Purchase",
+            withdrawal: "Withdrawal",
+            deposit: "Deposit",
+            referral_bonus: "Referral Bonus"
+        };
+        var statusColors = { completed: "#10b981", pending: "#f59e0b", failed: "#ef4444", cancelled: "#6b7280" };
+        container.innerHTML =
+            "<div class='payment-table-wrap'>" +
+            "<table class='payment-table'>" +
+            "<thead><tr>" +
+            "<th>Date</th><th>Description</th><th>Amount</th><th>Status</th>" +
+            "</tr></thead>" +
+            "<tbody>" +
+            transactions.map(function(t) {
+                var date = t.createdAt ? new Date(t.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+                var label = typeLabels[t.type] || t.type || "Transaction";
+                var courseName = (t.metadata && t.metadata.courseName) ? " — " + Utils.escapeHtml(t.metadata.courseName) : "";
+                var amount = (t.amount || 0).toLocaleString() + " ETB";
+                var status = t.status || "pending";
+                var statusColor = statusColors[status] || "#6b7280";
+                var statusIcon = status === "completed" ? "fa-check-circle" : status === "pending" ? "fa-clock" : "fa-times-circle";
+                return "<tr>" +
+                    "<td class='pay-date'>" + date + "</td>" +
+                    "<td class='pay-desc'>" + label + Utils.escapeHtml(courseName) + "</td>" +
+                    "<td class='pay-amount'>" + amount + "</td>" +
+                    "<td class='pay-status'><span style='color:" + statusColor + ";'><i class='fas " + statusIcon + "'></i> " +
+                    status.charAt(0).toUpperCase() + status.slice(1) + "</span></td>" +
+                    "</tr>";
+            }).join("") +
+            "</tbody></table></div>";
     },
     prefillProfile: function(user) {
         var nameInput = document.getElementById("dashProfileName");
         var bioInput = document.getElementById("dashProfileBio");
         var skillsInput = document.getElementById("dashProfileSkills");
+        var picInput = document.getElementById("dashProfilePic");
         if (nameInput) nameInput.value = user.name || "";
         if (bioInput) bioInput.value = user.bio || "";
         if (skillsInput) skillsInput.value = user.skills ? user.skills.join(", ") : "";
+        if (picInput) picInput.value = user.profilePicture || "";
     },
     initTabs: function() {
         var tabs = document.querySelectorAll(".dash-tab");
         tabs.forEach(function(tab) {
             tab.addEventListener("click", function() {
+                tabs.forEach(function(t) { t.classList.remove("active"); });
+                tab.classList.add("active");
+                var target = tab.getAttribute("data-dash");
+                document.querySelectorAll(".dash-tab-content").forEach(function(c) { c.classList.remove("active"); });
+                var content = document.getElementById("dashTab-" + target);
+                if (content) content.classList.add("active");
+                if (target === "payment-history") {
+                    DashboardManager.loadPaymentHistory();
+                }
+            });
+        });
+    },
+    initProfileEditToggle: function() {
+        var toggleBtn = document.getElementById("profileEditToggleBtn");
+        var cancelBtn = document.getElementById("profileEditCancelBtn");
+        var editForm = document.getElementById("profileEditForm");
+        if (toggleBtn && editForm) {
+            toggleBtn.addEventListener("click", function() {
+                editForm.classList.toggle("hidden");
+                toggleBtn.innerHTML = editForm.classList.contains("hidden")
+                    ? "<i class='fas fa-user-edit'></i> Edit Profile"
+                    : "<i class='fas fa-times'></i> Cancel";
+            });
+        }
+        if (cancelBtn && editForm) {
+            cancelBtn.addEventListener("click", function() {
+                editForm.classList.add("hidden");
+                if (toggleBtn) toggleBtn.innerHTML = "<i class='fas fa-user-edit'></i> Edit Profile";
+            });
+        }
+        var avatarEditBtn = document.getElementById("profileAvatarEditBtn");
+        if (avatarEditBtn) {
+            avatarEditBtn.addEventListener("click", function() {
+                if (editForm) editForm.classList.remove("hidden");
+                if (toggleBtn) toggleBtn.innerHTML = "<i class='fas fa-times'></i> Cancel";
+                var picInput = document.getElementById("dashProfilePic");
+                if (picInput) picInput.focus();
+            });
+        }
+    },
+    initRefreshPayments: function() {
+        var btn = document.getElementById("refreshPaymentsBtn");
+        if (btn) {
+            btn.addEventListener("click", function() { DashboardManager.loadPaymentHistory(); });
+        }
+    },
                 tabs.forEach(function(t) { t.classList.remove("active"); });
                 tab.classList.add("active");
                 var target = tab.getAttribute("data-dash");
@@ -1033,13 +1492,23 @@ var DashboardManager = {
             var bio = document.getElementById("dashProfileBio").value.trim();
             var skillsRaw = document.getElementById("dashProfileSkills").value.trim();
             var skills = skillsRaw ? skillsRaw.split(",").map(function(s) { return s.trim(); }).filter(Boolean) : [];
+            var profilePicture = document.getElementById("dashProfilePic") ? document.getElementById("dashProfilePic").value.trim() : "";
             UIHelper.showMessage(msgEl, "Saving...", "success");
             try {
-                await ApiService.updateProfile({ name: name, bio: bio, skills: skills });
+                var updated = await ApiService.updateProfile({ name: name, bio: bio, skills: skills, profilePicture: profilePicture });
                 var session = StorageManager.getUserSession();
                 if (session) { session.name = name; StorageManager.saveUserSession(session); }
                 NavbarUser.update();
+                if (updated && updated.user) {
+                    DashboardManager.user = Object.assign(DashboardManager.user || {}, updated.user);
+                    DashboardManager.renderProfileOverview(DashboardManager.user);
+                    DashboardManager.renderHeader(DashboardManager.user);
+                }
                 UIHelper.showMessage(msgEl, "Profile updated successfully!", "success");
+                var editForm = document.getElementById("profileEditForm");
+                var toggleBtn = document.getElementById("profileEditToggleBtn");
+                if (editForm) editForm.classList.add("hidden");
+                if (toggleBtn) toggleBtn.innerHTML = "<i class='fas fa-user-edit'></i> Edit Profile";
             } catch (err) {
                 UIHelper.showMessage(msgEl, err.message, "error");
             }
@@ -1061,6 +1530,51 @@ var DashboardManager = {
                 await ApiService.changePassword(current, newPwd);
                 UIHelper.showMessage(msgEl, "Password updated successfully!", "success");
                 form.reset();
+            } catch (err) {
+                UIHelper.showMessage(msgEl, err.message, "error");
+            }
+        });
+    },
+    initPhoneForm: function() {
+        var form = document.getElementById("dashPhoneForm");
+        var msgEl = document.getElementById("dashPhoneMsg");
+        if (!form) return;
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            var newPhone = document.getElementById("dashNewPhone").value.trim();
+            if (!newPhone) { UIHelper.showMessage(msgEl, "Please enter a phone number", "error"); return; }
+            UIHelper.showMessage(msgEl, "Updating phone...", "success");
+            try {
+                var updated = await ApiService.updateProfile({ phone: newPhone });
+                if (updated && updated.user) {
+                    DashboardManager.user = Object.assign(DashboardManager.user || {}, updated.user);
+                    DashboardManager.renderProfileOverview(DashboardManager.user);
+                }
+                document.getElementById("dashPhoneConfirmPwd").value = "";
+                UIHelper.showMessage(msgEl, "Phone number updated!", "success");
+            } catch (err) {
+                UIHelper.showMessage(msgEl, err.message, "error");
+            }
+        });
+    },
+    initCountryForm: function() {
+        var form = document.getElementById("dashCountryForm");
+        var msgEl = document.getElementById("dashCountryMsg");
+        if (!form) return;
+        form.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            var country = document.getElementById("dashNewCountry").value;
+            if (!country) { UIHelper.showMessage(msgEl, "Please select a country", "error"); return; }
+            UIHelper.showMessage(msgEl, "Saving...", "success");
+            try {
+                var updated = await ApiService.updateProfile({ country: country });
+                if (updated && updated.user) {
+                    DashboardManager.user = Object.assign(DashboardManager.user || {}, updated.user);
+                    DashboardManager.renderProfileOverview(DashboardManager.user);
+                }
+                var session = StorageManager.getUserSession();
+                if (session) { session.country = country; StorageManager.saveUserSession(session); }
+                UIHelper.showMessage(msgEl, "Country updated!", "success");
             } catch (err) {
                 UIHelper.showMessage(msgEl, err.message, "error");
             }
@@ -1221,6 +1735,7 @@ document.addEventListener("DOMContentLoaded", function() {
     NavbarUser.init();
     DashboardManager.init();
     ForgotPasswordManager.init();
+    NotificationManager.init();
     StatsManager.load();
 
     var firstLoginRole = document.querySelector("#loginForm .role-btn");
@@ -1230,8 +1745,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     var savedUser = StorageManager.getUserSession();
     if (savedUser && savedUser.loggedIn) {
-        console.log("Welcome back, " + savedUser.name);
-        // Auto-open dashboard if they were logged in
         setTimeout(function() { DashboardManager.show(); }, 500);
     }
 
@@ -1240,42 +1753,3 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 window.addEventListener("beforeunload", function() { AnimationManager.cleanup(); });
-
-// ===== INITIALIZATION =====
-document.addEventListener("DOMContentLoaded", function() {
-    // Core managers
-    CourseManager.init();
-    FreelancerManager.init();
-
-    // Forms
-    FormHandlers.initInstructorForm();
-    FormHandlers.initFreelancerForm();
-    FormHandlers.initContactForm();
-    FormHandlers.initNewsletterForm();
-    FormHandlers.initLoginForm();
-    FormHandlers.initRegisterForm();
-
-    // UI
-    NavigationManager.init();
-    AuthUI.init();
-    ButtonHandlers.init();
-    AnimationManager.init();
-
-    // Set default active role buttons
-    var firstLoginRole = document.querySelector("#loginForm .role-btn");
-    if (firstLoginRole) firstLoginRole.classList.add("active");
-    var firstRegRole = document.querySelector("#registerForm .role-btn");
-    if (firstRegRole) firstRegRole.classList.add("active");
-
-    // Restore session
-    var savedUser = StorageManager.getUserSession();
-    if (savedUser && savedUser.loggedIn) {
-        console.log("Welcome back, " + savedUser.name);
-    }
-
-    // Update copyright year
-    var copyright = document.querySelector(".copyright");
-    if (copyright) {
-        copyright.innerHTML = copyright.innerHTML.replace("2025", new Date().getFullYear());
-    }
-});
