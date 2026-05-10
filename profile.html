@@ -488,7 +488,7 @@ async function loadServices() {
             opt.addEventListener('click', async () => {
                 const newStatus = opt.getAttribute('data-avail');
                 try {
-                    await req("/freelancers/profile", "PUT", { availability: newStatus });
+                    await req("/freelancers/me", "PUT", { availability: newStatus });
                     showMsg("servicesList", "Availability updated!", "success");
                     setTimeout(() => loadServices(), 1000);
                 } catch (error) {
