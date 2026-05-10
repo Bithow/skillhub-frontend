@@ -1229,6 +1229,13 @@ var DashboardManager = {
             roleEl.innerHTML = "<i class='fas " + icon + "'></i> " + (user.role || "Learner").charAt(0).toUpperCase() + (user.role || "learner").slice(1);
             roleEl.className = "dash-role-badge role-" + (user.role || "user");
         }
+        // Show "Create Course" button only for instructors and admins
+        var createCourseBtn = document.getElementById("dashCreateCourseBtn");
+        var navCreateCourseLink = document.getElementById("navCreateCourseLink");
+        if (user.role === "instructor" || user.role === "admin") {
+            if (createCourseBtn) createCourseBtn.style.display = "inline-flex";
+            if (navCreateCourseLink) navCreateCourseLink.style.display = "inline-flex";
+        }
         if (walletEl) walletEl.textContent = (user.walletBalance || 0) + " ETB";
         if (ratingEl) ratingEl.textContent = user.rating ? user.rating.toFixed(1) + " ★" : "—";
         if (statusEl) {

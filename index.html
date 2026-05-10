@@ -59,6 +59,15 @@
                     <a href="#dashboard" class="nav-dash-link" id="navDashLink" title="My Dashboard">
                         <i class="fas fa-th-large"></i>
                     </a>
+                    <a href="chat.html" class="nav-dash-link" title="Messages" style="margin-left:2px;">
+                        <i class="fas fa-comments"></i>
+                    </a>
+                    <a href="profile.html" class="nav-dash-link" title="My Profile" style="margin-left:2px;">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="create-course.html" class="nav-dash-link" id="navCreateCourseLink" title="Create Course" style="margin-left:2px;display:none;">
+                        <i class="fas fa-plus-circle"></i>
+                    </a>
                     <button class="nav-logout-btn" id="navLogoutBtn" title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
@@ -555,9 +564,20 @@
                         <p id="dashRoleBadge" class="dash-role-badge"><i class="fas fa-circle"></i> Learner</p>
                     </div>
                 </div>
-                <button class="btn btn-gray btn-sm" id="dashLogoutBtn">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                    <a href="chat.html" class="btn btn-sm" style="background:#2563eb;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;">
+                        <i class="fas fa-comments"></i> Messages
+                    </a>
+                    <a href="profile.html" class="btn btn-sm" style="background:#7c3aed;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;">
+                        <i class="fas fa-user-circle"></i> My Profile
+                    </a>
+                    <a href="create-course.html" id="dashCreateCourseBtn" class="btn btn-sm" style="background:#059669;color:white;text-decoration:none;display:none;align-items:center;gap:0.4rem;">
+                        <i class="fas fa-plus-circle"></i> Create Course
+                    </a>
+                    <button class="btn btn-gray btn-sm" id="dashLogoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
             </div>
 
             <!-- ── Stats Row ── -->
