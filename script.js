@@ -109,7 +109,7 @@ var ApiService = {
             return data;
         } catch (err) {
             if (err.message === "Failed to fetch") {
-                throw new Error("Cannot reach server. Make sure backend is running on port 5000.");
+                throw new Error("Server is waking up, please wait 10 seconds and try again.");
             }
             throw err;
         }
@@ -1745,6 +1745,12 @@ document.addEventListener("DOMContentLoaded", function() {
     if (savedUser && savedUser.loggedIn) {
         setTimeout(function() { DashboardManager.show(); }, 500);
     }
+
+    // Wake up Render backend (free tier sleeps after inactivity)
+    fetch("https://skillhub-backend-i3dr.onrender.com/health")
+        .then(function(r) { return r.json(); })
+        .then(function(d) { console.log("Backend ready:", d.status); })
+        .catch(function() { console.warn("Backend warming up..."); });
 
     var copyright = document.querySelector(".copyright");
     if (copyright) { copyright.innerHTML = copyright.innerHTML.replace("2025", new Date().getFullYear()); }
