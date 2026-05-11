@@ -1480,15 +1480,6 @@ var DashboardManager = {
             btn.addEventListener("click", function() { DashboardManager.loadPaymentHistory(); });
         }
     },
-                tabs.forEach(function(t) { t.classList.remove("active"); });
-                tab.classList.add("active");
-                var target = tab.getAttribute("data-dash");
-                document.querySelectorAll(".dash-tab-content").forEach(function(c) { c.classList.remove("active"); });
-                var content = document.getElementById("dashTab-" + target);
-                if (content) content.classList.add("active");
-            });
-        });
-    },
     initProfileForm: function() {
         var form = document.getElementById("dashProfileForm");
         var msgEl = document.getElementById("dashProfileMsg");
