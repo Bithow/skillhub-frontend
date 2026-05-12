@@ -641,9 +641,12 @@
             <div id="dashTab-profile-overview" class="dash-tab-content active">
                 <div class="profile-overview-grid">
 
-                    <!-- Profile Card -->
+                    <!-- LEFT: Profile Card -->
                     <div class="profile-card">
-                        <!-- Avatar / Picture -->
+                        <!-- Cover banner -->
+                        <div class="profile-card-banner"></div>
+
+                        <!-- Avatar -->
                         <div class="profile-avatar-wrap">
                             <div class="profile-avatar-lg" id="profileAvatarLg">
                                 <i class="fas fa-user"></i>
@@ -653,20 +656,34 @@
                             </button>
                         </div>
 
-                        <!-- Info -->
-                        <div class="profile-info-block">
+                        <!-- Name + role -->
+                        <div class="profile-card-identity">
                             <h3 class="profile-full-name" id="profileFullName">—</h3>
-                            <p class="profile-meta-row"><i class="fas fa-envelope"></i> <span id="profileEmail">—</span></p>
-                            <p class="profile-meta-row"><i class="fas fa-phone"></i> <span id="profilePhone">—</span></p>
-                            <p class="profile-meta-row"><i class="fas fa-globe"></i> <span id="profileCountry">—</span></p>
+                            <span class="profile-role-chip" id="profileRoleChip">Learner</span>
+                        </div>
+
+                        <!-- Meta info -->
+                        <div class="profile-info-block">
+                            <div class="profile-meta-row">
+                                <span class="profile-meta-icon"><i class="fas fa-envelope"></i></span>
+                                <span id="profileEmail">—</span>
+                            </div>
+                            <div class="profile-meta-row">
+                                <span class="profile-meta-icon"><i class="fas fa-phone"></i></span>
+                                <span id="profilePhone">—</span>
+                            </div>
+                            <div class="profile-meta-row">
+                                <span class="profile-meta-icon"><i class="fas fa-globe"></i></span>
+                                <span id="profileCountry">—</span>
+                            </div>
                         </div>
 
                         <!-- Edit Profile Button -->
-                        <button class="btn btn-primary btn-sm profile-edit-btn" id="profileEditToggleBtn">
+                        <button class="profile-edit-main-btn" id="profileEditToggleBtn">
                             <i class="fas fa-user-edit"></i> Edit Profile
                         </button>
 
-                        <!-- Inline Edit Form (hidden by default) -->
+                        <!-- Inline Edit Form -->
                         <div id="profileEditForm" class="profile-edit-form hidden">
                             <form id="dashProfileForm">
                                 <div class="form-group">
@@ -710,15 +727,43 @@
                         </div>
                     </div>
 
-                    <!-- Quick Stats / Bio side panel -->
+                    <!-- RIGHT: Bio + Skills panel -->
                     <div class="profile-side-panel">
+                        <!-- About Me card -->
                         <div class="profile-bio-card">
-                            <h4><i class="fas fa-info-circle"></i> About Me</h4>
-                            <p id="profileBioText" class="profile-bio-text">No bio added yet.</p>
-                            <div id="profileSkillsWrap" class="profile-skills-wrap hidden">
-                                <h4><i class="fas fa-tags"></i> Skills</h4>
-                                <div id="profileSkillsTags" class="profile-skills-tags"></div>
+                            <div class="profile-bio-card-header">
+                                <i class="fas fa-user-circle"></i>
+                                <h4>About Me</h4>
                             </div>
+                            <p id="profileBioText" class="profile-bio-text">No bio added yet.</p>
+                        </div>
+
+                        <!-- Skills card -->
+                        <div id="profileSkillsWrap" class="profile-skills-card hidden">
+                            <div class="profile-bio-card-header">
+                                <i class="fas fa-tags"></i>
+                                <h4>Skills</h4>
+                            </div>
+                            <div id="profileSkillsTags" class="profile-skills-tags"></div>
+                        </div>
+
+                        <!-- Quick links card -->
+                        <div class="profile-quick-links">
+                            <a href="chat.html" class="profile-quick-link">
+                                <i class="fas fa-comments"></i>
+                                <span>Messages</span>
+                                <i class="fas fa-chevron-right profile-quick-arrow"></i>
+                            </a>
+                            <a href="profile.html" class="profile-quick-link">
+                                <i class="fas fa-id-badge"></i>
+                                <span>Full Profile</span>
+                                <i class="fas fa-chevron-right profile-quick-arrow"></i>
+                            </a>
+                            <a href="#courses" class="profile-quick-link" onclick="document.querySelector('.dash-tab[data-dash=my-courses]').click()">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>My Courses</span>
+                                <i class="fas fa-chevron-right profile-quick-arrow"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

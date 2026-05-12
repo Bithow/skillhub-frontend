@@ -1235,8 +1235,7 @@ var DashboardManager = {
         if (user.role === "instructor" || user.role === "admin") {
             if (createCourseBtn) createCourseBtn.style.display = "inline-flex";
             if (navCreateCourseLink) navCreateCourseLink.style.display = "inline-flex";
-        }
-        if (walletEl) walletEl.textContent = (user.walletBalance || 0) + " ETB";
+        }        if (walletEl) walletEl.textContent = (user.walletBalance || 0) + " ETB";
         if (ratingEl) ratingEl.textContent = user.rating ? user.rating.toFixed(1) + " ★" : "—";
         if (statusEl) {
             statusEl.textContent = (user.status || "pending").charAt(0).toUpperCase() + (user.status || "pending").slice(1);
@@ -1275,6 +1274,20 @@ var DashboardManager = {
         setEl("profileEmail", user.email);
         setEl("profilePhone", user.phone);
         setEl("profileCountry", countryNames[user.country] || user.country || "—");
+
+        // Role chip
+        var roleChip = document.getElementById("profileRoleChip");
+        if (roleChip) {
+            var roleLabel = { user: "Learner", instructor: "Instructor", freelancer: "Freelancer", admin: "Admin" };
+            var roleColors = {
+                user: "background:#dbeafe;color:#1d4ed8;",
+                instructor: "background:#d1fae5;color:#065f46;",
+                freelancer: "background:#ede9fe;color:#5b21b6;",
+                admin: "background:#fee2e2;color:#991b1b;"
+            };
+            roleChip.textContent = roleLabel[user.role] || "Learner";
+            roleChip.style.cssText = roleColors[user.role] || roleColors.user;
+        }
 
         var bioEl = document.getElementById("profileBioText");
         if (bioEl) bioEl.textContent = user.bio || "No bio added yet.";
