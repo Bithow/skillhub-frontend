@@ -35,23 +35,23 @@
             </div>
             
             <div class="nav-links" id="navLinks">
-                <a href="#how-it-works" class="nav-link">
+                <a href="#how-it-works" class="nav-link" onclick="document.getElementById('navLinks').classList.remove('active');document.getElementById('hamburger').classList.remove('active');document.body.style.overflow='';">
                     <span>How it Works</span>
                     <div class="nav-link-underline"></div>
                 </a>
-                <a href="#courses" class="nav-link">
+                <a href="#courses" class="nav-link" onclick="document.getElementById('navLinks').classList.remove('active');document.getElementById('hamburger').classList.remove('active');document.body.style.overflow='';">
                     <span>Courses</span>
                     <div class="nav-link-underline"></div>
                 </a>
-                <a href="#earn" class="nav-link">
+                <a href="#earn" class="nav-link" onclick="document.getElementById('navLinks').classList.remove('active');document.getElementById('hamburger').classList.remove('active');document.body.style.overflow='';">
                     <span>Earn</span>
                     <div class="nav-link-underline"></div>
                 </a>
-                <a href="#about" class="nav-link">
+                <a href="#about" class="nav-link" onclick="document.getElementById('navLinks').classList.remove('active');document.getElementById('hamburger').classList.remove('active');document.body.style.overflow='';">
                     <span>About</span>
                     <div class="nav-link-underline"></div>
                 </a>
-                <a href="#contact" class="nav-link">
+                <a href="#contact" class="nav-link" onclick="document.getElementById('navLinks').classList.remove('active');document.getElementById('hamburger').classList.remove('active');document.body.style.overflow='';">
                     <span>Contact</span>
                     <div class="nav-link-underline"></div>
                 </a>
@@ -81,7 +81,7 @@
                 </div>
             </div>
             
-            <div class="hamburger" id="hamburger">
+            <div class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('active');this.classList.toggle('active');document.body.style.overflow=document.getElementById('navLinks').classList.contains('active')?'hidden':'';">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -1468,6 +1468,44 @@
 
     <script src="script.js"></script>
     <script>
+      // Bulletproof hamburger — runs independently of script.js
+      (function() {
+        var btn = document.getElementById('hamburger');
+        var menu = document.getElementById('navLinks');
+        if (!btn || !menu) return;
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isOpen = menu.classList.contains('active');
+          menu.classList.toggle('active', !isOpen);
+          btn.classList.toggle('active', !isOpen);
+          document.body.style.overflow = !isOpen ? 'hidden' : '';
+        });
+        // Close when a nav link is clicked
+        menu.querySelectorAll('a').forEach(function(link) {
+          link.addEventListener('click', function() {
+            menu.classList.remove('active');
+            btn.classList.remove('active');
+            document.body.style.overflow = '';
+          });
+        });
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+          if (menu.classList.contains('active') && !menu.contains(e.target) && e.target !== btn) {
+            menu.classList.remove('active');
+            btn.classList.remove('active');
+            document.body.style.overflow = '';
+          }
+        });
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            menu.classList.remove('active');
+            btn.classList.remove('active');
+            document.body.style.overflow = '';
+          }
+        });
+      })();
+
       // Register Service Worker for PWA install
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
