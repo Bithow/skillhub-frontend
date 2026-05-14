@@ -1321,7 +1321,10 @@ function createDateSep(dateStr) {
    SEND MESSAGE
    ===================================================================== */
 async function sendMessage() {
-  if (!activeConvUserId) return;
+  if (!activeConvUserId) {
+    showToast('Please select a conversation first.', 'error');
+    return;
+  }
   const ta = document.getElementById('msgTextarea');
   const content = ta.value.trim();
   if (!content) return;
@@ -1339,7 +1342,12 @@ async function sendMessage() {
       body: JSON.stringify({ receiverId: activeConvUserId, content })
     });
     const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.message || 'Send failed');
+    if (!res.ok || !data.success) {
+      if (data.message && data.message.includes('Recipient not found')) {
+        throw new Error('This user no longer exists or their account was removed.');
+      }
+      throw new Error(data.message || 'Send failed');
+    }
 
     // Clear textarea
     ta.value = '';

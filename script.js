@@ -1235,6 +1235,24 @@ var DashboardManager = {
         if (user.role === "instructor" || user.role === "admin") {
             if (createCourseBtn) createCourseBtn.style.display = "inline-flex";
             if (navCreateCourseLink) navCreateCourseLink.style.display = "inline-flex";
+        }
+
+        // Customize tab label based on role
+        var tabLabel = document.getElementById("tabCoursesLabel");
+        if (tabLabel) {
+            if (user.role === "instructor") tabLabel.textContent = "My Courses";
+            else if (user.role === "freelancer") tabLabel.textContent = "My Services";
+            else tabLabel.textContent = "My Courses";
+        }
+
+        // Show role-specific stat labels
+        var walletEl = document.getElementById("dashWallet");
+        if (walletEl) {
+            if (user.role === "instructor") {
+                walletEl.closest(".dash-stat-card").querySelector(".dash-stat-label").textContent = "Total Earnings";
+            } else if (user.role === "freelancer") {
+                walletEl.closest(".dash-stat-card").querySelector(".dash-stat-label").textContent = "Wallet Balance";
+            }
         }        if (walletEl) walletEl.textContent = (user.walletBalance || 0) + " ETB";
         if (ratingEl) ratingEl.textContent = user.rating ? user.rating.toFixed(1) + " ★" : "—";
         if (statusEl) {

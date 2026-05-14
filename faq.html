@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ - SkillHub</title>
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;background:#f8fafc;color:#1e293b;}
+.topbar{background:#1e3a8a;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;}
+.topbar a{color:white;text-decoration:none;font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:0.5rem;}
+.topbar a img{width:32px;height:32px;object-fit:contain;}
+.hero{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:white;padding:4rem 2rem;text-align:center;}
+.hero h1{font-size:2.5rem;font-weight:800;margin-bottom:0.75rem;}
+.hero p{font-size:1.1rem;opacity:0.85;max-width:600px;margin:0 auto;}
+.container{max-width:860px;margin:3rem auto;padding:0 1.5rem 4rem;}
+.faq-category{margin-bottom:2.5rem;}
+.faq-category h2{font-size:1.1rem;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.faq-item{background:white;border-radius:12px;margin-bottom:0.75rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);overflow:hidden;border:1px solid #e2e8f0;}
+.faq-question{padding:1.1rem 1.5rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:0.95rem;transition:background 0.2s;}
+.faq-question:hover{background:#f8fafc;}
+.faq-question.open{background:#eff6ff;color:#2563eb;}
+.faq-question i{transition:transform 0.3s;color:#94a3b8;font-size:0.85rem;}
+.faq-question.open i{transform:rotate(180deg);color:#2563eb;}
+.faq-answer{display:none;padding:0 1.5rem 1.25rem;font-size:0.9rem;color:#475569;line-height:1.8;border-top:1px solid #f1f5f9;}
+.faq-answer.open{display:block;}
+.back-link{display:inline-flex;align-items:center;gap:0.5rem;color:#2563eb;text-decoration:none;font-weight:600;font-size:0.875rem;margin-bottom:2rem;}
+.back-link:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="index.html"><img src="logo.png" alt="SkillHub"> SkillHub</a>
+  <span style="font-size:0.875rem;opacity:0.8;">Frequently Asked Questions</span>
+</div>
+<div class="hero">
+  <h1><i class="fas fa-question-circle"></i> FAQ</h1>
+  <p>Everything you need to know about SkillHub. Can't find your answer? Contact us on WhatsApp.</p>
+</div>
+<div class="container">
+  <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+
+  <div class="faq-category">
+    <h2><i class="fas fa-user-graduate"></i> For Learners</h2>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">How do I buy a course? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Browse courses on the homepage, click "View Details", then click "Buy This Course". You'll be taken to the payment page where you choose your payment method (Telebirr, CBE, MTN Mobile Money, etc.), send the payment, and then send your screenshot to our WhatsApp. Access is granted within 24 hours.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">How long does it take to get access after payment? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Access is granted within 24 hours after we confirm your payment screenshot. For faster processing, send your screenshot immediately after paying via WhatsApp.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">Can I access courses on my phone? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Yes. SkillHub is fully mobile-responsive and can be installed as an app on your phone or desktop. Open the site in Chrome and look for the install button in the address bar.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">Do I get a certificate after completing a course? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Yes. Once you complete a course, a "Get Certificate" button appears in your dashboard. You can download and share your certificate of completion.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">What payment methods are accepted? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">We accept Telebirr, CBE Birr/Bank Transfer (Ethiopia), MTN Mobile Money (Uganda/South Sudan), and Western Union/WorldRemit for international payments.</div>
+    </div>
+  </div>
+
+  <div class="faq-category">
+    <h2><i class="fas fa-chalkboard-teacher"></i> For Instructors</h2>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">How do I become an instructor? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Register on SkillHub and select "Instructor" as your role. Your account will be reviewed by our admin team within 24 hours. Once approved, you can create and publish courses.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">How much do instructors earn? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Instructors earn 80% of every course sale. SkillHub takes a 20% platform fee. Payments are sent to your mobile money account after each confirmed sale.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">What format should my course content be in? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">You can add YouTube links, Google Drive video links, or Vimeo links for video lessons. For notes/PDFs, use Google Drive or Dropbox links. All content is hosted externally — you just paste the links.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">How long does course approval take? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Course review typically takes 24–48 hours. You'll receive a WhatsApp notification once your course is approved or if changes are needed.</div>
+    </div>
+  </div>
+
+  <div class="faq-category">
+    <h2><i class="fas fa-laptop-code"></i> For Freelancers</h2>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">How do I register as a freelancer? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Register on SkillHub and select "Freelancer" as your role. Fill in your skills, hourly rate, and portfolio link. Your profile will be reviewed and approved by admin within 24 hours.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">How do clients contact me? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Clients can message you directly through the SkillHub chat system or contact you via WhatsApp. When a client clicks "Hire" on your profile, they're taken to the payment page and can send you a message.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">What commission does SkillHub take on freelance jobs? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">SkillHub takes a 12% platform fee on freelance hires. You keep 88% of the agreed amount.</div>
+    </div>
+  </div>
+
+  <div class="faq-category">
+    <h2><i class="fas fa-cog"></i> Account & Technical</h2>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">I forgot my password. What do I do? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Click "Forgot Password?" on the login form. Enter your WhatsApp number and we'll send you a 6-digit reset code. Enter the code and set a new password.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">Can I change my role after registering? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Currently role changes require contacting our support team via WhatsApp. We'll update your account manually.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggle(this)">The site says "Server is waking up". What does that mean? <i class="fas fa-chevron-down"></i></div>
+      <div class="faq-answer">Our backend server goes to sleep after periods of inactivity to save resources. When you first visit, it takes about 30–60 seconds to wake up. Just wait a moment and try again — it will work.</div>
+    </div>
+  </div>
+</div>
+<script>
+function toggle(el) {
+  el.classList.toggle('open');
+  var ans = el.nextElementSibling;
+  ans.classList.toggle('open');
+}
+</script>
+</body>
+</html>

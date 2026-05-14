@@ -411,14 +411,56 @@
                                 <div class="input-icon">
                                     <i class="fas fa-globe"></i>
                                     <select id="regCountry">
-                                        <option value="">Select Country</option>
-                                        <option value="UG">Uganda</option>
-                                        <option value="ET">Ethiopia</option>
-                                        <option value="SS">South Sudan</option>
-                                        <option value="KE">Kenya</option>
-                                        <option value="TZ">Tanzania</option>
-                                        <option value="RW">Rwanda</option>
-                                        <option value="OTHER">Other</option>
+                                        <option value="">🌍 Select Your Country</option>
+                                        <optgroup label="East Africa">
+                                            <option value="ET">🇪🇹 Ethiopia</option>
+                                            <option value="UG">🇺🇬 Uganda</option>
+                                            <option value="SS">🇸🇸 South Sudan</option>
+                                            <option value="KE">🇰🇪 Kenya</option>
+                                            <option value="TZ">🇹🇿 Tanzania</option>
+                                            <option value="RW">🇷🇼 Rwanda</option>
+                                            <option value="BI">🇧🇮 Burundi</option>
+                                            <option value="DJ">🇩🇯 Djibouti</option>
+                                            <option value="ER">🇪🇷 Eritrea</option>
+                                            <option value="SO">🇸🇴 Somalia</option>
+                                        </optgroup>
+                                        <optgroup label="West Africa">
+                                            <option value="NG">🇳🇬 Nigeria</option>
+                                            <option value="GH">🇬🇭 Ghana</option>
+                                            <option value="SN">🇸🇳 Senegal</option>
+                                            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+                                            <option value="CM">🇨🇲 Cameroon</option>
+                                        </optgroup>
+                                        <optgroup label="Southern Africa">
+                                            <option value="ZA">🇿🇦 South Africa</option>
+                                            <option value="ZM">🇿🇲 Zambia</option>
+                                            <option value="ZW">🇿🇼 Zimbabwe</option>
+                                        </optgroup>
+                                        <optgroup label="Middle East">
+                                            <option value="AE">🇦🇪 UAE</option>
+                                            <option value="SA">🇸🇦 Saudi Arabia</option>
+                                            <option value="QA">🇶🇦 Qatar</option>
+                                        </optgroup>
+                                        <optgroup label="Europe">
+                                            <option value="GB">🇬🇧 United Kingdom</option>
+                                            <option value="DE">🇩🇪 Germany</option>
+                                            <option value="FR">🇫🇷 France</option>
+                                            <option value="NL">🇳🇱 Netherlands</option>
+                                            <option value="SE">🇸🇪 Sweden</option>
+                                            <option value="NO">🇳🇴 Norway</option>
+                                        </optgroup>
+                                        <optgroup label="Americas">
+                                            <option value="US">🇺🇸 United States</option>
+                                            <option value="CA">🇨🇦 Canada</option>
+                                        </optgroup>
+                                        <optgroup label="Asia & Oceania">
+                                            <option value="IN">🇮🇳 India</option>
+                                            <option value="CN">🇨🇳 China</option>
+                                            <option value="AU">🇦🇺 Australia</option>
+                                        </optgroup>
+                                        <optgroup label="Other">
+                                            <option value="OTHER">🌍 Other</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                             </div>
@@ -620,12 +662,12 @@
             </div>
 
             <!-- ── Tabs ── -->
-            <div class="dash-tabs">
+            <div class="dash-tabs" id="dashTabs">
                 <button class="dash-tab active" data-dash="profile-overview">
                     <i class="fas fa-id-card"></i> Profile
                 </button>
-                <button class="dash-tab" data-dash="my-courses">
-                    <i class="fas fa-graduation-cap"></i> My Courses
+                <button class="dash-tab" data-dash="my-courses" id="tabMyCourses">
+                    <i class="fas fa-graduation-cap"></i> <span id="tabCoursesLabel">My Courses</span>
                 </button>
                 <button class="dash-tab" data-dash="payment-history">
                     <i class="fas fa-receipt"></i> Payments
@@ -881,10 +923,44 @@
                                     <i class="fas fa-globe"></i>
                                     <select id="dashNewCountry" required>
                                         <option value="">— Select Country —</option>
-                                        <option value="ET">🇪🇹 Ethiopia (ETB)</option>
-                                        <option value="SS">🇸🇸 South Sudan (SSP)</option>
-                                        <option value="KE">🇰🇪 Kenya (KES)</option>
-                                        <option value="UG">🇺🇬 Uganda (UGX)</option>
+                                        <optgroup label="East Africa">
+                                            <option value="ET">🇪🇹 Ethiopia</option>
+                                            <option value="UG">🇺🇬 Uganda</option>
+                                            <option value="SS">🇸🇸 South Sudan</option>
+                                            <option value="KE">🇰🇪 Kenya</option>
+                                            <option value="TZ">🇹🇿 Tanzania</option>
+                                            <option value="RW">🇷🇼 Rwanda</option>
+                                            <option value="BI">🇧🇮 Burundi</option>
+                                            <option value="SO">🇸🇴 Somalia</option>
+                                        </optgroup>
+                                        <optgroup label="West Africa">
+                                            <option value="NG">🇳🇬 Nigeria</option>
+                                            <option value="GH">🇬🇭 Ghana</option>
+                                            <option value="CM">🇨🇲 Cameroon</option>
+                                        </optgroup>
+                                        <optgroup label="Southern Africa">
+                                            <option value="ZA">🇿🇦 South Africa</option>
+                                            <option value="ZM">🇿🇲 Zambia</option>
+                                            <option value="ZW">🇿🇼 Zimbabwe</option>
+                                        </optgroup>
+                                        <optgroup label="Middle East">
+                                            <option value="AE">🇦🇪 UAE</option>
+                                            <option value="SA">🇸🇦 Saudi Arabia</option>
+                                        </optgroup>
+                                        <optgroup label="Europe">
+                                            <option value="GB">🇬🇧 United Kingdom</option>
+                                            <option value="DE">🇩🇪 Germany</option>
+                                            <option value="FR">🇫🇷 France</option>
+                                            <option value="NL">🇳🇱 Netherlands</option>
+                                        </optgroup>
+                                        <optgroup label="Americas">
+                                            <option value="US">🇺🇸 United States</option>
+                                            <option value="CA">🇨🇦 Canada</option>
+                                        </optgroup>
+                                        <optgroup label="Asia & Oceania">
+                                            <option value="IN">🇮🇳 India</option>
+                                            <option value="AU">🇦🇺 Australia</option>
+                                        </optgroup>
                                         <option value="OTHER">🌍 Other</option>
                                     </select>
                                 </div>
@@ -1310,11 +1386,11 @@
                 <div class="footer-section footer-support">
                     <h3>Support</h3>
                     <ul>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Help Center</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> Refund Policy</a></li>
-                        <li><a href="#"><i class="fas fa-chevron-right"></i> FAQ</a></li>
+                        <li><a href="help.html"><i class="fas fa-chevron-right"></i> Help Center</a></li>
+                        <li><a href="terms.html"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                        <li><a href="privacy.html"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                        <li><a href="refund.html"><i class="fas fa-chevron-right"></i> Refund Policy</a></li>
+                        <li><a href="faq.html"><i class="fas fa-chevron-right"></i> FAQ</a></li>
                     </ul>
                 </div>
 
