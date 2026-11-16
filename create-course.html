@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="api-config.js"></script>
+    <script src="site-analytics.js" defer></script>
+  <script>
+    // HTTPS enforcement — redirect http to https on production
+    if(window.location.protocol==='http:'&&window.location.hostname!=='localhost'&&window.location.hostname!=='127.0.0.1'&&!window.location.hostname.startsWith('192.168.')){window.location.replace('https:'+window.location.href.substring(5));}
+  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Course - SkillHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+        .topbar {
+            background: #1e3a8a; color: white; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .topbar a {
+            color: white; text-decoration: none; font-size: 1.1rem; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .topbar-logo {
+            width: 32px; height: 32px; object-fit: contain;
+            border-radius: 6px; background: white; padding: 2px;
+        }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .card {
+            background: white; border-radius: 1rem; padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 1.5rem;
+        }
+        .card h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: #1e3a8a; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: #374151; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0;
+            border-radius: 0.5rem; font-size: 0.875rem; font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: #2563eb;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .btn {
+            padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem;
+            font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: #fee2e2; color: #991b1b; }
+        .btn-danger:hover { background: #fecaca; }
+        .btn-outline { background: white; color: #2563eb; border: 2px solid #2563eb; }
+        .btn-outline:hover { background: #eff6ff; }
+
+        /* LESSONS */
+        .lesson-card {
+            border: 2px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem;
+            margin-bottom: 1rem; position: relative;
+        }
+        .lesson-card h4 { font-size: 0.875rem; font-weight: 700; margin-bottom: 1rem; color: #374151; }
+        .lesson-remove {
+            position: absolute; top: 1rem; right: 1rem;
+            background: #fee2e2; color: #991b1b; border: none; border-radius: 0.375rem;
+            padding: 0.25rem 0.5rem; cursor: pointer; font-size: 0.75rem;
+        }
+        .lesson-move-btns {
+            position: absolute; top: 1rem; right: 5.5rem;
+            display: flex; gap: 0.25rem;
+        }
+        .lesson-move-btn {
+            background: #f1f5f9; color: #374151; border: none; border-radius: 0.375rem;
+            padding: 0.25rem 0.5rem; cursor: pointer; font-size: 0.75rem; transition: background 0.2s;
+        }
+        .lesson-move-btn:hover { background: #e2e8f0; }
+        .add-lesson-btn {
+            width: 100%; padding: 0.875rem; border: 2px dashed #cbd5e1;
+            background: #f8fafc; border-radius: 0.5rem; cursor: pointer;
+            color: #64748b; font-size: 0.875rem; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .add-lesson-btn:hover { border-color: #2563eb; color: #2563eb; background: #eff6ff; }
+
+        /* STATUS */
+        .status-msg {
+            padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;
+            font-size: 0.875rem; font-weight: 500; display: none;
+        }
+        .status-msg.success { background: #d1fae5; color: #065f46; display: block; }
+        .status-msg.error { background: #fee2e2; color: #991b1b; display: block; }
+
+        /* NOT LOGGED IN */
+        .not-logged-in {
+            text-align: center; padding: 4rem 2rem;
+        }
+        .not-logged-in i { font-size: 3rem; color: #f59e0b; margin-bottom: 1rem; display: block; }
+
+        @media (max-width: 640px) {
+            .form-row { grid-template-columns: 1fr; }
+            .card { padding: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <a href="index.html">
+        <img src="logo.png" alt="SkillHub" class="topbar-logo"> SkillHub
+    </a>
+    <span id="topbarUser" style="font-size:0.875rem;opacity:0.8;"></span>
+    <a href="profile.html" style="color:white;font-size:0.85rem;display:flex;align-items:center;gap:0.4rem;opacity:0.85;text-decoration:none;">
+        <i class="fas fa-arrow-left"></i> Back to Profile
+    </a>
+</div>
+
+<div class="container">
+    <div id="notLoggedIn" class="card not-logged-in" style="display:none;">
+        <i class="fas fa-lock"></i>
+        <h2>Instructor Access Required</h2>
+        <p style="color:#64748b;margin:1rem 0;">You need to be logged in as an instructor to create courses.</p>
+        <a href="index.html#login-register" style="background:#2563eb;color:white;padding:0.75rem 2rem;border-radius:0.5rem;text-decoration:none;font-weight:600;">Login / Register</a>
+    </div>
+
+    <div id="createForm">
+        <div class="card">
+            <h2><i class="fas fa-book-open" style="color:#2563eb;"></i> Create New Course</h2>
+            <div id="statusMsg" class="status-msg"></div>
+
+            <!-- Basic Info -->
+            <div class="form-group">
+                <label>Course Title *</label>
+                <input type="text" id="courseTitle" placeholder="e.g. Complete Web Development Bootcamp" required>
+            </div>
+            <div class="form-group">
+                <label>Description * (min 20 characters)</label>
+                <textarea id="courseDesc" rows="4" placeholder="Describe what students will learn..." required></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Price (USD) *</label>
+                    <input type="number" id="coursePrice" placeholder="e.g. 10" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="courseCategory" required>
+                        <option value="">Select category</option>
+                        <option value="web_development">Web Development</option>
+                        <option value="mobile_development">Mobile Development</option>
+                        <option value="data_science">Data Science</option>
+                        <option value="design">Design</option>
+                        <option value="marketing">Marketing</option>
+                        <option value="business">Business</option>
+                        <option value="language">Language</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Level</label>
+                    <select id="courseLevel">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                        <option value="all_levels">All Levels</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Duration (hours)</label>
+                    <input type="number" id="courseDuration" placeholder="e.g. 10" min="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Course Thumbnail</label>
+                <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;">
+                    <input type="file" id="thumbnailFile" accept="image/*" style="display:none;" onchange="handleThumbnailFile(event)">
+                    <button type="button" onclick="document.getElementById('thumbnailFile').click()" style="padding:0.5rem 1rem;background:#f1f5f9;border:2px solid #e2e8f0;border-radius:0.5rem;cursor:pointer;font-size:0.8rem;font-weight:600;color:#374151;">
+                        <i class="fas fa-image"></i> Upload Image
+                    </button>
+                    <span style="font-size:0.75rem;color:#94a3b8;">or paste a URL below</span>
+                </div>
+                <div id="thumbPreviewWrap" style="display:none;margin-bottom:0.5rem;">
+                    <img id="thumbPreview" style="width:120px;height:70px;object-fit:cover;border-radius:0.5rem;border:2px solid #e2e8f0;">
+                    <button type="button" onclick="clearThumbnail()" style="margin-left:0.5rem;font-size:0.75rem;color:#ef4444;background:none;border:none;cursor:pointer;"><i class="fas fa-times"></i> Remove</button>
+                </div>
+                <input type="url" id="courseThumbnail" placeholder="https://... (optional URL)" oninput="previewThumbUrl(this.value)">
+            </div>
+        </div>
+
+        <!-- Lessons -->
+        <div class="card">
+            <h2><i class="fas fa-list" style="color:#2563eb;"></i> Course Lessons</h2>
+            <p style="font-size:0.875rem;color:#64748b;margin-bottom:1.5rem;">Add your lessons. Supported video sources: <strong>YouTube, Google Drive, Vimeo, Loom, Dailymotion, or direct MP4 links.</strong> For notes/PDFs use Google Drive or Dropbox links.</p>
+            <div id="lessonsList"></div>
+            <button class="add-lesson-btn" onclick="addLesson()">
+                <i class="fas fa-plus"></i> Add Lesson
+            </button>
+        </div>
+
+        <!-- Submit -->
+        <div class="card" style="text-align:center;">
+            <p id="submitHint" style="font-size:0.875rem;color:#64748b;margin-bottom:1rem;">Your course will be reviewed by admin before going live.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <!-- Create mode: single submit button -->
+                <button class="btn btn-success" id="submitBtn" onclick="submitCourse(false)" style="font-size:1rem;padding:1rem 3rem;display:block;">
+                    <i class="fas fa-paper-plane"></i> Submit Course for Review
+                </button>
+                <!-- Edit mode: two buttons (shown/hidden by JS) -->
+                <button class="btn btn-success" id="minorSaveBtn" onclick="submitCourse(true)" style="font-size:0.95rem;padding:0.875rem 1.5rem;display:none;">
+                    <i class="fas fa-check"></i> Minor Save <small style="font-size:0.72rem;opacity:0.85;">(stays published)</small>
+                </button>
+                <button class="btn btn-primary" id="majorSaveBtn" onclick="submitCourse(false)" style="font-size:0.95rem;padding:0.875rem 1.5rem;display:none;">
+                    <i class="fas fa-paper-plane"></i> Major Update <small style="font-size:0.72rem;opacity:0.85;">(back to review)</small>
+                </button>
+                <a href="index.html" class="btn btn-outline" style="font-size:1rem;padding:1rem 2rem;">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var API_BASE = window.SKILLHUB_API_BASE || "https://skillhub-backend-i3dr.onrender.com/api";
+var token = sessionStorage.getItem("skillhub_token") || localStorage.getItem("skillhub_token");
+var lessonCount = 0;
+
+// Detect if we're editing an existing course
+var urlParams = new URLSearchParams(window.location.search);
+var editingCourseId = urlParams.get("courseId") || null;
+var isEditMode = !!editingCourseId;
+
+// Check auth then load
+async function init() {
+    if (!token) {
+        document.getElementById("createForm").style.display = "none";
+        document.getElementById("notLoggedIn").style.display = "block";
+        return;
+    }
+    try {
+        var r = await fetch(API_BASE + "/auth/me", { headers: { "Authorization": "Bearer " + token } });
+        var d = await r.json();
+        if (!r.ok || !d.success || !d.user) throw new Error("Not logged in");
+        if (d.user.role !== "instructor" && d.user.role !== "admin") {
+            document.getElementById("createForm").style.display = "none";
+            document.getElementById("notLoggedIn").style.display = "block";
+            document.getElementById("notLoggedIn").querySelector("h2").textContent = "Instructor Account Required";
+            document.getElementById("notLoggedIn").querySelector("p").textContent = "Only instructors can create or edit courses.";
+            return;
+        }
+        document.getElementById("topbarUser").textContent = d.user.name + " (Instructor)";
+
+        if (isEditMode) {
+            // Edit mode — load existing course
+            document.querySelector(".card h2").innerHTML = '<i class="fas fa-edit" style="color:#2563eb;"></i> Edit Course';
+            document.getElementById("submitBtn").innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            document.getElementById("submitHint").innerHTML =
+                '<strong>Minor edit</strong> (typo, link fix) → course stays published. ' +
+                '<strong>Major edit</strong> (new lessons, price change) → goes back to admin review.';
+            document.title = "Edit Course - SkillHub";
+            // Switch buttons to edit mode
+            document.getElementById("submitBtn").style.display    = "none";
+            document.getElementById("minorSaveBtn").style.display = "inline-flex";
+            document.getElementById("majorSaveBtn").style.display = "inline-flex";
+            await loadExistingCourse(editingCourseId);
+        }
+    } catch(e) {
+        document.getElementById("createForm").style.display = "none";
+        document.getElementById("notLoggedIn").style.display = "block";
+    }
+}
+
+// Load existing course data and pre-fill the form
+async function loadExistingCourse(courseId) {
+    showStatus("Loading course data...", "success");
+    try {
+        var res = await fetch(API_BASE + "/courses/" + courseId, {
+            headers: { "Authorization": "Bearer " + token }
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || "Course not found");
+
+        var c = data.course;
+
+        // Pre-fill basic info
+        document.getElementById("courseTitle").value = c.title || "";
+        document.getElementById("courseDesc").value = c.description || "";
+        document.getElementById("coursePrice").value = c.price || "";
+        document.getElementById("courseCategory").value = c.category || "";
+        document.getElementById("courseLevel").value = c.level || "beginner";
+        document.getElementById("courseDuration").value = c.duration || "";
+
+        // Pre-fill thumbnail
+        if (c.thumbnail) {
+            document.getElementById("courseThumbnail").value = c.thumbnail;
+            document.getElementById("thumbPreview").src = c.thumbnail;
+            document.getElementById("thumbPreviewWrap").style.display = "flex";
+            document.getElementById("thumbPreviewWrap").style.alignItems = "center";
+        }
+
+        // Pre-fill lessons
+        document.getElementById("lessonsList").innerHTML = ""; // clear default empty lesson
+        lessonCount = 0;
+        var lessons = c.lessons || [];
+        if (lessons.length === 0) {
+            addLesson(); // at least one empty lesson
+        } else {
+            lessons.forEach(function(lesson) {
+                addLessonWithData(lesson);
+            });
+        }
+
+        showStatus("", ""); // clear loading message
+        document.getElementById("statusMsg").style.display = "none";
+
+    } catch(e) {
+        showStatus("Could not load course: " + e.message, "error");
+    }
+}
+
+// Add a lesson card pre-filled with existing data
+function addLessonWithData(lesson) {
+    lessonCount++;
+    var id = lessonCount;
+    var div = document.createElement("div");
+    div.className = "lesson-card";
+    div.id = "lesson-" + id;
+    div.innerHTML = buildLessonHTML(id, lesson);
+    document.getElementById("lessonsList").appendChild(div);
+}
+
+function escAttr(str) {
+    return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+// Validate video URL live as instructor types — show green tick or warning
+function validateVideoUrl(input) {
+    var url = input.value.trim();
+    // Find the msg div — it's the next sibling div after the form-group
+    var formGroup = input.closest('.form-group');
+    var msgDiv = formGroup ? formGroup.nextElementSibling : null;
+    if (!msgDiv || !msgDiv.id || !msgDiv.id.startsWith('vurl-msg')) return;
+
+    if (!url) { msgDiv.style.display = 'none'; return; }
+
+    var supported = checkVideoSupport(url);
+    msgDiv.style.display = 'block';
+    if (supported.ok) {
+        msgDiv.style.color = '#059669';
+        msgDiv.innerHTML = '<i class="fas fa-check-circle"></i> ' + supported.label + ' — will play directly inside SkillHub';
+    } else {
+        msgDiv.style.color = '#f59e0b';
+        msgDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> This URL may not embed inside SkillHub. ' +
+            'Students will see an "Open in new tab" link instead. ' +
+            'Use YouTube, Google Drive, Vimeo, Loom, or Dailymotion for best experience.';
+    }
+}
+
+function checkVideoSupport(url) {
+    if (!url) return { ok: false };
+    if (url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/))
+        return { ok: true, label: 'YouTube' };
+    if (url.match(/drive\.google\.com\/file\/d\//))
+        return { ok: true, label: 'Google Drive' };
+    if (url.match(/vimeo\.com\/\d+/))
+        return { ok: true, label: 'Vimeo' };
+    if (url.match(/loom\.com\/share\//))
+        return { ok: true, label: 'Loom' };
+    if (url.match(/dailymotion\.com\/video\//))
+        return { ok: true, label: 'Dailymotion' };
+    if (url.match(/\.(mp4|webm|ogv)(\?.*)?$/i))
+        return { ok: true, label: 'Direct video file (MP4/WebM)' };
+    return { ok: false };
+}
+
+function addLesson() {
+    lessonCount++;
+    var id = lessonCount;
+    var div = document.createElement("div");
+    div.className = "lesson-card";
+    div.id = "lesson-" + id;
+    div.innerHTML = buildLessonHTML(id, {});
+    document.getElementById("lessonsList").appendChild(div);
+}
+
+function buildLessonHTML(id, data) {
+    return "<div class='lesson-move-btns'>" +
+            "<button type='button' class='lesson-move-btn' onclick='moveLesson(\"lesson-" + id + "\", -1)' title='Move up'><i class='fas fa-arrow-up'></i></button>" +
+            "<button type='button' class='lesson-move-btn' onclick='moveLesson(\"lesson-" + id + "\", 1)' title='Move down'><i class='fas fa-arrow-down'></i></button>" +
+        "</div>" +
+        "<button type='button' class='lesson-remove' onclick='removeLesson(" + id + ")'><i class='fas fa-times'></i> Remove</button>" +
+        "<h4>Lesson</h4>" +
+        "<div class='form-group'><label>Lesson Title *</label><input type='text' id='lt-" + id + "' value='" + escAttr(data.title || "") + "' placeholder='e.g. Introduction to HTML'></div>" +
+        "<div class='form-group'><label>Description</label><input type='text' id='ld-" + id + "' value='" + escAttr(data.description || "") + "' placeholder='What will students learn in this lesson?'></div>" +
+        "<div class='form-group'><label>Video URL (YouTube / Google Drive / Vimeo / Loom / Dailymotion / MP4)</label>" +
+        "<input type='url' id='lv-" + id + "' value='" + escAttr(data.videoUrl || "") + "' placeholder='https://youtube.com/watch?v=...' oninput='validateVideoUrl(this)'></div>" +
+        "<div id='vurl-msg-" + id + "' style='font-size:0.78rem;margin:-0.75rem 0 0.75rem;display:none;'></div>" +
+        "<div class='form-group'><label>PDF / Notes URL (Google Drive / Dropbox)</label><input type='url' id='lp-" + id + "' value='" + escAttr(data.pdfUrl || "") + "' placeholder='https://drive.google.com/...'></div>" +
+        "<div class='form-group'><label>Duration (minutes)</label><input type='number' id='ldur-" + id + "' value='" + (data.duration || "") + "' placeholder='e.g. 15' min='0'></div>";
+}
+
+function moveLesson(cardId, direction) {
+    var el = document.getElementById(cardId);
+    if (!el) return;
+    var list = document.getElementById("lessonsList");
+    var cards = Array.from(list.querySelectorAll(".lesson-card"));
+    var idx = cards.indexOf(el);
+    var targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= cards.length) return;
+
+    // Swap DOM positions
+    if (direction === -1) {
+        list.insertBefore(el, cards[targetIdx]);
+    } else {
+        list.insertBefore(cards[targetIdx], el);
+    }
+    updateLessonNumbers();
+}
+
+function updateLessonNumbers() {
+    // Lesson cards don't have numbered titles anymore — numbers are positional
+    // This is intentionally left as a no-op since we removed "Lesson N" static titles
+}
+
+function removeLesson(id) {
+    var el = document.getElementById("lesson-" + id);
+    if (el) el.remove();
+    // Confirm at least one lesson remains
+    if (document.querySelectorAll(".lesson-card").length === 0) {
+        addLesson();
+        showStatus("You need at least one lesson.", "error");
+    }
+}
+
+function getLessons() {
+    var lessons = [];
+    document.querySelectorAll(".lesson-card").forEach(function(card) {
+        var id = card.id.replace("lesson-", "");
+        var title = document.getElementById("lt-" + id);
+        if (!title || !title.value.trim()) return;
+        lessons.push({
+            title: title.value.trim(),
+            description: (document.getElementById("ld-" + id) || {}).value || "",
+            videoUrl: (document.getElementById("lv-" + id) || {}).value || "",
+            pdfUrl: (document.getElementById("lp-" + id) || {}).value || "",
+            duration: parseInt((document.getElementById("ldur-" + id) || {}).value) || 0,
+            order: lessons.length + 1
+        });
+    });
+    return lessons;
+}
+
+var _courseSubmitting = false;
+var _thumbnailBase64 = null;
+
+function handleThumbnailFile(event) {
+    var file = event.target.files[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    if (file.size > 3 * 1024 * 1024) { alert('Thumbnail must be under 3MB.'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var w = Math.min(img.width, 800), h = Math.round(img.height * w / img.width);
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            _thumbnailBase64 = canvas.toDataURL('image/jpeg', 0.8);
+            document.getElementById('courseThumbnail').value = '';
+            document.getElementById('thumbPreview').src = _thumbnailBase64;
+            document.getElementById('thumbPreviewWrap').style.display = 'flex';
+            document.getElementById('thumbPreviewWrap').style.alignItems = 'center';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function previewThumbUrl(url) {
+    _thumbnailBase64 = null;
+    if (url && url.startsWith('http')) {
+        document.getElementById('thumbPreview').src = url;
+        document.getElementById('thumbPreviewWrap').style.display = 'flex';
+        document.getElementById('thumbPreviewWrap').style.alignItems = 'center';
+    } else {
+        document.getElementById('thumbPreviewWrap').style.display = 'none';
+    }
+}
+
+function clearThumbnail() {
+    _thumbnailBase64 = null;
+    document.getElementById('courseThumbnail').value = '';
+    document.getElementById('thumbPreviewWrap').style.display = 'none';
+    document.getElementById('thumbnailFile').value = '';
+}
+
+async function submitCourse(keepStatus) {
+    if (_courseSubmitting) return;
+    // keepStatus=true means minor edit — don't reset to pending
+    keepStatus = !!keepStatus;
+    var submitBtn = document.getElementById("submitBtn");
+    var originalText = submitBtn ? submitBtn.innerHTML : "";
+    var statusMsg = document.getElementById("statusMsg");
+    statusMsg.className = "status-msg";
+    statusMsg.style.display = "none";
+
+    var title = document.getElementById("courseTitle").value.trim();
+    var desc = document.getElementById("courseDesc").value.trim();
+    var price = document.getElementById("coursePrice").value;
+    var category = document.getElementById("courseCategory").value;
+    var level = document.getElementById("courseLevel").value;
+    var duration = document.getElementById("courseDuration").value;
+    var thumbnail = _thumbnailBase64 || document.getElementById("courseThumbnail").value.trim();
+
+    if (!title || title.length < 5) { showStatus("Course title must be at least 5 characters", "error"); return; }
+    if (!desc || desc.length < 20) { showStatus("Description must be at least 20 characters", "error"); return; }
+    if (price === "" || isNaN(price) || parseFloat(price) < 0) { showStatus("Please enter a valid price (0 for free courses)", "error"); return; }
+    if (!category) { showStatus("Please select a category", "error"); return; }
+
+    var lessons = getLessons();
+    if (lessons.length === 0) { showStatus("Please add at least one lesson with a title.", "error"); return; }
+
+    _courseSubmitting = true;
+    // Disable whichever button was clicked
+    var activeBtn = isEditMode
+        ? (keepStatus ? document.getElementById("minorSaveBtn") : document.getElementById("majorSaveBtn"))
+        : document.getElementById("submitBtn");
+    var originalText = activeBtn ? activeBtn.innerHTML : "";
+    if (activeBtn) { activeBtn.disabled = true; activeBtn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Saving..."; }
+
+    var body = {
+        title: title,
+        description: desc,
+        price: parseFloat(price),
+        category: category,
+        level: level,
+        duration: parseFloat(duration) || 0,
+        thumbnail: thumbnail || null,
+        lessons: lessons,
+        tags: [],
+        keepStatus: isEditMode ? keepStatus : undefined
+    };
+
+    showStatus(isEditMode ? "Saving changes..." : "Submitting course...", "success");
+
+    try {
+        var method = isEditMode ? "PUT" : "POST";
+        var endpoint = isEditMode
+            ? API_BASE + "/courses/" + editingCourseId
+            : API_BASE + "/courses";
+
+        var res = await fetch(endpoint, {
+            method: method,
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+            body: JSON.stringify(body)
+        });
+        var data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || (isEditMode ? "Failed to update course" : "Failed to create course"));
+
+        if (isEditMode) {
+            var msg = keepStatus
+                ? "Changes saved! Your course remains published."
+                : "Course updated and sent for review. It will be re-published once approved.";
+            showStatus(msg, "success");
+            setTimeout(function() { window.location.href = "profile.html"; }, 2000);
+        } else {
+            showStatus("Course submitted successfully! It will be reviewed by admin and published soon.", "success");
+            setTimeout(function() { window.location.href = "profile.html"; }, 3000);
+        }
+    } catch(e) {
+        showStatus(e.message, "error");
+        _courseSubmitting = false;
+        if (activeBtn) { activeBtn.disabled = false; activeBtn.innerHTML = originalText; }
+    }
+}
+
+function showStatus(msg, type) {
+    var el = document.getElementById("statusMsg");
+    el.textContent = msg;
+    el.className = "status-msg " + (type || "");
+    if (msg) el.scrollIntoView({ behavior: "smooth" });
+}
+
+// Init — only add default lesson if creating new (not editing)
+init().then(function() {
+    if (!isEditMode) addLesson();
+});
+</script>
+</body>
+</html>

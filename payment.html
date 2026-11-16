@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="api-config.js"></script>
+  <script src="site-analytics.js" defer></script>
+  <script>
+    // HTTPS enforcement — redirect http to https on production
+    if(window.location.protocol==='http:'&&window.location.hostname!=='localhost'&&window.location.hostname!=='127.0.0.1'&&!window.location.hostname.startsWith('192.168.')){window.location.replace('https:'+window.location.href.substring(5));}
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment – SkillHub</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter','Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b}
+    a{text-decoration:none;color:inherit}
+
+    .topbar{background:#1e3a8a;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+    .topbar a{color:white;font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:0.5rem}
+    .topbar-logo{width:32px;height:32px;object-fit:contain;border-radius:6px;background:white;padding:2px}
+    .topbar-right{font-size:0.875rem;opacity:0.8;display:flex;align-items:center;gap:0.5rem}
+
+    .container{max-width:680px;margin:2rem auto;padding:0 1rem}
+
+    /* CARD */
+    .card{background:white;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1.5rem}
+    .card-title{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+    .card-title i{color:#2563eb}
+
+    /* ORDER SUMMARY */
+    .order-row{display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0}
+    .order-row + .order-row{border-top:1px solid #f1f5f9}
+    .order-price{font-size:1.5rem;font-weight:800;color:#2563eb}
+    .tag{display:inline-flex;align-items:center;gap:0.3rem;padding:0.2rem 0.65rem;border-radius:50px;font-size:0.72rem;font-weight:700}
+    .tag-course{background:#dbeafe;color:#1e40af}
+    .tag-freelance{background:#ede9fe;color:#5b21b6}
+
+    /* PAYMENT METHODS */
+    .country-header{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;font-weight:700;color:#374151;margin-bottom:0.6rem;margin-top:1rem;padding-top:0.75rem;border-top:1px solid #f1f5f9}
+    .country-header:first-of-type{margin-top:0;padding-top:0;border-top:none}
+    .method-row{display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;border:2px solid #e2e8f0;border-radius:0.75rem;margin-bottom:0.6rem;cursor:pointer;transition:all 0.2s}
+    .method-row:hover{border-color:#2563eb;background:#eff6ff}
+    .method-row.selected{border-color:#2563eb;background:#eff6ff}
+    .method-icon{width:42px;height:42px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+    .icon-telebirr{background:#fef3c7;color:#d97706}
+    .icon-cbe{background:#dbeafe;color:#1d4ed8}
+    .icon-mtn{background:#fef9c3;color:#ca8a04}
+    .icon-mpesa{background:#d1fae5;color:#059669}
+    .icon-airtel{background:#fee2e2;color:#dc2626}
+    .icon-wu{background:#f3e8ff;color:#7c3aed}
+    .method-info{flex:1}
+    .method-name{font-weight:700;font-size:0.875rem}
+    .method-num{font-size:0.8rem;color:#64748b;margin-top:2px}
+    .copy-btn{background:#f1f5f9;border:none;padding:0.4rem 0.7rem;border-radius:0.375rem;cursor:pointer;font-size:0.72rem;color:#374151;font-weight:600;transition:background 0.2s;white-space:nowrap}
+    .copy-btn:hover{background:#e2e8f0}
+    .copy-btn.copied{background:#d1fae5;color:#065f46}
+    .method-radio{width:18px;height:18px;border-radius:50%;border:2px solid #cbd5e1;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+    .method-row.selected .method-radio{border-color:#2563eb;background:#2563eb}
+    .method-row.selected .method-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:white}
+
+    /* RECEIPT UPLOAD */
+    .upload-zone{border:2px dashed #cbd5e1;border-radius:0.75rem;padding:1.5rem;text-align:center;cursor:pointer;transition:all 0.2s;background:#fafafa}
+    .upload-zone:hover,.upload-zone.drag{border-color:#2563eb;background:#eff6ff}
+    .upload-zone i{font-size:2rem;color:#94a3b8;margin-bottom:0.5rem}
+    .upload-zone p{font-size:0.85rem;color:#64748b}
+    .upload-zone strong{color:#2563eb}
+    .preview-img{max-width:100%;max-height:200px;border-radius:0.5rem;margin-top:0.75rem;display:block;margin-left:auto;margin-right:auto}
+    .remove-img{display:inline-flex;align-items:center;gap:0.35rem;margin-top:0.5rem;font-size:0.75rem;color:#ef4444;cursor:pointer;background:none;border:none;font-family:inherit}
+
+    /* FORM */
+    .form-group{margin-bottom:1rem}
+    .form-group label{display:block;font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:0.4rem}
+    .form-group label .req{color:#ef4444;margin-left:2px}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:0.625rem 0.875rem;border:2px solid #e2e8f0;border-radius:0.5rem;font-size:0.875rem;font-family:inherit;transition:border-color 0.2s;background:white;color:#1e293b}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:#2563eb}
+
+    /* SUBMIT BTN */
+    .submit-btn{width:100%;padding:1rem;background:#2563eb;color:white;border:none;border-radius:0.75rem;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.6rem}
+    .submit-btn:hover{background:#1d4ed8;transform:translateY(-1px)}
+    .submit-btn:disabled{background:#94a3b8;cursor:not-allowed;transform:none}
+
+    /* SUPPORT NOTE */
+    .support-note{background:#f8fafc;border:1px solid #e2e8f0;border-radius:0.75rem;padding:1rem 1.25rem;font-size:0.8rem;color:#64748b;display:flex;gap:0.6rem;align-items:flex-start}
+    .support-note i{color:#2563eb;flex-shrink:0;margin-top:2px}
+    .support-note a{color:#2563eb;font-weight:600}
+
+    /* STATUS CARD (shown after submit) */
+    .status-card{display:none;text-align:center;padding:2rem 1.5rem;background:white;border-radius:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);margin-bottom:1.5rem}
+    .status-icon{font-size:3rem;margin-bottom:1rem}
+    .status-card h3{font-size:1.2rem;font-weight:700;margin-bottom:0.5rem}
+    .status-card p{font-size:0.875rem;color:#64748b;margin-bottom:1.25rem;line-height:1.6}
+    .status-pill{display:inline-flex;align-items:center;gap:0.4rem;padding:0.35rem 1rem;border-radius:50px;font-size:0.85rem;font-weight:700}
+    .pill-pending{background:#fef3c7;color:#92400e}
+    .pill-approved{background:#d1fae5;color:#065f46}
+    .pill-rejected{background:#fee2e2;color:#991b1b}
+
+    /* ALERT */
+    .alert{display:flex;gap:0.6rem;padding:0.75rem 1rem;border-radius:0.625rem;font-size:0.82rem;margin-bottom:1rem;align-items:flex-start}
+    .alert i{flex-shrink:0;margin-top:2px}
+    .alert-yellow{background:#fefce8;border:1px solid #fde68a;color:#92400e}
+    .alert-red{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+
+    /* STEPS */
+    .steps{counter-reset:s;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem}
+    .step{display:flex;gap:0.75rem;align-items:flex-start}
+    .step-n{width:26px;height:26px;background:#2563eb;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0}
+    .step-t h4{font-size:0.85rem;font-weight:700;margin-bottom:0.15rem}
+    .step-t p{font-size:0.78rem;color:#64748b;line-height:1.5}
+
+    @media(max-width:600px){.topbar{padding:1rem}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html">
+    <img src="logo.png" alt="SkillHub" class="topbar-logo" onerror="this.style.display='none'"> SkillHub
+  </a>
+  <span class="topbar-right"><i class="fas fa-flask"></i> Pre-launch Simulation</span>
+  <a href="javascript:history.back()" style="color:white;font-size:0.85rem;display:flex;align-items:center;gap:0.4rem;opacity:0.85;text-decoration:none;">
+    <i class="fas fa-arrow-left"></i> Back
+  </a>
+</div>
+
+<div class="container">
+
+  <!-- STATUS CARD (shown after simulated payment) -->
+  <div class="status-card" id="statusCard">
+    <p id="pendingTxNote" style="display:none;margin-top:0.6rem;font-size:0.78rem;color:#64748b;background:#f1f5f9;padding:0.4rem 0.75rem;border-radius:0.5rem;"></p>
+  </div>
+
+  <!-- ERROR CARD (shown when submission fails) -->
+  <div class="status-card" id="errorCard" style="display:none;">
+    <div class="status-icon">❌</div>
+    <h3>Submission Failed</h3>
+    <p id="errorCardMsg">We could not submit your receipt. Please check your connection and try again.</p>
+    <button onclick="retryPayment()" style="margin-top:1rem;padding:0.75rem 2rem;background:#2563eb;color:white;border:none;border-radius:0.5rem;font-weight:700;cursor:pointer;font-size:0.9rem;">
+      <i class="fas fa-redo"></i> Try Again
+    </button>
+    <p style="margin-top:1rem;font-size:0.8rem;color:#94a3b8">
+      Still having trouble? Contact us on
+      <a href="https://wa.me/211910628427?text=Hi+SkillHub+I+have+a+payment+issue" target="_blank" style="color:#2563eb">WhatsApp</a>
+    </p>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div class="card" id="orderCard">
+    <div class="card-title"><i class="fas fa-shopping-cart"></i> Order Summary</div>
+    <div class="order-row">
+      <span style="font-weight:600" id="itemName">Loading…</span>
+      <span class="order-price" id="itemPrice">—</span>
+    </div>
+    <div class="order-row">
+      <span style="font-size:0.8rem;color:#64748b">Type</span>
+      <span id="itemTypeBadge">—</span>
+    </div>
+    <p style="font-size:0.72rem;color:#94a3b8;margin-top:0.5rem"><i class="fas fa-info-circle"></i> Amount shown includes all applicable platform fees.</p>
+  </div>
+
+  <!-- PRE-LAUNCH SIMULATED PAYMENT -->
+  <div class="card" id="simulationCard">
+    <div class="card-title"><i class="fas fa-flask"></i> Pre-launch simulated payment</div>
+    <div class="alert alert-yellow" style="margin-bottom:1rem;">
+      <i class="fas fa-circle-info"></i>
+      <span>This test checkout does not charge you. No bank or mobile-money transfer will happen. A successful simulation grants course access for testing only.</span>
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="submitPayment()" disabled>
+      <i class="fas fa-flask"></i> Simulate Course Payment
+    </button>
+    <p id="formErrorMsg" role="status" style="display:none;margin-top:.75rem;color:#991b1b;font-size:.85rem;"></p>
+  </div>
+
+  <div class="support-note">
+    <i class="fas fa-info-circle"></i>
+    <span>For real-payment support, contact us on <a href="https://wa.me/211910628427?text=Hi+SkillHub+I+need+payment+help" target="_blank" rel="noopener noreferrer">WhatsApp</a>.</span>
+  </div>
+
+  <div style="height:2rem"></div>
+</div>
+
+<script>
+const API_BASE = window.SKILLHUB_API_BASE || 'https://skillhub-backend-i3dr.onrender.com/api';
+const token = sessionStorage.getItem('skillhub_token') || localStorage.getItem('skillhub_token');
+let user = {};
+try {
+  user = JSON.parse(sessionStorage.getItem('skillhub_user') || localStorage.getItem('skillhub_user') || '{}');
+} catch(e) {}
+
+// URL params
+const P = new URLSearchParams(window.location.search);
+let itemName    = P.get('name') || 'Item';
+const parsedItemPrice = parseFloat(P.get('price') || '0');
+const itemPriceFromUrl = Number.isFinite(parsedItemPrice) ? parsedItemPrice : 0;
+const itemType    = P.get('type') === 'freelance' ? 'freelance' : 'course';
+const itemId      = P.get('id')   || '';
+
+// Verified price — set by verifyPrice(), used in submission
+let itemPriceUSD = itemPriceFromUrl;
+let priceVerified = false;
+
+const COURSE_FEE = 0.20, FREELANCE_FEE = 0.12;
+
+function updateOrderSummary(price) {
+  document.getElementById('itemPrice').textContent = '$' + parseFloat(price).toFixed(2);
+}
+
+// Populate with URL price immediately as display (will be replaced by backend price)
+document.getElementById('itemName').textContent = itemName;
+const badge = document.getElementById('itemTypeBadge');
+badge.className = 'tag ' + (itemType === 'freelance' ? 'tag-freelance' : 'tag-course');
+badge.textContent = itemType === 'freelance' ? 'Freelancer Hire' : 'Course Purchase';
+updateOrderSummary(itemPriceFromUrl);
+
+// Show a verifying indicator
+document.getElementById('itemPrice').innerHTML = '$' + itemPriceFromUrl.toFixed(2) +
+  ' <span id="priceVerifyBadge" style="font-size:0.7rem;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:50px;margin-left:6px;vertical-align:middle;">' +
+  '<i class="fas fa-spinner fa-spin"></i> Verifying...</span>';
+
+// Fetch real price from backend and verify
+async function verifyPrice() {
+  document.getElementById('submitBtn').disabled = true;
+  if (itemType === 'freelance') {
+    document.getElementById('priceVerifyBadge').textContent = 'Use in-app chat to discuss hiring';
+    document.getElementById('priceVerifyBadge').style.background = '#fee2e2';
+    document.getElementById('priceVerifyBadge').style.color = '#991b1b';
+    document.getElementById('submitBtn').title = 'Freelancer hiring is arranged through SkillHub chat.';
+    return;
+  }
+  if (!itemId) {
+    // No item ID — can't verify, block submission
+    document.getElementById('priceVerifyBadge').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Unverified';
+    document.getElementById('priceVerifyBadge').style.background = '#fee2e2';
+    document.getElementById('priceVerifyBadge').style.color = '#991b1b';
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').title = 'Cannot verify price. Please return to the course page.';
+    return;
+  }
+
+  try {
+    const endpoint = itemType === 'freelance'
+      ? API_BASE + '/freelancers/' + encodeURIComponent(itemId)
+      : API_BASE + '/courses/' + encodeURIComponent(itemId);
+
+    const res = await fetch(endpoint);
+    if (!res.ok) throw new Error('Could not fetch item');
+    const data = await res.json();
+
+    let backendPrice = null;
+    if (itemType === 'freelance' && data.freelancer) {
+      backendPrice = parseFloat(data.freelancer.hourlyRate || 0);
+    } else if (data.course) {
+      backendPrice = parseFloat(data.course.price || 0);
+    }
+
+    if (backendPrice !== null && backendPrice > 0) {
+      itemPriceUSD = backendPrice;
+      priceVerified = true;
+      if (itemType === 'course' && data.course.title) {
+        itemName = data.course.title;
+        document.getElementById('itemName').textContent = itemName;
+      }
+      updateOrderSummary(backendPrice);
+      document.getElementById('submitBtn').disabled = false;
+
+      const badge = document.getElementById('priceVerifyBadge');
+      if (badge) {
+        badge.innerHTML = '<i class="fas fa-check-circle"></i> Verified';
+        badge.style.background = '#d1fae5';
+        badge.style.color = '#065f46';
+      }
+    } else {
+      throw new Error('Invalid price from server');
+    }
+  } catch(err) {
+    // Never submit a payment using a client-controlled URL price.
+    priceVerified = false;
+    itemPriceUSD = itemPriceFromUrl;
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').title = 'Price verification failed. Return to the item page and try again.';
+    const badge = document.getElementById('priceVerifyBadge');
+    if (badge) {
+      badge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Unverified';
+      badge.style.background = '#fef3c7';
+      badge.style.color = '#92400e';
+    }
+  }
+}
+
+verifyPrice();
+
+// Pre-fill name/phone from stored user
+if (user.name) document.getElementById('payerName').value = user.name;
+if (user.phone) document.getElementById('payerPhone').value = user.phone;
+
+// Get user's country from stored session
+function getUserCountry() {
+  try {
+    var u = JSON.parse(localStorage.getItem('skillhub_user') || '{}');
+    return u.country || null;
+  } catch(e) { return null; }
+}
+
+// Render payment methods from config — amounts remain denominated in USD.
+function renderPaymentMethods() {
+  var container = document.getElementById('methodsContainer');
+  if (!container || !window.SKILLHUB_PAYMENT_METHODS) return;
+
+  var userCountry = getUserCountry();
+  var userGroup = userCountry
+    ? SKILLHUB_PAYMENT_METHODS.find(function(g) { return g.country === userCountry; })
+    : null;
+  var otherGroups = SKILLHUB_PAYMENT_METHODS.filter(function(g) {
+    return !userCountry || g.country !== userCountry;
+  });
+
+  var html = '';
+
+  // ── PRIMARY: User's country method (shown prominently) ──────────────
+  if (userGroup) {
+    html += '<div style="margin-bottom:0.75rem;">';
+    html += '<div style="font-size:0.78rem;font-weight:700;color:#2563eb;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem;">' +
+      '<span>' + userGroup.flag + '</span> ' + userGroup.label +
+      ' <span style="background:#dbeafe;color:#1e40af;font-size:0.68rem;padding:1px 6px;border-radius:50px;">Your country</span>' +
+    '</div>';
+    userGroup.methods.forEach(function(m) {
+      html += buildMethodRow(m, userGroup.country, true);
+    });
+    html += '</div>';
+  }
+
+  // ── SECONDARY: All other methods collapsed under a toggle ────────────
+  html += '<div id="otherMethodsToggle" onclick="toggleOtherMethods()" ' +
+    'style="cursor:pointer;font-size:0.8rem;color:#2563eb;font-weight:600;padding:0.5rem 0;display:flex;align-items:center;gap:0.4rem;user-select:none;border-top:1px solid #e2e8f0;margin-top:0.25rem;">' +
+    '<i class="fas fa-chevron-down" id="otherMethodsIcon"></i> ' +
+    (userGroup ? 'Pay from another country' : 'All payment methods') +
+  '</div>';
+
+  html += '<div id="otherMethodsList" style="display:none;">';
+  otherGroups.forEach(function(group) {
+    html += '<div style="font-size:0.78rem;font-weight:700;color:#374151;margin:0.75rem 0 0.5rem;display:flex;align-items:center;gap:0.4rem;">' +
+      '<span>' + group.flag + '</span> ' + group.label +
+    '</div>';
+    group.methods.forEach(function(m) {
+      html += buildMethodRow(m, group.country, false);
+    });
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+
+  // If user has no country registered, expand all methods by default
+  if (!userGroup) {
+    document.getElementById('otherMethodsList').style.display = 'block';
+    var icon = document.getElementById('otherMethodsIcon');
+    if (icon) icon.style.transform = 'rotate(180deg)';
+  }
+}
+
+function buildMethodRow(m, countryCode, isPrimary) {
+  var num = m.number.replace(/'/g, "\\'");
+  var name = m.name.replace(/'/g, "\\'");
+  var noteHtml = m.note
+    ? '<div style="font-size:0.75rem;color:#92400e;background:#fef3c7;border-radius:0.375rem;padding:0.35rem 0.6rem;margin-top:0.5rem;line-height:1.5;">' + m.note + '</div>'
+    : '';
+  var borderColor = isPrimary ? '#2563eb' : '#e2e8f0';
+  var bg = isPrimary ? 'background:#eff6ff;' : '';
+  return '<div class="method-row" ' +
+    'style="display:flex;align-items:center;gap:0.75rem;padding:0.875rem 1rem;border:2px solid ' + borderColor + ';border-radius:0.75rem;margin-bottom:0.6rem;cursor:pointer;' + bg + 'transition:all 0.2s;" ' +
+    'onclick="selectMethod(this,\'' + name + '\',\'' + num + '\')">' +
+    '<div class="method-radio"></div>' +
+    '<div class="method-icon ' + m.iconClass + '"><i class="fas ' + m.icon + '"></i></div>' +
+    '<div class="method-info">' +
+      '<div class="method-name">' + m.name + '</div>' +
+      '<div class="method-num">' + m.display + '</div>' +
+      noteHtml +
+    '</div>' +
+    '<button class="copy-btn" onclick="copyNum(event,\'' + num + '\',this)">Copy</button>' +
+  '</div>';
+}
+
+function toggleOtherMethods() {
+  var list = document.getElementById('otherMethodsList');
+  var icon = document.getElementById('otherMethodsIcon');
+  var isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'block';
+  if (icon) icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+renderPaymentMethods();
+
+// ── Submission persistence key ──────────────────────────────────────────────
+var PENDING_KEY = 'skillhub_pending_payment:' + itemType + ':' + itemId;
+
+// On page load, check if a previous submission is pending or approved
+(function restoreSubmission() {
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(PENDING_KEY)); } catch(e) {}
+  if (!saved) return;
+
+  // If it was already approved/rejected don't show the pending card again
+  if (saved.status === 'approved' || saved.status === 'rejected') {
+    localStorage.removeItem(PENDING_KEY);
+    return;
+  }
+
+  if (saved.status === 'simulated') {
+    showSimulatedState(saved.txRef);
+    return;
+  }
+
+  // Restore the status card and hide the form
+  document.querySelectorAll('.card').forEach(function(c) { c.style.display = 'none'; });
+  var sc = document.getElementById('statusCard');
+  sc.style.display = 'block';
+  // Show a "still checking" note
+  var noteEl = document.getElementById('pendingTxNote');
+  if (noteEl && saved.txId) {
+    noteEl.textContent = 'Transaction ref: ' + saved.txRef;
+    noteEl.style.display = 'block';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Immediately kick off polling
+  if (saved.txId) startPolling(saved.txId, saved.itemId, saved.itemType);
+})();
+
+// State
+let selectedMethod = null;
+let receiptBase64 = null;
+
+function selectMethod(el, methodName, number) {
+  document.querySelectorAll('.method-row').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMethod = { name: methodName, number };
+  document.getElementById('methodAlert').style.display = 'none';
+  document.getElementById('receiptForm').style.display = 'block';
+}
+
+function copyNum(e, num, btn) {
+  e.stopPropagation();
+  navigator.clipboard.writeText(num).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => prompt('Copy this number:', num));
+}
+
+// ---- Image handling ----
+function handleFileSelect(e) { processFile(e.target.files[0]); }
+function handleDrop(e) { e.preventDefault(); dragLeave(e); processFile(e.dataTransfer.files[0]); }
+function dragOver(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('drag'); }
+function dragLeave(e) { document.getElementById('uploadZone').classList.remove('drag'); }
+
+function processFile(file) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) { showError('Please upload an image file.'); return; }
+  // Tighten to 5MB — no need to accept huge receipts
+  if (file.size > 5 * 1024 * 1024) { showError('Image must be under 5MB. Please take a clearer, smaller screenshot.'); return; }
+
+  compressImage(file, 1200, 0.75).then(b64 => {
+    // Check compressed size — warn if still too large
+    const sizeKB = Math.round((b64.length * 3) / 4 / 1024);
+    if (sizeKB > 500) {
+      showError('Image is still too large after compression (' + sizeKB + 'KB). Please use a smaller or lower-resolution screenshot.');
+      return;
+    }
+    receiptBase64 = b64;
+    const preview = document.getElementById('receiptPreview');
+    preview.src = b64;
+    preview.style.display = 'block';
+    document.getElementById('removeImgBtn').style.display = 'inline-flex';
+    const zone = document.getElementById('uploadZone');
+    zone.querySelector('i').style.display = 'none';
+    zone.querySelectorAll('p').forEach(p => p.style.display = 'none');
+  }).catch(function() {
+    showError('Could not process the image. Please try a different file.');
+  });
+}
+
+function compressImage(file, maxPx, quality) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxPx || height > maxPx) {
+        if (width > height) { height = Math.round(height * maxPx / width); width = maxPx; }
+        else { width = Math.round(width * maxPx / height); height = maxPx; }
+      }
+      const c = document.createElement('canvas');
+      c.width = width; c.height = height;
+      c.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(c.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Failed to read image')); };
+    img.src = url;
+  });
+}
+
+function removeImage() {
+  receiptBase64 = null;
+  document.getElementById('receiptPreview').style.display = 'none';
+  document.getElementById('receiptFile').value = '';
+  document.getElementById('removeImgBtn').style.display = 'none';
+  const zone = document.getElementById('uploadZone');
+  zone.querySelector('i').style.display = '';
+  zone.querySelectorAll('p').forEach(p => p.style.display = '');
+}
+
+// ---- Form error ----
+function showError(msg) {
+  const el = document.getElementById('formError');
+  document.getElementById('formErrorMsg').textContent = msg;
+  el.style.display = 'flex';
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+function hideError() { document.getElementById('formError').style.display = 'none'; }
+
+// ---- Submit ----
+async function submitPayment() {
+  if (!token) {
+    showErrorCard('Please log in before starting a simulated checkout.');
+    return;
+  }
+  if (itemType !== 'course') {
+    showErrorCard('Freelancer projects are paid directly to freelancers and reported separately.');
+    return;
+  }
+  if (!itemId || !priceVerified) {
+    showErrorCard('The course and price must be verified before checkout. Return to the course page and try again.');
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing simulation…';
+  try {
+    const checkoutResponse = await fetch(API_BASE + '/payments/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ courseId: itemId })
+    });
+    const checkout = await checkoutResponse.json();
+    if (!checkoutResponse.ok || !checkout.success || !checkout.transactionId) {
+      throw new Error(checkout.message || 'Could not create the course order.');
+    }
+
+    const simulationResponse = await fetch(API_BASE + '/payments/simulate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ transactionId: checkout.transactionId })
+    });
+    const simulation = await simulationResponse.json();
+    if (!simulationResponse.ok || !simulation.success || !simulation.simulated || !simulation.transaction || !simulation.transaction.isSimulated) {
+      throw new Error(simulation.message || 'The simulated checkout could not be completed.');
+    }
+
+    try {
+      localStorage.setItem(PENDING_KEY, JSON.stringify({
+        txId: simulation.transaction.id,
+        txRef: simulation.transaction.reference,
+        itemId: itemId,
+        itemType: itemType,
+        itemName: itemName,
+        status: 'simulated',
+        savedAt: Date.now()
+      }));
+    } catch (storageError) {}
+    showSimulatedState(simulation.transaction.reference);
+  } catch (error) {
+    showErrorCard(error.message || 'Could not complete the simulated checkout. Please try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-flask"></i> Simulate Course Payment';
+  }
+}
+
+async function submitLegacyReceipt() {
+  hideError();
+  if (!token) { showError('Please log in before submitting a payment receipt.'); return; }
+  if (itemType !== 'course') { showError('Freelancer hiring is arranged through SkillHub chat.'); return; }
+  if (!selectedMethod) { showError('Please select a payment method.'); return; }
+  if (!receiptBase64) { showError('Please upload your payment receipt photo.'); return; }
+  const txRef = document.getElementById('txRef').value.trim();
+  const payerName = document.getElementById('payerName').value.trim();
+  const payerPhone = document.getElementById('payerPhone').value.trim();
+  if (!txRef) { showError('Please enter your transaction reference number.'); return; }
+  if (!payerName) { showError('Please enter your full name.'); return; }
+  if (!payerPhone) { showError('Please enter your phone number.'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting…';
+
+  try {
+    const checkoutRes = await fetch(API_BASE + '/payments/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ courseId: itemId })
+    });
+    const checkoutData = await checkoutRes.json();
+    if (!checkoutRes.ok || !checkoutData.success || !checkoutData.transactionId) {
+      showErrorCard(checkoutData.message || 'Could not create a course checkout. Please try again.');
+      return;
+    }
+    const checkoutTransactionId = checkoutData.transactionId;
+    var submitted = false;
+
+    // Try FormData (multipart) first — avoids storing base64 in DB
+    var submittedTxId = null;
+    try {
+      var fileInput = document.getElementById('receiptFile');
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        var formData = new FormData();
+        formData.append('receiptImage', fileInput.files[0]);
+        formData.append('itemName', itemName);
+        formData.append('itemPriceUSD', String(itemPriceUSD));
+        formData.append('itemType', itemType);
+        formData.append('itemId', itemId);
+        formData.append('paymentMethod', selectedMethod.name);
+        formData.append('paymentNumber', selectedMethod.number);
+        formData.append('transactionRef', txRef);
+        formData.append('transactionId', checkoutTransactionId);
+        formData.append('payerName', payerName);
+        formData.append('payerPhone', payerPhone);
+        formData.append('notes', document.getElementById('payerNotes').value.trim());
+        var uploadHeaders = { 'Authorization': 'Bearer ' + token };
+        var uploadRes = await fetch(API_BASE + '/payments/submit-receipt', {
+          method: 'POST', headers: uploadHeaders, body: formData
+        });
+        if (uploadRes.ok) {
+          var uploadData = await uploadRes.json();
+          if (uploadData.success) {
+            submitted = true;
+            submittedTxId = uploadData.transactionId || uploadData.transaction?._id || null;
+          } else {
+            // Server explicitly rejected — don't fall through, show error
+            showErrorCard(uploadData.message || 'Server rejected the submission. Please try again.');
+            return;
+          }
+        } else if (uploadRes.status !== 404 && uploadRes.status !== 405) {
+          var uploadError = await uploadRes.json().catch(function() { return {}; });
+          showErrorCard(uploadError.message || 'The receipt upload could not be confirmed. Check your payment history before retrying.');
+          return;
+        }
+      }
+    } catch(e) {
+      showErrorCard('The receipt upload could not be confirmed. Check your payment history before retrying.');
+      return;
+    }
+
+    // Fallback: base64 JSON (with enforced size limit)
+    if (!submitted) {
+      const sizeKB = Math.round((receiptBase64.length * 3) / 4 / 1024);
+      if (sizeKB > 500) {
+        showErrorCard('Receipt image is too large (' + sizeKB + 'KB). Please use a smaller screenshot and try again.');
+        return;
+      }
+
+      const payload = {
+        itemName, itemPriceUSD, itemType, itemId,
+        transactionId: checkoutTransactionId,
+        paymentMethod: selectedMethod.name,
+        paymentNumber: selectedMethod.number,
+        transactionRef: txRef,
+        payerName, payerPhone,
+        notes: document.getElementById('payerNotes').value.trim(),
+        receiptImage: receiptBase64
+      };
+
+      const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+
+      const res = await fetch(API_BASE + '/payments/submit', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        showErrorCard(data.message || 'Server rejected the submission. Please try again.');
+        return;
+      }
+
+      submitted = true;
+      submittedTxId = data.transactionId || (data.transaction && data.transaction._id) || null;
+    }
+
+    // ── Persist submission to survive page refresh ──────────────────────────
+    try {
+      localStorage.setItem(PENDING_KEY, JSON.stringify({
+        txId:     submittedTxId,
+        txRef:    txRef,
+        itemId:   itemId,
+        itemType: itemType,
+        itemName: itemName,
+        status:   'pending',
+        savedAt:  Date.now()
+      }));
+    } catch(e) {}
+
+    // Only show success if at least one endpoint confirmed the submission
+    if (!submitted) {
+      showErrorCard('We could not confirm your submission was received. Please check your connection and try again, or contact support.');
+      return;
+    }
+
+    // Success — show status card
+    document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
+    document.getElementById('statusCard').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Show transaction ref in the status card
+    var noteEl = document.getElementById('pendingTxNote');
+    if (noteEl) { noteEl.textContent = 'Transaction ref: ' + txRef; noteEl.style.display = 'block'; }
+
+    // Start polling for status updates if we got a transaction ID back
+    if (submittedTxId) startPolling(submittedTxId, itemId, itemType);
+
+  } catch (err) {
+    // Network error or server unreachable
+    const isOffline = !navigator.onLine;
+    const msg = isOffline
+      ? 'You appear to be offline. Please check your connection and try again.'
+      : 'Could not reach the server. Please try again in a moment.';
+    showErrorCard(msg);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Payment Receipt';
+  }
+}
+
+function showErrorCard(msg) {
+  document.getElementById('errorCardMsg').textContent = msg;
+  document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
+  document.getElementById('errorCard').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retryPayment() {
+  document.getElementById('errorCard').style.display = 'none';
+  document.getElementById('orderCard').style.display = 'block';
+  document.getElementById('simulationCard').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showSimulatedState(reference) {
+  var statusCard = document.getElementById('statusCard');
+  document.querySelectorAll('.card').forEach(function(card) { card.style.display = 'none'; });
+  statusCard.innerHTML =
+    '<div class="status-icon"><i class="fas fa-flask" style="color:#2563eb"></i></div>' +
+    '<h3 style="color:#1d4ed8;">Simulated Payment Successful</h3>' +
+    '<p>Your course enrollment is active in the pre-launch test environment. No money was charged, received, or transferred.</p>' +
+    '<div class="status-pill" style="margin:.5rem 0 1rem;background:#dbeafe;color:#1e40af;"><i class="fas fa-circle-info"></i> Successful (Simulated)</div>' +
+    (reference ? '<p style="font-size:.8rem;color:#64748b;">Test reference: ' + escapePaymentText(reference) + '</p>' : '') +
+    '<a href="course.html?id=' + encodeURIComponent(itemId) + '" style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;padding:.8rem 1.4rem;background:#2563eb;color:#fff;border-radius:.5rem;font-weight:700;"><i class="fas fa-play-circle"></i> Open Course</a>';
+  statusCard.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapePaymentText(value) {
+  return String(value || '').replace(/[&<>"']/g, function(character) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+  });
+}
+
+// ── Status polling ───────────────────────────────────────────────────────────
+var _pollTimer = null;
+var _pollCount = 0;
+var POLL_INTERVAL = 30000; // 30 seconds
+var POLL_MAX     = 60;     // stop after 30 min (60 × 30s)
+
+function startPolling(txId, courseItemId, courseItemType) {
+  if (_pollTimer) clearInterval(_pollTimer);
+  _pollCount = 0;
+  _pollTimer = setInterval(function() {
+    _pollCount++;
+    if (_pollCount > POLL_MAX) { clearInterval(_pollTimer); return; }
+    checkPaymentStatus(txId, courseItemId, courseItemType);
+  }, POLL_INTERVAL);
+}
+
+async function checkPaymentStatus(txId, courseItemId, courseItemType) {
+  if (!txId) return;
+  try {
+    var headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    var res = await fetch(API_BASE + '/payments/transactions/' + txId, { headers: headers });
+    if (!res.ok) return;
+    var data = await res.json();
+    var tx = data.transaction || data;
+    if (!tx || !tx.status) return;
+
+    if (tx.status === 'approved') {
+      clearInterval(_pollTimer);
+      // Update persisted state
+      try {
+        var saved = JSON.parse(localStorage.getItem(PENDING_KEY) || '{}');
+        saved.status = 'approved';
+        localStorage.setItem(PENDING_KEY, JSON.stringify(saved));
+      } catch(e) {}
+      showApprovedState(courseItemId, courseItemType, tx);
+    } else if (tx.status === 'rejected') {
+      clearInterval(_pollTimer);
+      try {
+        var saved2 = JSON.parse(localStorage.getItem(PENDING_KEY) || '{}');
+        saved2.status = 'rejected';
+        localStorage.setItem(PENDING_KEY, JSON.stringify(saved2));
+      } catch(e) {}
+      showRejectedState(tx.rejectionReason || 'Your payment could not be verified.');
+    }
+  } catch(e) { /* silently ignore — will retry next interval */ }
+}
+
+function showApprovedState(courseItemId, courseItemType, tx) {
+  var sc = document.getElementById('statusCard');
+  sc.style.display = 'block';
+  sc.innerHTML =
+    '<div class="status-icon">✅</div>' +
+    '<h3 style="color:#065f46;">Payment Approved!</h3>' +
+    '<p>Your payment has been verified and your access has been granted. You can now start learning.</p>' +
+    '<div class="status-pill pill-approved" style="margin:1rem 0;"><i class="fas fa-check-circle"></i> Approved</div>' +
+    (courseItemId && courseItemType !== 'freelance'
+      ? '<a href="course.html?id=' + encodeURIComponent(courseItemId) + '" ' +
+        'style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1rem;padding:0.875rem 2rem;' +
+        'background:#059669;color:white;border-radius:0.75rem;font-weight:700;font-size:1rem;text-decoration:none;">' +
+        '<i class="fas fa-play-circle"></i> Start Learning Now</a>'
+      : '<a href="profile.html" ' +
+        'style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1rem;padding:0.875rem 2rem;' +
+        'background:#059669;color:white;border-radius:0.75rem;font-weight:700;font-size:1rem;text-decoration:none;">' +
+        '<i class="fas fa-user"></i> Go to My Profile</a>') +
+    '<p style="margin-top:1.25rem;font-size:0.8rem;color:#94a3b8;">You can also view all your courses in ' +
+    '<a href="profile.html" style="color:#2563eb;font-weight:600;">Profile → My Courses</a></p>';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showRejectedState(reason) {
+  var sc = document.getElementById('statusCard');
+  sc.style.display = 'block';
+  sc.innerHTML =
+    '<div class="status-icon">❌</div>' +
+    '<h3 style="color:#991b1b;">Payment Not Verified</h3>' +
+    '<p>' + reason + '</p>' +
+    '<div class="status-pill pill-rejected" style="margin:1rem 0;"><i class="fas fa-times-circle"></i> Rejected</div>' +
+    '<p style="font-size:0.85rem;color:#64748b;margin-top:1rem;">Please contact support if you believe this is an error.</p>' +
+    '<a href="https://wa.me/211910628427?text=Hi+SkillHub+my+payment+was+rejected+and+I+need+help" target="_blank" ' +
+    'style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1rem;padding:0.75rem 1.5rem;' +
+    'background:#25d366;color:white;border-radius:0.75rem;font-weight:700;font-size:0.9rem;text-decoration:none;">' +
+    '<i class="fab fa-whatsapp"></i> Contact Support</a>';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

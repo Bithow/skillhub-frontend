@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>All Courses | SkillHub</title>
+    <meta name="description" content="Explore published SkillHub courses by topic, level, price and instructor.">
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="learn.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="page-navigation.js" defer></script>
+</head>
+<body class="learn-page catalogue-page">
+    <header class="learn-topbar">
+        <a class="learn-brand" href="index.html"><img src="logo.png" alt="" width="34" height="34"><span>SkillHub</span></a>
+        <nav aria-label="Learn navigation"><a href="learn.html">Learn</a><a class="is-current" href="courses.html">All Courses</a><a href="index.html#dashboard">My Learning</a><a href="index.html#login-register">Log in</a></nav>
+    </header>
+    <main class="catalogue-main">
+        <section class="catalogue-intro">
+            <a class="catalogue-back" href="learn.html"><i class="fas fa-arrow-left"></i> Learn</a>
+            <span class="learn-kicker">THE SKILLHUB CATALOGUE</span>
+            <h1>Find your next skill.</h1>
+            <p>Explore published courses, compare the details, and choose where to begin.</p>
+        </section>
+        <section class="catalogue-tools" aria-label="Filter courses">
+            <label class="catalogue-search"><i class="fas fa-magnifying-glass" aria-hidden="true"></i><span class="sr-only">Search courses</span><input id="catalogueSearch" type="search" minlength="2" maxlength="100" placeholder="Search courses, skills or instructors"></label>
+            <label><span class="sr-only">Category</span><select id="catalogueCategory"><option value="">All categories</option><option value="technology">Technology</option><option value="business">Business</option><option value="design">Design</option><option value="marketing">Marketing</option><option value="entrepreneurship">Entrepreneurship</option></select></label>
+            <label><span class="sr-only">Level</span><select id="catalogueLevel"><option value="">All levels</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option><option value="all_levels">All levels</option></select></label>
+            <label><span class="sr-only">Minimum price</span><input id="catalogueMinPrice" type="number" min="0" step="1" placeholder="Min price"></label>
+            <label><span class="sr-only">Maximum price</span><input id="catalogueMaxPrice" type="number" min="0" step="1" placeholder="Max price"></label>
+            <label><span class="sr-only">Sort courses</span><select id="catalogueSort"><option value="-createdAt">Newest</option><option value="-rating">Top rated</option><option value="trending">Trending activity</option><option value="price">Price: low to high</option><option value="-price">Price: high to low</option></select></label>
+            <button type="button" class="catalogue-clear" id="clearCatalogueFilters">Clear</button>
+        </section>
+        <p id="catalogueSearchStatus" class="catalogue-search-status" role="status" aria-live="polite"></p>
+        <section class="catalogue-listing" aria-live="polite">
+            <div class="catalogue-result-summary"><h2 id="catalogueHeading">All courses</h2><span id="catalogueCount"></span></div>
+            <div class="learn-course-grid" id="catalogueCourses"><div class="learn-loading">Loading courses...</div></div>
+            <div class="catalogue-pagination"><button id="cataloguePrevious" type="button" disabled><i class="fas fa-arrow-left"></i> Previous</button><span id="cataloguePageLabel">Page 1</span><button id="catalogueNext" type="button" disabled>Next <i class="fas fa-arrow-right"></i></button></div>
+        </section>
+    </main>
+    <footer class="learn-footer"><a href="index.html">SkillHub</a><span>Learn. Build. Grow.</span><a href="learn.html">Learning homepage</a></footer>
+    <script src="learn.js" defer></script>
+</body>
+</html>

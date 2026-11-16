@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="api-config.js"></script>
+    <script src="site-analytics.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your SkillHub freelance profile, client requests and work activity.">
+    <title>Freelancer Dashboard | SkillHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="freelancer-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="dashboard-page freelancer-dashboard-page">
+    <div class="dashboard-shell freelancer-shell">
+        <aside class="dashboard-sidebar freelancer-sidebar" id="freelancerSidebar">
+            <div class="dashboard-brand-row">
+                <img src="logo.png" alt="SkillHub logo" class="dashboard-brand-logo">
+                <div><span class="dashboard-brand-kicker">Freelance workspace</span><strong>SkillHub</strong></div>
+                <button class="freelancer-sidebar-close" type="button" id="freelancerSidebarClose" aria-label="Close navigation"><i class="fas fa-xmark"></i></button>
+            </div>
+            <nav class="dashboard-nav freelancer-nav" aria-label="Freelancer dashboard navigation">
+                <a href="freelancer-dashboard.html?view=overview" class="dashboard-nav-item" data-freelancer-nav="overview"><i class="fas fa-gauge-high"></i> Overview</a>
+                <a href="freelancer-dashboard.html?view=work" class="dashboard-nav-item" data-freelancer-nav="work"><i class="fas fa-magnifying-glass"></i> Find Work</a>
+                <a href="freelancer-dashboard.html?view=proposals" class="dashboard-nav-item" data-freelancer-nav="proposals"><i class="fas fa-paper-plane"></i> My Proposals</a>
+                <a href="freelancer-dashboard.html?view=invitations" class="dashboard-nav-item" data-freelancer-nav="invitations"><i class="fas fa-envelope-open-text"></i> Invitations</a>
+                <a href="freelancer-dashboard.html?view=projects" class="dashboard-nav-item" data-freelancer-nav="projects"><i class="fas fa-list-check"></i> Active Projects</a>
+                <a href="freelancer-dashboard.html?view=earnings" class="dashboard-nav-item" data-freelancer-nav="earnings"><i class="fas fa-wallet"></i> Earnings</a>
+                <a href="freelancer-dashboard.html?view=services" class="dashboard-nav-item" data-freelancer-nav="services"><i class="fas fa-briefcase"></i> My Services</a>
+                <a href="freelancer-dashboard.html?view=portfolio" class="dashboard-nav-item" data-freelancer-nav="portfolio"><i class="fas fa-images"></i> My Portfolio</a>
+                <a href="profile.html" class="dashboard-nav-item"><i class="fas fa-user"></i> My Profile</a>
+                <a href="chat.html" class="dashboard-nav-item"><i class="fas fa-message"></i> Messages</a>
+                <a href="freelancer-dashboard.html?view=contracts" class="dashboard-nav-item" data-freelancer-nav="contracts"><i class="fas fa-file-signature"></i> Contracts</a>
+                <a href="freelancer-dashboard.html?view=reviews" class="dashboard-nav-item" data-freelancer-nav="reviews"><i class="fas fa-star"></i> Reviews</a>
+                <a href="freelancer-dashboard.html?view=analytics" class="dashboard-nav-item" data-freelancer-nav="analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                <a href="profile.html#tab-settings" class="dashboard-nav-item"><i class="fas fa-gear"></i> Settings</a>
+            </nav>
+            <div class="dashboard-user-card freelancer-user-card">
+                <div class="dashboard-sidebar-avatar freelancer-avatar" id="freelancerAvatar"><i class="fas fa-user"></i></div>
+                <div class="dashboard-user-meta"><strong id="freelancerName">Freelancer</strong><span class="dash-role-badge"><i class="fas fa-laptop-code"></i> Freelancer</span></div>
+                <a href="profile.html" class="dashboard-mini-link"><i class="fas fa-arrow-up-right-from-square"></i> Profile shortcut</a>
+                <a href="profile.html#tab-settings" class="dashboard-mini-link"><i class="fas fa-gear"></i> Account settings</a>
+                <button type="button" class="dashboard-logout-btn" id="freelancerLogoutBtn"><i class="fas fa-right-from-bracket"></i> Log out</button>
+            </div>
+        </aside>
+        <button type="button" class="freelancer-scrim" id="freelancerScrim" aria-label="Close navigation" hidden></button>
+
+        <main class="dashboard-main freelancer-main">
+            <header class="dashboard-topbar freelancer-topbar">
+                <button type="button" class="freelancer-menu-button" id="freelancerMenuButton" aria-controls="freelancerSidebar" aria-expanded="false" aria-label="Open navigation"><i class="fas fa-bars"></i></button>
+                <div class="freelancer-welcome-copy">
+                    <p class="dashboard-topbar-kicker">Freelance workspace</p>
+                    <h1 id="freelancerPageHeading">Welcome back, <span id="freelancerWelcomeName">Freelancer</span>!</h1>
+                    <p class="freelancer-subtitle" id="freelancerSubtitle">Find work, build your reputation, and grow your independent practice.</p>
+                </div>
+                <div class="dashboard-header-actions">
+                    <a class="dashboard-icon-button" href="chat.html" aria-label="Open messages" title="Messages"><i class="fas fa-message"></i></a>
+                    <a class="freelancer-header-profile" href="profile.html" aria-label="Open your profile"><span id="freelancerHeaderAvatar" class="freelancer-header-avatar"><i class="fas fa-user"></i></span></a>
+                    <a class="freelancer-primary-button" href="freelancer-dashboard.html?view=work"><i class="fas fa-magnifying-glass"></i><span>Find Work</span></a>
+                </div>
+            </header>
+            <p class="freelancer-load-message" id="freelancerLoadMessage" role="status">Loading your freelance workspace...</p>
+
+            <section class="freelancer-view-section" id="overview">
+                <div class="freelancer-profile-progress dashboard-panel">
+                    <div class="freelancer-profile-progress-copy"><span class="dashboard-panel-kicker">Profile readiness</span><strong id="freelancerCompletionLabel">—</strong><span id="freelancerTitle">Freelance professional</span></div>
+                    <a href="profile.html" class="dashboard-link-button">Complete profile <i class="fas fa-arrow-right"></i></a>
+                    <div class="freelancer-progress-track" aria-label="Profile completion"><span id="freelancerCompletionBar"></span></div>
+                </div>
+                <section class="dash-stats-row freelancer-stats" aria-label="Freelancer statistics">
+                    <article class="dash-stat-card"><i class="fas fa-briefcase"></i><div><span class="dash-stat-num">—</span><span class="dash-stat-label">Active Projects</span><small>Project tracking is not available</small></div></article>
+                    <article class="dash-stat-card"><i class="fas fa-paper-plane"></i><div><span class="dash-stat-num">—</span><span class="dash-stat-label">Submitted Proposals</span><small>Proposal tracking is not available</small></div></article>
+                    <article class="dash-stat-card"><i class="fas fa-eye"></i><div><span class="dash-stat-num" id="freelancerViews">—</span><span class="dash-stat-label">Profile Views</span></div></article>
+                    <article class="dash-stat-card"><i class="fas fa-wallet"></i><div><span class="dash-stat-num" id="freelancerWallet">—</span><span class="dash-stat-label">Wallet Balance</span><small>Not a lifetime earnings total</small></div></article>
+                </section>
+                <div class="freelancer-overview-grid">
+                    <section class="dashboard-panel freelancer-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Opportunity discovery</span><h2>Find Work</h2></div><a href="freelancer-dashboard.html?view=work" class="dashboard-link-button">Browse</a></div>
+                        <div class="freelancer-empty-state"><i class="fas fa-magnifying-glass"></i><div><strong>Project listings are not available yet</strong><p>SkillHub does not currently have a project marketplace or proposal endpoint for freelancers.</p></div></div>
+                    </section>
+                    <section class="dashboard-panel freelancer-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Client activity</span><h2>Proposals &amp; Invitations</h2></div><a href="freelancer-dashboard.html?view=invitations" class="dashboard-link-button">View requests</a></div>
+                        <div id="freelancerRecentRequests" class="freelancer-request-list"><div class="freelancer-empty-state"><i class="fas fa-envelope-open-text"></i><div><strong>Loading client requests</strong></div></div></div>
+                    </section>
+                </div>
+                <section class="dashboard-panel freelancer-panel">
+                    <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Client engagements</span><h2>My Active Projects</h2></div><a href="freelancer-dashboard.html?view=projects" class="dashboard-link-button">View projects</a></div>
+                    <div class="freelancer-empty-state"><i class="fas fa-list-check"></i><div><strong>Project tracking is not available yet</strong><p>Client requests are visible in Invitations. Contracts, milestones, and project completion are not part of the current workflow.</p></div></div>
+                </section>
+                <div class="freelancer-overview-grid">
+                    <section class="dashboard-panel freelancer-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Your offer</span><h2>My Services</h2></div><a href="profile.html#tab-services" class="dashboard-link-button">Manage profile</a></div>
+                        <div id="freelancerServiceSummary" class="freelancer-data-list"></div>
+                    </section>
+                    <section class="dashboard-panel freelancer-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Financial snapshot</span><h2>Earnings Overview</h2></div><a href="profile.html#tab-wallet" class="dashboard-link-button">Open wallet</a></div>
+                        <div class="freelancer-wallet-summary"><i class="fas fa-wallet"></i><div><span>Current wallet balance</span><strong id="freelancerWalletSummary">—</strong><small>Verified account balance. Earnings and project payouts are not aggregated.</small></div></div>
+                    </section>
+                </div>
+            </section>
+
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="work" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Marketplace</span><h2>Find Work</h2></div></div>
+                <div class="freelancer-empty-state freelancer-large-empty"><i class="fas fa-magnifying-glass"></i><div><strong>Project listings are not available yet</strong><p>There is no project listing, search, or proposal API in the current SkillHub backend. We won’t show sample jobs or accept proposals that cannot be saved.</p></div></div>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="proposals" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Your applications</span><h2>My Proposals</h2></div></div>
+                <div class="freelancer-empty-state freelancer-large-empty"><i class="fas fa-paper-plane"></i><div><strong>Proposal tracking is not available yet</strong><p>Proposal submission, client responses, and withdrawal are not supported by the current platform.</p></div></div>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="invitations" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Client requests</span><h2>Invitations</h2></div></div>
+                <div id="freelancerAllRequests" class="freelancer-request-list"><div class="freelancer-empty-state"><i class="fas fa-spinner fa-spin"></i><div><strong>Loading client requests</strong></div></div></div>
+                <p class="freelancer-data-note">These are existing hire requests. Accept/decline actions are not supported; use Messages to reply to a client.</p>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="projects" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Delivery tracking</span><h2>Active Projects</h2></div></div>
+                <p class="freelancer-data-note">Clients pay freelancers directly. A payment report records an external payment; it is not money held by SkillHub.</p>
+                <div id="freelancerProjectList" class="freelancer-project-list"><div class="freelancer-empty-state"><i class="fas fa-spinner fa-spin"></i><div><strong>Loading projects</strong></div></div></div>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="earnings" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Recorded financial activity</span><h2>Earnings</h2></div><button type="button" class="dashboard-link-button" id="refreshFreelancerFinance">Refresh</button></div>
+                <p class="freelancer-data-note">Simulated course values, reported external payments, and eligible recorded earnings are shown separately. No values here imply SkillHub has transferred money.</p>
+                <div class="freelancer-finance-filters"><label>From<input type="date" id="freelancerFinanceFrom"></label><label>To<input type="date" id="freelancerFinanceTo"></label><label>Currency<select id="freelancerFinanceCurrency"><option value="">All currencies</option><option>USD</option><option>ETB</option><option>UGX</option><option>SSP</option><option>KES</option></select></label><label>Status<select id="freelancerFinanceStatus"><option value="">All statuses</option><option value="eligible">Eligible</option><option value="verified_external">Verified external</option><option value="simulated_pending">Simulated</option><option value="requested">Requested</option></select></label><button type="button" id="filterFreelancerFinance">Apply filters</button></div>
+                <div id="freelancerFinanceSummary" class="freelancer-analytics-grid"></div>
+                <div id="freelancerLedgerHistory" class="freelancer-project-list"></div>
+                <section class="freelancer-withdraw-panel"><h3>Request a withdrawal review</h3><p>Internal request only. Approval will not start a bank or mobile-money transfer.</p>
+                    <div class="freelancer-withdraw-fields"><label>Amount<input id="freelancerWithdrawalAmount" type="number" min="5" step="0.01" placeholder="0.00"></label><label>Currency<select id="freelancerWithdrawalCurrency"><option>USD</option><option>ETB</option><option>UGX</option><option>SSP</option><option>KES</option></select></label><label>Payout preference<select id="freelancerPayoutMethod"><option value="mobile_money">Mobile money</option><option value="telebirr">Telebirr</option><option value="cbe_birr">CBE Bank</option><option value="bank_transfer">Bank transfer</option><option value="other">Other</option></select></label><label>Destination hint (optional)<input id="freelancerPayoutDestination" maxlength="120" placeholder="Only last digits are stored"></label></div>
+                    <button class="freelancer-request-reply" type="button" id="freelancerWithdrawalSubmit">Submit request</button><p id="freelancerWithdrawalMessage" role="status"></p>
+                </section>
+                <div id="freelancerWithdrawalHistory" class="freelancer-project-list"></div>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel freelancer-detail-page" id="services" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Your professional offer</span><h2>My Services</h2></div><a href="profile.html#tab-services" class="dashboard-link-button">Edit availability</a></div>
+                <div id="freelancerServicesPage" class="freelancer-data-list"></div>
+                <p class="freelancer-data-note">SkillHub stores your freelancer profile, skills, rate, and availability. Separate service listings and thumbnails are not currently supported.</p>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel freelancer-detail-page" id="portfolio" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Selected work</span><h2>My Portfolio</h2></div><a href="profile.html" class="dashboard-link-button">Edit profile</a></div>
+                <div id="freelancerPortfolioGrid" class="freelancer-portfolio-grid"></div>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="contracts" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Agreements</span><h2>Contracts</h2></div></div>
+                <div class="freelancer-empty-state freelancer-large-empty"><i class="fas fa-file-signature"></i><div><strong>Contracts are not available yet</strong><p>Contract records and signing are not supported by the current platform.</p></div></div>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="reviews" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Reputation</span><h2>Reviews</h2></div></div>
+                <div id="freelancerReviewSummary" class="freelancer-review-summary"><div class="freelancer-empty-state"><i class="fas fa-star"></i><div><strong>Loading profile rating</strong></div></div></div>
+            </section>
+            <section class="freelancer-view-section dashboard-panel freelancer-panel" id="analytics" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Profile insights</span><h2>Analytics</h2></div></div>
+                <div class="freelancer-analytics-grid" id="freelancerAnalyticsGrid"></div>
+                <p class="freelancer-data-note">Only profile views, completed jobs, and profile rating are available in the current freelancer record.</p>
+            </section>
+            <footer class="freelancer-footer"><span>SkillHub Freelancer Workspace</span><a href="profile.html">Manage your profile</a></footer>
+        </main>
+    </div>
+    <script src="script.js" defer></script>
+    <script src="freelancer-dashboard.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // HTTPS enforcement — redirect http to https on production
+    if(window.location.protocol==='http:'&&window.location.hostname!=='localhost'&&window.location.hostname!=='127.0.0.1'&&!window.location.hostname.startsWith('192.168.')){window.location.replace('https:'+window.location.href.substring(5));}
+  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillHub Admin Dashboard</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="styles.css">
+        <script src="page-navigation.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+        /* LOGIN SCREEN */
+        #loginScreen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        }
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .login-box h1 { font-size: 1.75rem; margin-bottom: 0.5rem; color: #1e3a8a; }
+        .login-box p { color: #64748b; margin-bottom: 2rem; font-size: 0.875rem; }
+        .login-box input {
+            width: 100%; padding: 0.875rem 1rem; border: 2px solid #e2e8f0;
+            border-radius: 0.5rem; font-size: 1rem; margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+        .login-box input:focus { outline: none; border-color: #2563eb; }
+        .login-btn {
+            width: 100%; padding: 0.875rem; background: #2563eb; color: white;
+            border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .login-btn:hover { background: #1d4ed8; }
+        #loginError { color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; display: none; }
+
+        /* DASHBOARD */
+        #dashboard { display: none; }
+        .topbar {
+            background: #1e3a8a; color: white; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .topbar h1 {
+            font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .topbar-logo {
+            width: 30px; height: 30px; object-fit: contain;
+            border-radius: 6px; background: white; padding: 2px;
+        }
+        .topbar-right { display: flex; align-items: center; gap: 1rem; }
+        .admin-back { color: white; text-decoration: none; font-size: .82rem; display: inline-flex; align-items: center; gap: .4rem; opacity: .9; }
+        .admin-back:hover { opacity: 1; }
+        .admin-name { font-size: 0.875rem; opacity: 0.8; }
+        .logout-btn {
+            background: rgba(255,255,255,0.2); color: white; border: none;
+            padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;
+            font-size: 0.875rem; transition: background 0.2s;
+        }
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* TABS */
+        .tabs {
+            background: white; border-bottom: 2px solid #e2e8f0;
+            display: flex; overflow-x: auto; padding: 0 2rem;
+        }
+        .tab-btn {
+            padding: 1rem 1.5rem; border: none; background: none; cursor: pointer;
+            font-size: 0.875rem; font-weight: 600; color: #64748b;
+            border-bottom: 3px solid transparent; margin-bottom: -2px;
+            white-space: nowrap; transition: all 0.2s;
+        }
+        .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; }
+        .tab-btn i { margin-right: 0.5rem; }
+
+        /* CONTENT */
+        .content { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem; margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white; padding: 1.5rem; border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-left: 4px solid #2563eb;
+        }
+        .stat-card.yellow { border-left-color: #f59e0b; }
+        .stat-card.green { border-left-color: #10b981; }
+        .stat-card.purple { border-left-color: #8b5cf6; }
+        .stat-card.red { border-left-color: #ef4444; }
+        .stat-card h3 { font-size: 2rem; font-weight: 800; color: #1e293b; }
+        .stat-card p { font-size: 0.875rem; color: #64748b; margin-top: 0.25rem; }
+        .stat-card i { font-size: 1.5rem; color: #2563eb; margin-bottom: 0.5rem; }
+        .stat-card.yellow i { color: #f59e0b; }
+        .stat-card.green i { color: #10b981; }
+        .stat-card.purple i { color: #8b5cf6; }
+        .stat-card.red i { color: #ef4444; }
+
+        /* TABLE */
+        .table-card {
+            background: white; border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden;
+        }
+        .table-header {
+            padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .table-header h2 { font-size: 1.1rem; font-weight: 700; }
+        .search-input {
+            padding: 0.5rem 1rem; border: 1px solid #e2e8f0; border-radius: 0.5rem;
+            font-size: 0.875rem; width: 250px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8fafc; padding: 0.875rem 1rem; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; }
+        td { padding: 0.875rem 1rem; border-top: 1px solid #f1f5f9; font-size: 0.875rem; }
+        tr:hover td { background: #f8fafc; }
+
+        /* BADGES */
+        .badge {
+            display: inline-block; padding: 0.25rem 0.75rem; border-radius: 50px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-suspended { background: #fee2e2; color: #991b1b; }
+        .badge-user { background: #dbeafe; color: #1e40af; }
+        .badge-instructor { background: #ede9fe; color: #5b21b6; }
+        .badge-freelancer { background: #fce7f3; color: #9d174d; }
+        .badge-admin { background: #1e3a8a; color: white; }
+
+        /* ACTION BUTTONS */
+        .action-btn {
+            padding: 0.375rem 0.75rem; border: none; border-radius: 0.375rem;
+            font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-right: 0.25rem;
+            transition: opacity 0.2s;
+        }
+        .action-btn:hover { opacity: 0.8; }
+        .btn-approve { background: #d1fae5; color: #065f46; }
+        .btn-reject { background: #fee2e2; color: #991b1b; }
+        .btn-view { background: #dbeafe; color: #1e40af; }
+        .btn-suspend { background: #fef3c7; color: #92400e; }
+
+        /* LOADING */
+        .loading { text-align: center; padding: 3rem; color: #64748b; }
+        .loading i { font-size: 2rem; margin-bottom: 1rem; display: block; }
+
+        /* REFRESH BTN */
+        .refresh-btn {
+            background: #2563eb; color: white; border: none; padding: 0.5rem 1rem;
+            border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .refresh-btn:hover { background: #1d4ed8; }
+
+        /* TRANSACTION FILTER BUTTONS */
+        .tx-filter-btn {
+            padding: 0.35rem 0.9rem; border: 2px solid #e2e8f0; border-radius: 50px;
+            background: white; color: #64748b; font-size: 0.78rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.3rem;
+        }
+        .tx-filter-btn:hover { border-color: #2563eb; color: #2563eb; }
+        .tx-filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+        .tx-filter-btn.active i { color: white; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: white; border-radius: 1rem; padding: 2rem; max-width: 680px;
+            width: 95%; max-height: 90vh; overflow-y: auto;
+        }
+        .modal-box h3 { font-size: 1.25rem; margin-bottom: 1rem; }
+        .modal-close { float: right; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+        .detail-row { display: flex; gap: 1rem; margin-bottom: 0.75rem; font-size: 0.875rem; }
+        .detail-label { font-weight: 600; min-width: 120px; color: #64748b; }
+        .receipt-img { max-width: 100%; border-radius: 0.75rem; margin: 1rem 0; border: 2px solid #e2e8f0; display: block; }
+        .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #e2e8f0; }
+
+        /* ── CHAT VIEWER ── */
+        .chat-conv-item {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.875rem 1.5rem; border-bottom: 1px solid #f1f5f9;
+            cursor: pointer; transition: background 0.15s;
+        }
+        .chat-conv-item:hover { background: #f8fafc; }
+        .chat-user-pair { display: flex; align-items: center; gap: 0.5rem; flex: 1; }
+        .chat-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #8b5cf6);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+        }
+        .chat-user-info { flex: 1; min-width: 0; }
+        .chat-user-name { font-weight: 600; font-size: 0.875rem; }
+        .chat-last-msg { font-size: 0.78rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-meta { text-align: right; font-size: 0.75rem; color: #94a3b8; }
+        .chat-msg-count { background: #2563eb; color: white; border-radius: 50px; padding: 1px 7px; font-size: 0.7rem; font-weight: 700; }
+        /* Admin message bubbles */
+        .admin-msg-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; align-items: flex-end; }
+        .admin-msg-row.right { flex-direction: row-reverse; }
+        .admin-bubble {
+            max-width: 60%; padding: 0.5rem 0.875rem; border-radius: 14px;
+            font-size: 0.875rem; line-height: 1.5; word-break: break-word;
+        }
+        .admin-msg-row.left .admin-bubble { background: white; border: 1px solid #e2e8f0; color: #1e293b; border-radius: 14px 14px 14px 4px; }
+        .admin-msg-row.right .admin-bubble { background: #2563eb; color: white; border-radius: 14px 14px 4px 14px; }
+        .admin-msg-sender { font-size: 0.7rem; font-weight: 600; margin-bottom: 2px; color: #64748b; }
+        .admin-msg-time { font-size: 0.68rem; opacity: 0.6; margin-top: 3px; text-align: right; }
+        .admin-date-sep { text-align: center; font-size: 0.72rem; color: #94a3b8; margin: 0.75rem 0; }
+
+        @media (max-width: 768px) {
+            .content { padding: 1rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .search-input { width: 150px; }
+            table { font-size: 0.75rem; }
+            td, th { padding: 0.5rem; }
+        }
+        .ai-studio-section[hidden] { display: none; }
+        .ai-studio-field { display: grid; gap: .4rem; font-size: .8rem; font-weight: 600; color: #475569; }
+        .ai-studio-field input, .ai-studio-field select, .ai-studio-field textarea { width: 100%; padding: .65rem .75rem; border: 1px solid #cbd5e1; border-radius: .4rem; font: inherit; color: #1e293b; }
+        .ai-studio-field textarea { resize: vertical; }
+        .ai-studio-wide { grid-column: 1 / -1; }
+        .ai-studio-note { padding: 1.25rem 1.5rem; color: #475569; line-height: 1.6; max-width: 900px; }
+        .visitor-analytics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+        .visitor-range-label { display: flex; align-items: center; gap: .5rem; color: #64748b; font-size: .78rem; }
+        .visitor-range-label select { padding: .45rem .6rem; border: 1px solid #cbd5e1; border-radius: .35rem; background: white; }
+        .table-card { min-width: 0; }
+        .table-card > div[id$="Table"] { overflow-x: auto; }
+        .tabs { scrollbar-width: thin; }
+        .content { width: 100%; }
+        @media (max-width: 760px) {
+            .topbar { padding: .75rem 1rem; gap: .65rem; flex-wrap: wrap; }
+            .topbar-right { gap: .5rem; }
+            .admin-name { max-width: 35vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .tabs { padding: 0 .5rem; }
+            .tab-btn { padding: .8rem .85rem; }
+            .content { padding: .85rem; }
+            .visitor-analytics-grid { grid-template-columns: 1fr; }
+            .table-header { padding: 1rem; align-items: flex-start; gap: .75rem; flex-wrap: wrap; }
+            .ai-studio-wide { grid-column: auto; }
+            #aiStudioCourseForm { grid-template-columns: minmax(0, 1fr) !important; }
+        }
+        @media (max-width: 420px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .topbar h1 { font-size: 1rem; }
+            .logout-btn { padding: .45rem .6rem; }
+            .search-input { width: 100%; max-width: 100%; }
+            .visitor-range-label { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+    <div class="login-box">
+        <h1><img src="logo.png" alt="SkillHub" style="width:36px;height:36px;object-fit:contain;vertical-align:middle;margin-right:0.5rem;border-radius:6px;"> SkillHub</h1>
+        <!-- Security notice shown if a regular user is logged in on same browser -->
+        <div id="sharedBrowserWarning" style="display:none;background:#fef3c7;border:1px solid #f59e0b;border-radius:0.5rem;padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.82rem;color:#92400e;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Shared browser detected.</strong> A regular user session is active in this browser.
+            Admin actions here are completely separate and will not affect that session.
+        </div>
+        <p>Admin Dashboard — Restricted Access</p>
+        <input type="email" id="adminEmail" placeholder="Admin Email" autocomplete="username" required>
+        <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password" required>
+        <button class="login-btn" onclick="adminLogin()">
+            <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+        </button>
+        <p id="loginError">Invalid credentials. Access denied.</p>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+    <div class="topbar">
+        <h1><img src="logo.png" alt="SkillHub" class="topbar-logo"> SkillHub Admin</h1>
+                <div class="topbar-right">
+                <a class="admin-back" href="index.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back</a>
+            <span class="admin-name" id="adminNameDisplay">Admin</span>
+            <button class="logout-btn" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('overview', event)"><i class="fas fa-chart-bar"></i> Overview</button>
+        <button class="tab-btn" onclick="showTab('pending', event)"><i class="fas fa-clock"></i> Pending <span id="pendingCount" style="background:#ef4444;color:white;border-radius:50px;padding:0.1rem 0.4rem;font-size:0.7rem;margin-left:0.25rem;"></span></button>
+        <button class="tab-btn" onclick="showTab('pendingpayments', event)"><i class="fas fa-receipt"></i> Payments <span id="pendingPaymentsCount" style="background:#ef4444;color:white;border-radius:50px;padding:0.1rem 0.4rem;font-size:0.7rem;margin-left:0.25rem;"></span></button>
+        <button class="tab-btn" onclick="showTab('users', event)"><i class="fas fa-users"></i> Users</button>
+        <button class="tab-btn" onclick="showTab('freelancers', event)"><i class="fas fa-laptop-code"></i> Freelancers</button>
+        <button class="tab-btn" onclick="showTab('courses', event)"><i class="fas fa-book"></i> Courses</button>
+        <button class="tab-btn" onclick="showTab('transactions', event)"><i class="fas fa-money-bill"></i> Transactions</button>
+        <button class="tab-btn" onclick="showTab('messages', event)"><i class="fas fa-envelope"></i> Messages</button>
+        <button class="tab-btn" onclick="showTab('business', event)"><i class="fas fa-briefcase"></i> Business Inquiries</button>
+        <button class="tab-btn" onclick="showTab('support', event)"><i class="fas fa-life-ring"></i> Support Tickets</button>
+        <button class="tab-btn" onclick="showTab('reports', event)"><i class="fas fa-flag"></i> Reports &amp; Complaints</button>
+        <button class="tab-btn" onclick="showTab('notifications', event)"><i class="fas fa-bell"></i> Notifications</button>
+        <button class="tab-btn" onclick="showTab('ai-studio', event)"><i class="fas fa-wand-magic-sparkles"></i> AI Studio</button>
+        <button class="tab-btn" onclick="showTab('chats', event)"><i class="fas fa-comments"></i> Live Chats</button>
+        <button class="tab-btn" onclick="showTab('roles', event)"><i class="fas fa-user-shield"></i> Roles</button>
+        <button class="tab-btn" onclick="showTab('activity', event)"><i class="fas fa-history"></i> Activity</button>
+        <button class="tab-btn" onclick="showTab('visitors', event)"><i class="fas fa-chart-line"></i> Visitors</button>
+        <button class="tab-btn" onclick="showTab('rates', event)"><i class="fas fa-exchange-alt"></i> Exchange Rates</button>
+    </div>
+
+    <div class="content">
+        <!-- OVERVIEW TAB -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="stats-grid" id="statsGrid">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading stats...</div>
+            </div>
+        </div>
+
+        <!-- PENDING APPROVALS TAB -->
+        <div id="tab-pending" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Pending Approvals</h2>
+                    <button class="refresh-btn" onclick="loadPending()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="pendingTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- USERS TAB -->
+        <div id="tab-users" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>All Users</h2>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="text" class="search-input" placeholder="Search users..." oninput="filterTable('usersTable', this.value)">
+                        <button class="refresh-btn" onclick="loadUsers()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
+                </div>
+                <div id="usersTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- FREELANCERS TAB -->
+        <div id="tab-freelancers" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Freelancers</h2>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="text" class="search-input" placeholder="Search freelancers..." oninput="filterTable('freelancersTable', this.value)">
+                        <button class="refresh-btn" onclick="loadFreelancers()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
+                </div>
+                <div id="freelancersTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- COURSES TAB -->
+        <div id="tab-courses" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Courses</h2>
+                    <div style="display:flex;gap:0.5rem;">
+                        <input type="text" class="search-input" placeholder="Search courses..." oninput="filterTable('coursesTable', this.value)">
+                        <button class="refresh-btn" onclick="loadCourses()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
+                </div>
+                <div id="coursesTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- TRANSACTIONS TAB -->
+        <div id="tab-transactions" class="tab-content">
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <div class="table-header">
+                    <h2>Financial Snapshot</h2>
+                    <button class="refresh-btn" type="button" onclick="loadFinancialReport()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:.65rem;padding:1rem 1.5rem;align-items:end;">
+                    <label style="display:grid;gap:.25rem;font-size:.75rem;color:#475569;">From<input type="date" id="financeFrom" class="search-input"></label>
+                    <label style="display:grid;gap:.25rem;font-size:.75rem;color:#475569;">To<input type="date" id="financeTo" class="search-input"></label>
+                    <label style="display:grid;gap:.25rem;font-size:.75rem;color:#475569;">Type<select id="financeType" class="search-input"><option value="">All types</option><option value="course_purchase">Course</option><option value="freelance_hire">Freelance</option><option value="withdrawal">Withdrawal</option><option value="deposit">Deposit</option></select></label>
+                    <label style="display:grid;gap:.25rem;font-size:.75rem;color:#475569;">Status<select id="financeStatus" class="search-input"><option value="">All statuses</option><option value="pending">Pending</option><option value="completed">Completed</option><option value="failed">Failed</option><option value="refunded">Refunded</option></select></label>
+                    <label style="display:grid;gap:.25rem;font-size:.75rem;color:#475569;">Currency<input type="text" id="financeCurrency" class="search-input" maxlength="3" placeholder="All"></label>
+                    <label style="display:grid;gap:.25rem;font-size:.75rem;color:#475569;">Mode<select id="financeMode" class="search-input"><option value="">All</option><option value="false">Recorded</option><option value="true">Simulated</option></select></label>
+                    <button class="refresh-btn" type="button" onclick="loadFinancialReport()"><i class="fas fa-filter"></i> Apply</button>
+                </div>
+                <div id="financialReportSummary" class="stats-grid" style="padding:0 1.5rem 1.25rem;"><div class="loading">Load financial totals from the ledger.</div></div>
+                <p id="financialReportNotice" style="padding:0 1.5rem 1.25rem;font-size:.78rem;color:#64748b;">Recorded and simulated amounts are reported separately; simulated values are not cash received or paid.</p>
+            </div>
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <div class="table-header"><h2>Financial Review Queue</h2><button class="refresh-btn" type="button" onclick="loadFinancialReviewQueues()"><i class="fas fa-sync"></i> Refresh</button></div>
+                <div id="financialReviewQueues"><div class="loading">Load refund requests, internal withdrawal requests, and reported external freelance payments.</div></div>
+            </div>
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <div class="table-header"><h2>Commission Settings</h2><button class="refresh-btn" type="button" onclick="loadCommissionSettings()"><i class="fas fa-sync"></i> Refresh</button></div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;padding:1.25rem 1.5rem;">
+                    <label style="display:grid;gap:.35rem;font-size:.8rem;font-weight:600;">Course instructor share (%)<input type="number" id="courseInstructorShare" min="0" max="100" step="0.01" class="search-input"></label>
+                    <label style="display:grid;gap:.35rem;font-size:.8rem;font-weight:600;">Course SkillHub commission (%)<input type="number" id="courseCommissionShare" min="0" max="100" step="0.01" class="search-input"></label>
+                    <label style="display:grid;gap:.35rem;font-size:.8rem;font-weight:600;">Freelancer share (%)<input type="number" id="freelancerShare" min="0" max="100" step="0.01" class="search-input"></label>
+                    <label style="display:grid;gap:.35rem;font-size:.8rem;font-weight:600;">Freelance SkillHub commission (%)<input type="number" id="freelanceCommissionShare" min="0" max="100" step="0.01" class="search-input"></label>
+                </div>
+                <div style="display:flex;align-items:center;gap:1rem;padding:0 1.5rem 1.25rem;">
+                    <button class="refresh-btn" type="button" onclick="saveCommissionSettings()"><i class="fas fa-save"></i> Save rates</button>
+                    <span id="commissionSettingsMessage" role="status" style="font-size:.8rem;color:#64748b;"></span>
+                </div>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Transactions</h2>
+                    <button class="refresh-btn" onclick="loadTransactions()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <!-- Filter buttons -->
+                <div style="display:flex;gap:0.5rem;padding:0.75rem 1.5rem;border-bottom:1px solid #e2e8f0;flex-wrap:wrap;">
+                    <button id="txFilter-all" class="tx-filter-btn active" onclick="setTxFilter('all')">All</button>
+                    <button id="txFilter-pending" class="tx-filter-btn" onclick="setTxFilter('pending')"><i class="fas fa-clock"></i> Pending</button>
+                    <button id="txFilter-approved" class="tx-filter-btn" onclick="setTxFilter('approved')"><i class="fas fa-check-circle"></i> Approved</button>
+                    <button id="txFilter-rejected" class="tx-filter-btn" onclick="setTxFilter('rejected')"><i class="fas fa-times-circle"></i> Rejected</button>
+                </div>
+                <div id="transactionsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- PENDING PAYMENTS TAB -->
+        <div id="tab-pendingpayments" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-receipt" style="color:#f59e0b;margin-right:0.4rem;"></i> Pending Payment Receipts</h2>
+                    <button class="refresh-btn" onclick="loadPendingPayments()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="pendingPaymentsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- MESSAGES TAB -->
+        <div id="tab-messages" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Contact Messages</h2>
+                    <button class="refresh-btn" onclick="loadMessages()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="messagesTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div></div>
+            </div>
+        </div>
+
+        <!-- BUSINESS INQUIRIES TAB -->
+        <div id="tab-business" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Business Inquiries</h2>
+                    <button class="refresh-btn" onclick="loadBusinessInquiries()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="businessInquiriesTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading business inquiries...</div></div>
+            </div>
+        </div>
+
+        <!-- SUPPORT TICKETS TAB -->
+        <div id="tab-support" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Support Tickets</h2>
+                    <button class="refresh-btn" onclick="loadSupportTickets()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="supportTicketsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading support tickets...</div></div>
+            </div>
+        </div>
+
+        <!-- REPORTS & COMPLAINTS TAB -->
+        <div id="tab-reports" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Reports &amp; Complaints</h2>
+                    <button class="refresh-btn" onclick="loadReportsComplaints()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="reportsComplaintsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading reports and complaints...</div></div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS TAB -->
+        <div id="tab-notifications" class="tab-content">
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <div class="table-header">
+                    <h2>Create Notification</h2>
+                </div>
+                <div style="padding:1.25rem 1.5rem;display:grid;gap:1rem;max-width:700px;">
+                    <label style="display:grid;gap:.4rem;font-weight:600;color:#475569;">Title<input type="text" id="notificationTitle" class="search-input" style="width:100%;" placeholder="Platform update"></label>
+                    <label style="display:grid;gap:.4rem;font-weight:600;color:#475569;">Message<textarea id="notificationMessage" rows="4" class="search-input" style="width:100%;resize:vertical;" placeholder="Share the announcement or reminder"></textarea></label>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
+                        <label style="display:grid;gap:.4rem;font-weight:600;color:#475569;">Type<select id="notificationType" class="search-input" style="width:100%;"><option value="info">Info</option><option value="success">Success</option><option value="warning">Warning</option><option value="error">Error</option></select></label>
+                        <label style="display:grid;gap:.4rem;font-weight:600;color:#475569;">Audience<select id="notificationAudience" class="search-input" style="width:100%;"><option value="all">All users</option><option value="users">Students</option><option value="instructors">Instructors</option><option value="freelancers">Freelancers</option><option value="admins">Admins</option></select></label>
+                    </div>
+                    <button class="refresh-btn" type="button" onclick="createNotification()" style="max-width:220px;"><i class="fas fa-paper-plane"></i> Publish notification</button>
+                </div>
+            </div>
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Notification Center</h2>
+                    <button class="refresh-btn" onclick="loadNotifications()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="notificationsTable"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading notifications...</div></div>
+            </div>
+        </div>
+
+        <!-- AI STUDIO TAB -->
+        <div id="tab-ai-studio" class="tab-content">
+            <div class="table-card" style="margin-bottom:1rem;">
+                <div class="table-header">
+                    <div><h2>SkillHub AI Studio</h2><p id="aiStudioProviderSummary" style="font-size:.8rem;color:#64748b;margin-top:.3rem;">Checking configured production services...</p></div>
+                    <button class="refresh-btn" type="button" onclick="loadAiStudio()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <nav aria-label="AI Studio sections" style="display:flex;gap:.45rem;overflow-x:auto;padding:.75rem 1rem;border-bottom:1px solid #e2e8f0;">
+                    <button class="tx-filter-btn active" type="button" onclick="showAiStudioSection('generator', this)">Course Generator</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('video', this)">Video Studio</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('materials', this)">Learning Materials</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('assessments', this)">Quizzes</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('quality', this)">Quality Checker</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('production', this)">Production Manager</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('library', this)">Content Library</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('usage', this)">Usage &amp; Costs</button>
+                    <button class="tx-filter-btn" type="button" onclick="showAiStudioSection('settings', this)">Settings</button>
+                </nav>
+            </div>
+
+            <section id="aiStudioSection-generator" class="ai-studio-section">
+                <div class="table-card" style="margin-bottom:1rem;">
+                    <div class="table-header"><h2>Generate a course draft</h2><span id="aiStudioGeneratorAvailability" class="badge badge-pending">Checking provider</span></div>
+                    <form id="aiStudioCourseForm" onsubmit="submitAiCourse(event)" style="padding:1.25rem 1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;">
+                        <label class="ai-studio-field">Course title<input name="title" maxlength="180" required placeholder="Practical Data Analysis with Python"></label>
+                        <label class="ai-studio-field">Course category<input name="category" maxlength="80" required placeholder="data_science"></label>
+                        <label class="ai-studio-field">Subtitle<input name="subtitle" maxlength="300" placeholder="A hands-on path from data to insight"></label>
+                        <label class="ai-studio-field">Level<select name="level"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></label>
+                        <label class="ai-studio-field">Target audience<input name="targetAudience" maxlength="1000" placeholder="Who should take this course?"></label>
+                        <label class="ai-studio-field">Duration (hours)<input name="durationHours" type="number" min="1" max="500" value="8" required></label>
+                        <label class="ai-studio-field">Language<input name="language" maxlength="80" value="English"></label>
+                        <label class="ai-studio-field">Learning format<input name="learningFormat" maxlength="300" placeholder="Short lessons, projects, demonstrations"></label>
+                        <label class="ai-studio-field">Modules<input name="moduleCount" type="number" min="1" max="12" value="5" required></label>
+                        <label class="ai-studio-field">Approx. lessons<input name="lessonCount" type="number" min="1" max="48" value="15" required></label>
+                        <label class="ai-studio-field">Certificate eligible<select name="certificateEligible"><option value="true">Yes</option><option value="false">No</option></select></label>
+                        <label class="ai-studio-field ai-studio-wide">Course objectives<textarea name="objectives" rows="3" maxlength="4000" placeholder="What should learners be able to do?"></textarea></label>
+                        <label class="ai-studio-field ai-studio-wide">Skills students should acquire<textarea name="skills" rows="2" maxlength="2000"></textarea></label>
+                        <label class="ai-studio-field ai-studio-wide">Prerequisites<textarea name="prerequisites" rows="2" maxlength="2000"></textarea></label>
+                        <label class="ai-studio-field ai-studio-wide">Additional instructions<textarea name="additionalInstructions" rows="3" maxlength="4000"></textarea></label>
+                        <div class="ai-studio-wide" style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;">
+                            <button id="aiStudioGenerateButton" class="refresh-btn" type="submit"><i class="fas fa-wand-magic-sparkles"></i> Generate Complete Course</button>
+                            <span id="aiStudioFormMessage" role="status" style="font-size:.85rem;color:#475569;"></span>
+                        </div>
+                    </form>
+                </div>
+                <div class="stats-grid" id="aiStudioStats"></div>
+            </section>
+
+            <section id="aiStudioSection-video" class="ai-studio-section" hidden><div class="table-card"><div class="table-header"><h2>AI Video Studio</h2><span id="aiVideoStatus" class="badge badge-pending">Provider status unavailable</span></div><p class="ai-studio-note">Video automation, screen recording, narration, editing, rendering, and subtitle delivery are not enabled until a video production service and secure storage are configured. No video jobs will be marked complete without a provider response.</p></div></section>
+            <section id="aiStudioSection-materials" class="ai-studio-section" hidden><div class="table-card"><div class="table-header"><h2>AI Learning Materials</h2><span id="aiMaterialsStatus" class="badge badge-pending">Provider status unavailable</span></div><p class="ai-studio-note">PDF generation and downloadable material storage are not enabled until document generation and persistent file storage are configured.</p></div></section>
+            <section id="aiStudioSection-assessments" class="ai-studio-section" hidden><div class="table-card"><div class="table-header"><h2>Quiz &amp; Assessment Generator</h2><span class="badge badge-pending">Course draft only</span></div><p class="ai-studio-note">Generated course drafts may include quiz data for administrator review. Student assessment delivery and answer protection are not yet integrated with the learning experience.</p></div></section>
+            <section id="aiStudioSection-quality" class="ai-studio-section" hidden><div class="table-card"><div class="table-header"><h2>Course Quality Checker</h2><span class="badge badge-pending">Not configured</span></div><p class="ai-studio-note">No automated quality pass is reported as complete until a review provider is configured. AI review will be advisory and is not proof of factual accuracy.</p></div></section>
+            <section id="aiStudioSection-production" class="ai-studio-section" hidden><div class="table-card"><div class="table-header"><h2>Course Production Manager</h2><button class="refresh-btn" type="button" onclick="loadAiStudioJobs()"><i class="fas fa-sync"></i> Refresh</button></div><div id="aiStudioJobs"><div class="loading">Load persisted production jobs.</div></div></div></section>
+            <section id="aiStudioSection-library" class="ai-studio-section" hidden><div class="table-card"><div class="table-header"><h2>AI Content Library</h2><span id="aiLibraryStatus" class="badge badge-pending">Persistent storage required</span></div><p class="ai-studio-note">Generated course structures are linked to pending SkillHub course drafts. Browsable video and document assets require configured persistent storage.</p></div></section>
+            <section id="aiStudioSection-usage" class="ai-studio-section" hidden><div class="stats-grid" id="aiStudioUsageStats"></div><div class="table-card"><div class="table-header"><h2>Recent AI requests</h2><button class="refresh-btn" type="button" onclick="loadAiStudioUsage()"><i class="fas fa-sync"></i> Refresh</button></div><div id="aiStudioUsage"><div class="loading">Load usage records.</div></div></div></section>
+            <section id="aiStudioSection-settings" class="ai-studio-section" hidden><div class="table-card"><div class="table-header"><h2>AI Studio Settings</h2><span class="badge badge-user">Server-managed</span></div><p class="ai-studio-note">Provider credentials are never sent to this page. Configure provider keys, model, monthly budget, video/voice services, and storage through backend environment variables; the status indicators here report readiness only.</p><div id="aiStudioSettingsStatus" style="padding:0 1.5rem 1.5rem;"></div></div></section>
+        </div>
+
+        <!-- LIVE CHATS TAB -->
+        <div id="tab-chats" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-comments" style="color:#2563eb;"></i> All User Conversations</h2>
+                    <button class="refresh-btn" onclick="loadAllChats()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="chatsContainer"><div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading conversations...</div></div>
+            </div>
+            <!-- Chat viewer panel -->
+            <div id="chatViewerPanel" style="display:none;margin-top:1.5rem;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2 id="chatViewerTitle">Conversation</h2>
+                        <button class="refresh-btn" onclick="document.getElementById('chatViewerPanel').style.display='none'">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                    <div id="chatViewerMessages" style="padding:1rem;max-height:500px;overflow-y:auto;background:#f8fafc;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROLES TAB -->
+        <div id="tab-roles" class="tab-content">
+            <div class="table-card" style="margin-bottom:1.5rem;">
+                <div class="table-header">
+                    <h2>Admin Roles & Permissions</h2>
+                    <button class="refresh-btn" onclick="loadAdminRoles()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="adminRolesTable" style="padding:1rem 1.5rem;"><div class="loading"><i class='fas fa-spinner fa-spin'></i> Loading roles...</div></div>
+            </div>
+        </div>
+
+        <!-- ACTIVITY LOG TAB -->
+        <div id="tab-visitors" class="tab-content">
+            <section class="stats-grid" id="visitorStats"><div class="loading">Load visitor analytics.</div></section>
+            <div class="visitor-analytics-grid">
+                <div class="table-card"><div class="table-header"><h2>Popular pages</h2><button class="refresh-btn" onclick="loadVisitorAnalytics()"><i class="fas fa-sync"></i> Refresh</button></div><div id="visitorPagesTable"></div></div>
+                <div class="table-card"><div class="table-header"><h2>Devices</h2><label class="visitor-range-label">Period<select id="visitorRange" onchange="loadVisitorAnalytics()"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">90 days</option></select></label></div><div id="visitorDevicesTable"></div></div>
+            </div>
+            <div class="table-card" style="margin-top:1rem;"><div class="table-header"><h2>Recent page visits</h2><span style="font-size:.78rem;color:#64748b;">Anonymous session key, page, device, and time only</span></div><div id="visitorRecentTable"></div></div>
+        </div>
+
+        <!-- ACTIVITY LOG TAB -->
+        <div id="tab-activity" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Admin Activity Log</h2>
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        <input type="text" id="adminSearchInput" class="search-input" placeholder="Search records..." />
+                        <button class="refresh-btn" onclick="loadAdminActivity()"><i class="fas fa-sync"></i> Refresh</button>
+                    </div>
+                </div>
+                <div id="adminActivityTable" style="padding:1rem 1.5rem;"><div class="loading"><i class='fas fa-spinner fa-spin'></i> Loading activity...</div></div>
+            </div>
+        </div>
+
+        <!-- EXCHANGE RATES TAB -->
+        <div id="tab-rates" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2><i class="fas fa-exchange-alt" style="color:#2563eb;"></i> Exchange Rates</h2>
+                    <span style="font-size:0.8rem;color:#64748b;">1 USD = X local currency</span>
+                </div>
+
+                <div style="padding:1.5rem;max-width:560px;">
+                    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:0.75rem;padding:1rem 1.25rem;margin-bottom:1.5rem;font-size:0.85rem;color:#1e40af;display:flex;gap:0.6rem;align-items:flex-start;">
+                        <i class="fas fa-info-circle" style="margin-top:2px;flex-shrink:0;"></i>
+                        <span>These rates are used on the payment page to show users the approximate local amount to send. Update them whenever the exchange rate changes.</span>
+                    </div>
+
+                    <!-- Rate cards -->
+                    <div id="ratesForm">
+                        <!-- Rendered by loadRates() -->
+                    </div>
+
+                    <button onclick="saveRates()" id="saveRatesBtn"
+                        style="width:100%;padding:0.875rem;background:#2563eb;color:white;border:none;border-radius:0.5rem;font-weight:700;font-size:0.95rem;cursor:pointer;margin-top:0.5rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;transition:background 0.2s;">
+                        <i class="fas fa-save"></i> Save Exchange Rates
+                    </button>
+                    <div id="ratesSaveMsg" style="display:none;margin-top:0.75rem;padding:0.75rem 1rem;border-radius:0.5rem;font-size:0.85rem;font-weight:600;text-align:center;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<script src="api-config.js"></script>
+<script src="admin.js"></script>
+<script>
+// Show shared browser warning if a regular user is also logged in
+(function() {
+    var userToken = localStorage.getItem("skillhub_token");
+    if (userToken) {
+        var warn = document.getElementById("sharedBrowserWarning");
+        if (warn) warn.style.display = "block";
+    }
+})();
+</script>
+</body>
+</html>

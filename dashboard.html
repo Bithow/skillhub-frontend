@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillHub Dashboard</title>
+    <meta name="description" content="SkillHub learner dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="api-config.js"></script>
+</head>
+<body class="dashboard-page" data-page="dashboard">
+    <div class="dashboard-shell">
+        <aside class="dashboard-sidebar">
+            <div class="dashboard-brand-row">
+                <img src="logo.png" alt="SkillHub logo" class="dashboard-brand-logo">
+                <div>
+                    <span class="dashboard-brand-kicker">Welcome</span>
+                    <strong>SkillHub</strong>
+                </div>
+            </div>
+
+            <nav class="dashboard-nav" aria-label="Main dashboard navigation">
+                <a href="#my-learning" class="dashboard-nav-item active"><i class="fas fa-graduation-cap"></i> My Learning</a>
+                <a href="#progress" class="dashboard-nav-item"><i class="fas fa-chart-line"></i> Progress</a>
+                <a href="#skills" class="dashboard-nav-item"><i class="fas fa-brain"></i> Skills</a>
+                <a href="#wishlist" class="dashboard-nav-item"><i class="fas fa-heart"></i> Wishlist</a>
+                <a href="#certificates" class="dashboard-nav-item"><i class="fas fa-award"></i> Certificates</a>
+                <a href="#assignments" class="dashboard-nav-item"><i class="fas fa-file-lines"></i> Assignments</a>
+                <a href="#messages" class="dashboard-nav-item"><i class="fas fa-message"></i> Messages</a>
+                <a href="profile.html#tab-settings" class="dashboard-nav-item"><i class="fas fa-gear"></i> Settings</a>
+                <a href="profile.html" class="dashboard-nav-item"><i class="fas fa-user"></i> Profile</a>
+            </nav>
+
+            <div class="dashboard-user-card">
+                <div class="dashboard-sidebar-avatar" id="dashAvatar"><i class="fas fa-user"></i></div>
+                <div class="dashboard-user-meta">
+                    <strong id="dashName">Learner</strong>
+                    <span id="dashRoleBadge" class="dash-role-badge"><i class="fas fa-user-graduate"></i> Learner</span>
+                </div>
+                <a href="profile.html" class="dashboard-mini-link">View profile</a>
+                <button type="button" class="dashboard-logout-btn" id="dashLogoutBtn"><i class="fas fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-topbar">
+                <div>
+                    <p class="dashboard-topbar-kicker">Learning dashboard</p>
+                    <h1>Welcome back, <span id="dashNameMain">Learner</span>!</h1>
+                </div>
+                <div class="dashboard-header-actions">
+                    <button class="dashboard-icon-button" type="button" aria-label="Notifications">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <a href="index.html" class="dashboard-home-link">Back to home</a>
+                </div>
+            </header>
+
+            <section class="dashboard-search-wrap">
+                <label class="dashboard-search" for="dashboardSearchInput">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <input id="dashboardSearchInput" type="search" placeholder="What would you like to learn?">
+                </label>
+            </section>
+
+            <section class="dash-stats-row" aria-label="Learning statistics">
+                <article class="dash-stat-card">
+                    <i class="fas fa-book-open"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashEnrolledCount">0</span>
+                        <span class="dash-stat-label">Courses Enrolled</span>
+                    </div>
+                </article>
+                <article class="dash-stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashCompletedCount">0</span>
+                        <span class="dash-stat-label">Courses Completed</span>
+                    </div>
+                </article>
+                <article class="dash-stat-card">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashHoursCount">0h</span>
+                        <span class="dash-stat-label">Learning Hours</span>
+                    </div>
+                </article>
+                <article class="dash-stat-card">
+                    <i class="fas fa-award"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashCertificatesCount">0</span>
+                        <span class="dash-stat-label">Certificates Earned</span>
+                    </div>
+                </article>
+            </section>
+
+            <section id="my-learning" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Continue learning</span>
+                        <h2>Continue Learning</h2>
+                    </div>
+                    <a href="courses.html" class="dashboard-link-button">Browse courses</a>
+                </div>
+                <div id="dashCoursesList" class="dashboard-course-grid"></div>
+            </section>
+
+            <section id="progress" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Progress</span>
+                        <h2>Learning progress</h2>
+                    </div>
+                </div>
+                <div class="dashboard-surface-grid">
+                    <article class="dashboard-surface-card">
+                        <h3>Your activity</h3>
+                        <p id="progressSummaryText">Your learning progress will appear here.</p>
+                    </article>
+                    <article class="dashboard-surface-card">
+                        <h3>Next milestone</h3>
+                        <p>Complete your next lesson to unlock your next learning streak.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section id="skills" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Skills</span>
+                        <h2>Recommended skills</h2>
+                    </div>
+                </div>
+                <div id="dashboardSkillsList" class="dashboard-skill-list">
+                    <div class="dashboard-empty-state"><i class="fas fa-brain"></i><p>No skills tracked yet.</p></div>
+                </div>
+            </section>
+
+            <section id="wishlist" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Wishlist</span>
+                        <h2>Saved for later</h2>
+                    </div>
+                </div>
+                <div class="dashboard-empty-state"><i class="fas fa-heart"></i><p>No saved courses yet.</p></div>
+            </section>
+
+            <section id="certificates" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Certificates</span>
+                        <h2>Achievements</h2>
+                    </div>
+                </div>
+                <div class="dashboard-empty-state"><i class="fas fa-award"></i><p>No certificates earned yet.</p></div>
+            </section>
+
+            <section id="assignments" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Assignments</span>
+                        <h2>Upcoming tasks</h2>
+                    </div>
+                </div>
+                <div class="dashboard-empty-state"><i class="fas fa-file-lines"></i><p>No upcoming assignments.</p></div>
+            </section>
+
+            <section id="messages" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Messages</span>
+                        <h2>Inbox</h2>
+                    </div>
+                    <a href="chat.html" class="dashboard-link-button">Open messages</a>
+                </div>
+                <div class="dashboard-empty-state"><i class="fas fa-message"></i><p>No new messages yet.</p></div>
+            </section>
+
+            <section id="settings" class="dashboard-panel">
+                <div class="dashboard-panel-header">
+                    <div>
+                        <span class="dashboard-panel-kicker">Settings</span>
+                        <h2>Account preferences</h2>
+                    </div>
+                </div>
+                <div class="dashboard-surface-grid">
+                    <article class="dashboard-surface-card">
+                        <h3>Profile</h3>
+                        <p>Update your name, bio, and profile picture from your account settings.</p>
+                    </article>
+                    <article class="dashboard-surface-card">
+                        <h3>Notifications</h3>
+                        <p>Manage your communication preferences for course updates and messages.</p>
+                    </article>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

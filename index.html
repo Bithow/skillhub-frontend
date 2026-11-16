@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SkillHub | Learn, Earn & Hire</title>
+    <meta name="description" content="SkillHub connects learners, instructors, and freelancers in one ecosystem. Buy courses, teach skills, and hire talent — all via WhatsApp.">
+    <meta name="keywords" content="SkillHub, online courses, freelancers, Ethiopia, South Sudan, learn online, earn money, hire freelancers">
+    <meta name="author" content="SkillHub">
+    <!-- Open Graph (for sharing on WhatsApp, Facebook, etc.) -->
+    <meta property="og:title" content="SkillHub | Learn, Earn & Hire">
+    <meta property="og:description" content="Connect with learners, instructors, and freelancers. Buy courses, offer services, hire talent — all via WhatsApp.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://skillhub.com">
+    <!-- Favicon -->
+    <link rel="icon" href="logo.png" type="image/png">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SkillHub">
+    <link rel="apple-touch-icon" href="logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+<noscript>
+  <div style="background:#1e3a8a;color:white;text-align:center;padding:1.5rem;font-family:sans-serif;font-size:1rem;">
+    <strong>JavaScript is required to use SkillHub.</strong> Please enable JavaScript in your browser settings and reload the page.
+  </div>
+</noscript>
+
+  <!-- ==================== SKILLHUB NAVIGATION ==================== -->
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="nav-container">
+            <a class="logo" href="index.html" aria-label="SkillHub home">
+                <img src="logo.png" alt="" width="40" height="40">
+                <span class="logo-text">SkillHub</span>
+            </a>
+
+            <div class="nav-links" id="navLinks">
+                <div class="nav-item">
+                    <button class="nav-link nav-trigger" type="button" aria-expanded="false" aria-controls="learnMenu"><span>Learn</span><i class="fas fa-chevron-down nav-chevron" aria-hidden="true"></i></button>
+                    <div class="mega-menu" id="learnMenu" role="region" aria-label="Learn menu">
+                        <div class="mega-grid">
+                            <section class="mega-column"><h2>Explore learning</h2>
+                                <a href="learn.html"><i class="fas fa-book-open"></i><span>Explore learning<small>Discover courses and skills</small></span></a>
+                                <a href="courses.html"><i class="fas fa-list"></i><span>Browse all courses<small>Search the full catalogue</small></span></a>
+                                <a href="#courses" data-nav-action="show-instructor"><i class="fas fa-chalkboard-teacher"></i><span>Become an instructor<small>Apply to teach on SkillHub</small></span></a>
+                                <span class="mega-coming"><i class="fas fa-video"></i><span>Live classes<small>Coming soon</small></span></span>
+                            </section>
+                            <section class="mega-column"><h2>Popular categories</h2>
+                                <a href="courses.html?category=technology"><i class="fas fa-code"></i><span>Technology courses</span></a>
+                                <a href="courses.html?category=design"><i class="fas fa-pen-nib"></i><span>Design courses</span></a>
+                                <a href="courses.html?category=marketing"><i class="fas fa-bullhorn"></i><span>Marketing courses</span></a>
+                                <a href="courses.html?search=Data%20Analytics"><i class="fas fa-chart-line"></i><span>Data analytics</span></a>
+                            </section>
+                            <section class="mega-column"><h2>Your learning</h2>
+                                <a class="nav-private hidden" href="dashboard.html"><i class="fas fa-graduation-cap"></i><span>My courses<small>Your enrolled learning</small></span></a>
+                                <a class="nav-private hidden" href="profile.html"><i class="fas fa-chart-simple"></i><span>Learning progress</span></a>
+                                <a class="nav-private hidden" href="certificate.html"><i class="fas fa-certificate"></i><span>Certificates</span></a>
+                                <a href="faq.html"><i class="fas fa-circle-question"></i><span>Learning help</span></a>
+                            </section>
+                            <section class="mega-feature"><span class="mega-kicker">LEARN · BUILD · EARN</span><h2>Build skills for what comes next.</h2><p>Start with the SkillHub course catalogue.</p><a class="mega-feature-link" href="learn.html">Explore learning <i class="fas fa-arrow-right"></i></a></section>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <button class="nav-link nav-trigger" type="button" aria-expanded="false" aria-controls="freelanceMenu"><span>Freelance</span><i class="fas fa-chevron-down nav-chevron" aria-hidden="true"></i></button>
+                    <div class="mega-menu" id="freelanceMenu" role="region" aria-label="Freelance menu">
+                        <div class="mega-grid">
+                            <section class="mega-column"><h2>Get started</h2>
+                                <a href="#earn" data-nav-action="show-freelancer-form"><i class="fas fa-user-plus"></i><span>Become a freelancer<small>Create your professional profile</small></span></a>
+                                <a class="nav-private nav-role-freelancer hidden" href="profile.html"><i class="fas fa-id-card"></i><span>My freelancer profile</span></a>
+                                <a href="#how-it-works"><i class="fas fa-route"></i><span>How SkillHub works</span></a>
+                                <a href="faq.html"><i class="fas fa-shield-halved"></i><span>Freelancer guidelines</span></a>
+                            </section>
+                            <section class="mega-column"><h2>Showcase your skills</h2>
+                                <a href="#earn" data-nav-action="show-freelancer-form"><i class="fas fa-briefcase"></i><span>Build your portfolio</span></a>
+                                <a class="nav-private nav-role-freelancer hidden" href="freelancer-dashboard.html?view=services"><i class="fas fa-list-check"></i><span>Manage my services</span></a>
+                                <span class="mega-coming"><i class="fas fa-award"></i><span>Work experience<small>Profile tools coming soon</small></span></span>
+                            </section>
+                            <section class="mega-column"><h2>Find work</h2>
+                                <a href="freelancer-dashboard.html?view=work"><i class="fas fa-magnifying-glass"></i><span>Browse projects<small>Find work that fits your skills</small></span></a>
+                                <span class="mega-coming"><i class="fas fa-paper-plane"></i><span>Proposals and invitations<small>Coming soon</small></span></span>
+                                <a class="nav-private nav-role-freelancer hidden" href="freelancer-dashboard.html?view=invitations"><i class="fas fa-inbox"></i><span>Client hire requests</span></a>
+                                <a class="nav-private nav-role-client hidden" href="client-dashboard.html"><i class="fas fa-briefcase"></i><span>Client dashboard</span></a>
+                            </section>
+                            <section class="mega-column"><h2>Manage your work</h2>
+                                <a class="nav-private nav-role-freelancer hidden" href="freelancer-dashboard.html"><i class="fas fa-gauge-high"></i><span>Freelancer dashboard</span></a>
+                                <a class="nav-private nav-role-client hidden" href="client-dashboard.html"><i class="fas fa-gauge-high"></i><span>Hiring workspace</span></a>
+                                <a class="nav-private hidden" href="chat.html"><i class="fas fa-comments"></i><span>Messages</span></a>
+                                <a class="nav-private hidden" href="profile.html"><i class="fas fa-wallet"></i><span>Earnings and payments</span></a>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <button class="nav-link nav-trigger" type="button" aria-expanded="false" aria-controls="talentMenu"><span>Hire Talent</span><i class="fas fa-chevron-down nav-chevron" aria-hidden="true"></i></button>
+                    <div class="mega-menu" id="talentMenu" role="region" aria-label="Hire talent menu">
+                        <div class="mega-grid">
+                            <section class="mega-column"><h2>Find professionals</h2>
+                                <a href="#earn" data-nav-action="browse-freelancers"><i class="fas fa-users"></i><span>Browse freelancers<small>Meet independent professionals</small></span></a>
+                                <a href="#earn" data-nav-action="browse-freelancers"><i class="fas fa-magnifying-glass"></i><span>Search by skills</span></a>
+                                <a href="#earn" data-nav-action="browse-freelancers"><i class="fas fa-user-tie"></i><span>Find a specialist</span></a>
+                            </section>
+                            <section class="mega-column"><h2>Hire with confidence</h2>
+                                <a href="#how-it-works"><i class="fas fa-route"></i><span>How hiring works</span></a>
+                                <a href="#contact"><i class="fas fa-file-circle-plus"></i><span>Post a project<small>Tell us what you need</small></span></a>
+                                <a href="#contact"><i class="fas fa-comments"></i><span>Contact talent</span></a>
+                            </section>
+                            <section class="mega-feature"><span class="mega-kicker">SKILLED PEOPLE · REAL RESULTS</span><h2>Find the right talent for your next project.</h2><p>Explore skills and connect with professionals.</p><a class="mega-feature-link" href="#earn" data-nav-action="browse-freelancers">Browse talent <i class="fas fa-arrow-right"></i></a></section>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item">
+                    <button class="nav-link nav-trigger" type="button" aria-expanded="false" aria-controls="businessMenu"><span>Business Solutions</span><i class="fas fa-chevron-down nav-chevron" aria-hidden="true"></i></button>
+                    <div class="mega-menu" id="businessMenu" role="region" aria-label="Business solutions menu">
+                        <div class="mega-grid">
+                            <section class="mega-column"><h2>For organizations</h2>
+                                <a href="#contact"><i class="fas fa-building"></i><span>Corporate training<small>Develop skills across your team</small></span></a>
+                                <a href="#contact"><i class="fas fa-laptop-code"></i><span>Digital services</span></a>
+                                <a href="#contact"><i class="fas fa-people-group"></i><span>Talent sourcing</span></a>
+                            </section>
+                            <section class="mega-column"><h2>Work with SkillHub</h2>
+                                <a href="#contact"><i class="fas fa-diagram-project"></i><span>Project outsourcing</span></a>
+                                <a href="#contact"><i class="fas fa-handshake"></i><span>Partnerships</span></a>
+                                <a href="#contact"><i class="fas fa-file-lines"></i><span>Request a proposal</span></a>
+                            </section>
+                            <section class="mega-feature"><span class="mega-kicker">PEOPLE · SKILLS · PROGRESS</span><h2>Build a stronger organization.</h2><p>Talk with our team about training and talent solutions.</p><a class="mega-feature-link" href="#contact">Contact our team <i class="fas fa-arrow-right"></i></a></section>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-item nav-item-about">
+                    <button class="nav-link nav-trigger" type="button" aria-expanded="false" aria-controls="aboutMenu"><span>Why SkillHub</span><i class="fas fa-chevron-down nav-chevron" aria-hidden="true"></i></button>
+                    <div class="mega-menu" id="aboutMenu" role="region" aria-label="About SkillHub menu">
+                        <div class="mega-grid">
+                            <section class="mega-column"><h2>Discover SkillHub</h2>
+                                <a href="#about"><i class="fas fa-circle-info"></i><span>About us</span></a>
+                                <a href="#about"><i class="fas fa-bullseye"></i><span>Our mission and vision</span></a>
+                                <a href="#how-it-works"><i class="fas fa-route"></i><span>How SkillHub works</span></a>
+                                <a href="#core-values"><i class="fas fa-star"></i><span>Our core values</span></a>
+                            </section>
+                            <section class="mega-column"><h2>Help and support</h2>
+                                <a href="faq.html"><i class="fas fa-circle-question"></i><span>FAQs</span></a>
+                                <a href="help.html"><i class="fas fa-life-ring"></i><span>Help center</span></a>
+                                <a href="#contact"><i class="fas fa-envelope"></i><span>Contact us</span></a>
+                                <a href="terms.html"><i class="fas fa-scale-balanced"></i><span>Terms and policies</span></a>
+                            </section>
+                            <section class="mega-feature"><span class="mega-kicker">LEARN · BUILD · EARN</span><h2>One platform for your next step.</h2><p>Learning, opportunity and professional growth in one place.</p><a class="mega-feature-link" href="#about">Our story <i class="fas fa-arrow-right"></i></a></section>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-mobile-auth">
+                    <a href="#login-register" class="nav-mobile-login" id="navDrawerLogin" data-auth-tab="login">Log In</a>
+                    <a href="#login-register" class="nav-mobile-signup" id="navDrawerGetStarted" data-auth-tab="register">Sign Up</a>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <div class="nav-search" id="navSearch">
+                    <button class="nav-search-mobile-toggle" id="navSearchToggle" type="button" aria-label="Search skills, courses or talent" aria-expanded="false" aria-controls="navSearchPanel"><span class="nav-search-prompt">Search skills, courses or talent...</span><i class="fas fa-magnifying-glass" aria-hidden="true"></i></button>
+                    <section class="nav-search-panel" id="navSearchPanel" aria-label="SkillHub search" hidden>
+                        <form id="navSearchForm" role="search" autocomplete="off">
+                            <label class="sr-only" for="navSearchInput">Search skills, courses or talent</label>
+                            <i class="fas fa-magnifying-glass nav-search-icon" aria-hidden="true"></i>
+                            <input id="navSearchInput" type="search" name="q" placeholder="Search skills, courses or talent..." minlength="2" maxlength="100" aria-controls="navSearchResults" aria-expanded="false" aria-autocomplete="list">
+                            <button class="nav-search-close" id="navSearchClose" type="button" aria-label="Close search"><i class="fas fa-times"></i></button>
+                        </form>
+                        <div class="nav-search-suggestions" id="navSearchSuggestions"><span>Suggestions</span>
+                            <button type="button" data-search-suggestion="Digital Marketing">Digital Marketing</button>
+                            <button type="button" data-search-suggestion="Web Development">Web Development</button>
+                            <button type="button" data-search-suggestion="Graphic Design">Graphic Design</button>
+                            <button type="button" data-search-suggestion="Data Analytics">Data Analytics</button>
+                        </div>
+                        <div class="nav-search-results" id="navSearchResults" role="region" aria-label="Search results" hidden></div>
+                    </section>
+                </div>
+                <a href="#login-register" class="nav-auth-link" id="navAuthLink" data-auth-tab="login">Log In</a>
+                <a href="#login-register" class="nav-get-started" id="navGetStarted" data-auth-tab="register">Sign Up</a>
+                <div class="nav-user-badge hidden" id="navUserBadge">
+                    <button class="nav-account-toggle" id="navAccountToggle" type="button" aria-expanded="false" aria-controls="navAccountMenu"><span id="navUserName">Account</span><i class="fas fa-chevron-down" aria-hidden="true"></i></button>
+                    <div class="nav-account-menu" id="navAccountMenu" hidden>
+                        <a href="#dashboard" id="navDashLink"><i class="fas fa-gauge-high"></i> Dashboard</a>
+                        <a class="nav-private hidden" href="chat.html"><i class="fas fa-comments"></i> Messages</a>
+                        <a class="nav-private hidden" href="profile.html"><i class="fas fa-user"></i> Profile and payments</a>
+                        <a class="nav-private nav-role-instructor hidden" href="create-course.html" id="navCreateCourseLink"><i class="fas fa-plus"></i> Create a course</a>
+                        <button class="nav-logout-btn" id="navLogoutBtn" type="button"><i class="fas fa-arrow-right-from-bracket"></i> Sign out</button>
+                    </div>
+                </div>
+                <button class="hamburger" id="hamburger" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+        <button class="nav-scrim" id="navScrim" type="button" aria-label="Close navigation menu" hidden></button>
+    </nav>
+
+    <!-- ==================== CINEMATIC HERO CAROUSEL ==================== -->
+    <header class="hero hero-carousel" id="homeCarousel" aria-roledescription="carousel" aria-label="Explore SkillHub">
+        <div class="hero-slides" aria-live="off">
+            <article class="hero-slide is-active" data-slide="0" data-accent="learn" aria-hidden="false">
+                <img class="hero-photo" src="hero-images/learn.jpeg" alt="Learner studying online" fetchpriority="high" decoding="async">
+                <div class="hero-content">
+                    <span class="hero-eyebrow"><i class="fas fa-book-open" aria-hidden="true"></i> LEARN · BUILD · GROW</span>
+                    <h1 class="hero-title">Learn skills that move you <span class="hero-highlight">forward.</span></h1>
+                    <p class="hero-description">Access practical online courses, live classes, masterclasses and professional training programs from experienced instructors.</p>
+                    <div class="hero-buttons">
+                        <a href="#courses" class="hero-cta hero-cta-primary" data-hero-action="show-courses">Explore Courses <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="#courses" class="hero-cta hero-cta-secondary" data-hero-action="show-instructor">Become an Instructor</a>
+                    </div>
+                    <p class="hero-note">Learn at your pace. Grow your potential.</p>
+                </div>
+            </article>
+            <article class="hero-slide" data-slide="1" data-accent="freelance" aria-hidden="true">
+                <img class="hero-photo" src="hero-images/freelance.jpeg" alt="Freelancers collaborating on a project" loading="lazy" decoding="async">
+                <div class="hero-content">
+                    <span class="hero-eyebrow"><i class="fas fa-laptop-code" aria-hidden="true"></i> FREELANCE · CREATE · EARN</span>
+                    <h2 class="hero-title">Turn your skills into <span class="hero-highlight">income.</span></h2>
+                    <p class="hero-description">Showcase your expertise, build your professional portfolio, discover projects and connect with clients looking for your skills.</p>
+                    <div class="hero-buttons">
+                        <a href="#earn" class="hero-cta hero-cta-primary" data-hero-action="browse-freelancers">Explore Freelance Work <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="#earn" class="hero-cta hero-cta-secondary" data-hero-action="show-freelancer-form">Create Your Profile</a>
+                    </div>
+                    <p class="hero-note">Your skills deserve opportunities.</p>
+                </div>
+            </article>
+            <article class="hero-slide" data-slide="2" data-accent="talent" aria-hidden="true">
+                <img class="hero-photo" src="hero-images/hire%20talent.jpeg" alt="Professionals meeting to plan a project" loading="lazy" decoding="async">
+                <div class="hero-content">
+                    <span class="hero-eyebrow"><i class="fas fa-people-group" aria-hidden="true"></i> HIRE TALENT · MOVE FORWARD</span>
+                    <h2 class="hero-title">Find the <span class="hero-highlight">right talent.</span> Get work done.</h2>
+                    <p class="hero-description">Discover qualified professionals, evaluate their expertise and connect with the right people to bring your projects and business goals to life.</p>
+                    <div class="hero-buttons">
+                        <a href="#earn" class="hero-cta hero-cta-primary" data-hero-action="browse-freelancers">Find Professionals <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="#contact" class="hero-cta hero-cta-secondary">Post a Project</a>
+                    </div>
+                    <p class="hero-note">Great work starts with the right people.</p>
+                </div>
+            </article>
+            <article class="hero-slide" data-slide="3" data-accent="business" aria-hidden="true">
+                <img class="hero-photo" src="hero-images/business.jpeg" alt="Modern business team workspace" loading="lazy" decoding="async">
+                <div class="hero-content">
+                    <span class="hero-eyebrow"><i class="fas fa-building" aria-hidden="true"></i> BUSINESS · PEOPLE · PROGRESS</span>
+                    <h2 class="hero-title">Power your business. <span class="hero-highlight">Accelerate growth.</span></h2>
+                    <p class="hero-description">Access corporate training, skilled talent, digital services and project outsourcing solutions designed to help organizations achieve more.</p>
+                    <div class="hero-buttons">
+                        <a href="#contact" class="hero-cta hero-cta-primary">Explore Business Solutions <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+                        <a href="#contact" class="hero-cta hero-cta-secondary">Partner With SkillHub</a>
+                    </div>
+                    <p class="hero-note">Building stronger teams. Enabling better businesses.</p>
+                </div>
+            </article>
+        </div>
+        <div class="hero-bottom-bar">
+            <div class="hero-previews" role="tablist" aria-label="Choose a SkillHub division">
+                <button class="hero-preview is-active" type="button" role="tab" aria-selected="true" aria-label="Slide 1: Learn" data-go-to="0" style="--preview-image:url('hero-images/learn.jpeg')">
+                    <span class="hero-preview-number">01</span><span class="hero-preview-copy"><strong>LEARN</strong><small>Build in-demand skills.</small></span>
+                </button>
+                <button class="hero-preview" type="button" role="tab" aria-selected="false" aria-label="Slide 2: Freelance" data-go-to="1" style="--preview-image:url('hero-images/freelance.jpeg')">
+                    <span class="hero-preview-number">02</span><span class="hero-preview-copy"><strong>FREELANCE</strong><small>Build a career. Earn.</small></span>
+                </button>
+                <button class="hero-preview" type="button" role="tab" aria-selected="false" aria-label="Slide 3: Hire talent" data-go-to="2" style="--preview-image:url('hero-images/hire%20talent.jpeg')">
+                    <span class="hero-preview-number">03</span><span class="hero-preview-copy"><strong>HIRE TALENT</strong><small>Connect with experts.</small></span>
+                </button>
+                <button class="hero-preview" type="button" role="tab" aria-selected="false" aria-label="Slide 4: Business solutions" data-go-to="3" style="--preview-image:url('hero-images/business.jpeg')">
+                    <span class="hero-preview-number">04</span><span class="hero-preview-copy"><strong>BUSINESS</strong><small>Grow with SkillHub.</small></span>
+                </button>
+            </div>
+            <div class="hero-controls" aria-label="Carousel controls">
+                <span class="hero-slide-count"><span id="heroCurrentSlide">01</span> <span aria-hidden="true">/</span> 04</span>
+                <button class="hero-control" id="heroPrevious" type="button" aria-label="Previous slide"><i class="fas fa-arrow-left" aria-hidden="true"></i></button>
+                <button class="hero-control" id="heroPause" type="button" aria-label="Pause automatic slides" aria-pressed="false"><i class="fas fa-pause" aria-hidden="true"></i></button>
+                <button class="hero-control" id="heroNext" type="button" aria-label="Next slide"><i class="fas fa-arrow-right" aria-hidden="true"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== SECTION 1: HOW IT WORKS ==================== -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">One Connected Ecosystem</span>
+                <h2>Learn. Build. <span class="blue-text">Hire.</span> <span class="yellow-text">Grow.</span></h2>
+                <p>Four ways people and organizations move forward with SkillHub</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card learner">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="feature-number">01</div>
+                    <h3>Learn</h3>
+                    <p>Discover practical courses or publish one to share your expertise.</p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+                <div class="feature-card freelancer">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <div class="feature-number">02</div>
+                    <h3>Freelance</h3>
+                    <p>Create a professional profile, showcase your skills, and offer services to clients on SkillHub.</p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+                <div class="feature-card client">
+                    <div class="feature-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="feature-number">03</div>
+                    <h3>Hire Talent</h3>
+                    <p>Browse freelancer profiles, find the right professional, and start a conversation through SkillHub messaging.</p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+                <div class="feature-card business">
+                    <div class="feature-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="feature-number">04</div>
+                    <h3>Business Solutions</h3>
+                    <p>Connect with SkillHub for corporate training, talent sourcing, digital services, and project support.</p>
+                    <div class="feature-hover-effect"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION 2: COURSES ==================== -->
+    <section id="courses" class="courses-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Premium Learning</span>
+                <h2>Explore Our <span class="blue-text">Courses</span></h2>
+                <p>World-class courses taught by industry experts</p>
+            </div>
+            <div class="button-group">
+                <button id="showInstructorFormBtn" class="btn btn-green">
+                    <i class="fas fa-chalkboard-user"></i> Become Instructor
+                </button>
+                <a href="courses.html" class="btn btn-blue" id="exploreCoursesLink">
+                    <i class="fas fa-book-open" aria-hidden="true"></i> Explore Courses
+                </a>
+            </div>
+
+            <!-- Become Instructor Form -->
+            <div id="instructorFormCard" class="form-card hidden">
+                <div class="form-card-header">
+                    <i class="fas fa-chalkboard-user"></i>
+                    <h3>Instructor Registration</h3>
+                </div>
+                <form id="instructorRegisterForm">
+                    <div class="form-group">
+                        <input type="text" id="instName" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="instEmail" placeholder="Email Address" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="instPhone" placeholder="WhatsApp Number (including country code)" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="instSkill" placeholder="Your Skill / Course Topic" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="instExperience" placeholder="Brief experience / course description" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-green btn-full">Submit & Register →</button>
+                </form>
+                <p id="instructorSuccessMsg" class="success-message"></p>
+            </div>
+
+            <!-- Courses Display Grid -->
+            <div id="coursesListContainer" class="courses-grid hidden"></div>
+        </div>
+    </section>
+
+    <!-- Course Details Modal -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ==================== TESTIMONIALS ==================== -->
+    <section style="background:#f8fafc;padding:4rem 0;">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">What People Say</span>
+          <h2>Trusted by Learners & Freelancers</h2>
+          <p>Real experiences from our East African community</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem;">
+          <div style="background:white;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <div style="color:#fbbf24;font-size:1.1rem;margin-bottom:0.75rem;">★★★★★</div>
+            <p style="font-size:0.9rem;color:#475569;line-height:1.7;margin-bottom:1rem;">"I completed the Full-Stack Web Dev course and landed my first freelance client within a month. SkillHub made it easy to learn and earn."</p>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.9rem;">BT</div>
+              <div><div style="font-weight:700;font-size:0.85rem;">Biruk T.</div><div style="font-size:0.75rem;color:#94a3b8;">Learner — Ethiopia</div></div>
+            </div>
+          </div>
+          <div style="background:white;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <div style="color:#fbbf24;font-size:1.1rem;margin-bottom:0.75rem;">★★★★★</div>
+            <p style="font-size:0.9rem;color:#475569;line-height:1.7;margin-bottom:1rem;">"As an instructor, I published my Graphic Design course and started earning within the first week. The platform is simple and the admin team is very responsive."</p>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.9rem;">MA</div>
+              <div><div style="font-weight:700;font-size:0.85rem;">Meron A.</div><div style="font-size:0.75rem;color:#94a3b8;">Instructor — Ethiopia</div></div>
+            </div>
+          </div>
+          <div style="background:white;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <div style="color:#fbbf24;font-size:1.1rem;margin-bottom:0.75rem;">★★★★★</div>
+            <p style="font-size:0.9rem;color:#475569;line-height:1.7;margin-bottom:1rem;">"I found a skilled web developer on SkillHub in minutes. The payment process via MTN Mobile Money was seamless. Will use again."</p>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:0.9rem;">JO</div>
+              <div><div style="font-weight:700;font-size:0.85rem;">James O.</div><div style="font-size:0.75rem;color:#94a3b8;">Client — Uganda</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 3: EARN ==================== -->
+    <section id="earn" class="earn-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Freelance &amp; Hire Talent</span>
+                <h2>Build your practice. <span class="yellow-text">Find your people.</span></h2>
+                <p>Turn your skills into professional opportunities, or connect with independent talent for your next project.</p>
+            </div>
+            <div class="earn-path-grid">
+                <article class="earn-path-card earn-path-freelance">
+                    <div class="earn-path-icon" aria-hidden="true"><i class="fas fa-laptop-code"></i></div>
+                    <div class="earn-path-copy">
+                        <span class="earn-path-kicker">FREELANCE</span>
+                        <h3>Showcase your skills</h3>
+                        <p>Create a professional profile, present your portfolio, and offer services to clients through SkillHub.</p>
+                        <ul>
+                            <li>Build your professional profile</li>
+                            <li>Highlight your skills and portfolio</li>
+                            <li>Connect with people who need your work</li>
+                        </ul>
+                        <button id="showFreelancerFormBtn" class="earn-path-action earn-path-action-freelance" type="button">
+                            <i class="fas fa-user-plus" aria-hidden="true"></i> Become a Freelancer
+                        </button>
+                    </div>
+                </article>
+                <article class="earn-path-card earn-path-hire">
+                    <div class="earn-path-icon" aria-hidden="true"><i class="fas fa-users"></i></div>
+                    <div class="earn-path-copy">
+                        <span class="earn-path-kicker">HIRE TALENT</span>
+                        <h3>Find the right professional</h3>
+                        <p>Explore freelancer profiles, compare skills and rates, then start a conversation through SkillHub messaging.</p>
+                        <ul>
+                            <li>Browse professionals by skill</li>
+                            <li>Review portfolios and service details</li>
+                            <li>Message talent about your project</li>
+                        </ul>
+                        <button id="hireFreelancerBtn" class="earn-path-action earn-path-action-hire" type="button">
+                            <i class="fas fa-magnifying-glass" aria-hidden="true"></i> Explore Freelancers
+                        </button>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Freelancer Registration Form -->
+            <div id="freelancerFormCard" class="form-card hidden">
+                <div class="form-card-header">
+                    <i class="fas fa-user-astronaut"></i>
+                    <h3>Become a Freelancer</h3>
+                </div>
+                <form id="freelancerRegForm">
+                    <div class="form-group">
+                        <input type="text" id="freeName" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="freeSkill" placeholder="Skill (e.g., Web Dev, Graphics, Writing)" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="url" id="freePortfolio" placeholder="Portfolio link (GitHub / Behance / LinkedIn)">
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="freePhone" placeholder="WhatsApp Number" required>
+                    </div>
+                    <button type="submit" class="btn btn-indigo btn-full">Register as Freelancer</button>
+                </form>
+                <p id="freelancerSuccessMsg" class="success-message"></p>
+            </div>
+
+            <!-- Freelancer Profiles & Hiring -->
+            <div id="freelancerHireContainer" class="hidden">
+                <div class="filter-bar">
+                    <h3>Available Freelancers</h3>
+                    <div class="filter-controls">
+                        <input type="text" id="skillFilterInput" placeholder="Filter by skill...">
+                        <input type="number" id="freelancerMinRate" min="0" placeholder="Min $/hr" aria-label="Minimum hourly rate">
+                        <input type="number" id="freelancerMaxRate" min="0" placeholder="Max $/hr" aria-label="Maximum hourly rate">
+                        <select id="freelancerExperienceFilter" aria-label="Filter by experience">
+                            <option value="">All experience</option>
+                            <option value="entry">Entry level</option>
+                            <option value="junior">Junior</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="senior">Senior</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                        <select id="freelancerAvailabilityFilter" aria-label="Filter by availability">
+                            <option value="">Any availability</option>
+                            <option value="available">Available</option>
+                            <option value="looking">Open to work</option>
+                            <option value="busy">Busy</option>
+                        </select>
+                        <select id="freelancerSort" aria-label="Sort freelancers">
+                            <option value="match">Best match</option>
+                            <option value="rating">Top rated</option>
+                            <option value="experience">Most experienced</option>
+                            <option value="rate">Lowest rate</option>
+                            <option value="newest">Newest</option>
+                        </select>
+                        <button id="filterSkillBtn" class="btn btn-small btn-blue" type="button">Search</button>
+                        <button id="resetFilterBtn" class="btn btn-small btn-gray" type="button">Clear</button>
+                    </div>
+                </div>
+                <p id="talentSearchValidation" class="talent-search-validation" role="status"></p>
+                <p id="freelancerResultCount" class="freelancer-result-count" aria-live="polite"></p>
+                <div id="freelancerProfileDetail" class="freelancer-profile-detail" hidden></div>
+                <div id="freelancerProfilesList" class="freelancers-grid"></div>
+            </div>
+        </div>
+    </section>
+
+  <!-- ==================== LOGIN / REGISTER SECTION ==================== -->
+    <section id="login-register" class="auth-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Access Platform</span>
+                <h2><span class="blue-text">Login</span> / <span class="blue-text">Register</span></h2>
+                <p>Join our community of learners and professionals</p>
+            </div>
+            
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button class="auth-tab" data-tab="register">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <div id="loginForm" class="auth-form active">
+                        <div class="role-selector">
+                            <p class="role-label" style="font-size:0.78rem;color:#64748b;">Choose your account type</p>
+                            <div class="role-buttons">
+                                <button type="button" class="role-btn" data-role="learner">
+                                    <i class="fas fa-user-graduate"></i>
+                                    <span>Learner</span>
+                                </button>
+                                <button type="button" class="role-btn" data-role="instructor">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <span>Instructor</span>
+                                </button>
+                                <button type="button" class="role-btn" data-role="freelancer">
+                                    <i class="fas fa-laptop-code"></i>
+                                    <span>Freelancer</span>
+                                </button>
+                                <button type="button" class="role-btn" data-role="client">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Client / Employer</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form id="loginFormElement">
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="loginEmail" placeholder="Email address" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="loginPassword" placeholder="Password" required>
+                                    <button type="button" class="toggle-password" data-target="loginPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="rememberMe">
+                                    <span>Remember me</span>
+                                </label>
+                                <a href="#" class="forgot-link" id="forgotPasswordLink">Forgot Password?</a>
+                            </div>
+                            <input type="hidden" id="loginSelectedRole" value="learner">
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-sign-in-alt"></i> Login to Account
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="registerForm" class="auth-form">
+                        <div class="role-selector">
+                            <p class="role-label">Select your role</p>
+                            <div class="role-buttons">
+                                <button type="button" class="role-btn" data-role-reg="learner">
+                                    <i class="fas fa-user-graduate"></i>
+                                    <span>Learner</span>
+                                </button>
+                                <button type="button" class="role-btn" data-role-reg="instructor">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <span>Instructor</span>
+                                </button>
+                                <button type="button" class="role-btn" data-role-reg="freelancer">
+                                    <i class="fas fa-laptop-code"></i>
+                                    <span>Freelancer</span>
+                                </button>
+                                <button type="button" class="role-btn" data-role-reg="client">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Client / Employer</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form id="registerFormElement">
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="regFullName" placeholder="Full Name" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="regEmail" placeholder="Email address" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <input type="tel" id="regPhone" placeholder="WhatsApp Number">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-globe"></i>
+                                    <select id="regCountry">
+                                        <option value="">🌍 Select Your Country</option>
+                                        <optgroup label="East Africa">
+                                            <option value="ET">🇪🇹 Ethiopia</option>
+                                            <option value="UG">🇺🇬 Uganda</option>
+                                            <option value="SS">🇸🇸 South Sudan</option>
+                                            <option value="KE">🇰🇪 Kenya</option>
+                                            <option value="TZ">🇹🇿 Tanzania</option>
+                                            <option value="RW">🇷🇼 Rwanda</option>
+                                            <option value="BI">🇧🇮 Burundi</option>
+                                            <option value="DJ">🇩🇯 Djibouti</option>
+                                            <option value="ER">🇪🇷 Eritrea</option>
+                                            <option value="SO">🇸🇴 Somalia</option>
+                                        </optgroup>
+                                        <optgroup label="West Africa">
+                                            <option value="NG">🇳🇬 Nigeria</option>
+                                            <option value="GH">🇬🇭 Ghana</option>
+                                            <option value="SN">🇸🇳 Senegal</option>
+                                            <option value="CI">🇨🇮 Côte d'Ivoire</option>
+                                            <option value="CM">🇨🇲 Cameroon</option>
+                                        </optgroup>
+                                        <optgroup label="Southern Africa">
+                                            <option value="ZA">🇿🇦 South Africa</option>
+                                            <option value="ZM">🇿🇲 Zambia</option>
+                                            <option value="ZW">🇿🇼 Zimbabwe</option>
+                                        </optgroup>
+                                        <optgroup label="Middle East">
+                                            <option value="AE">🇦🇪 UAE</option>
+                                            <option value="SA">🇸🇦 Saudi Arabia</option>
+                                            <option value="QA">🇶🇦 Qatar</option>
+                                        </optgroup>
+                                        <optgroup label="Europe">
+                                            <option value="GB">🇬🇧 United Kingdom</option>
+                                            <option value="DE">🇩🇪 Germany</option>
+                                            <option value="FR">🇫🇷 France</option>
+                                            <option value="NL">🇳🇱 Netherlands</option>
+                                            <option value="SE">🇸🇪 Sweden</option>
+                                            <option value="NO">🇳🇴 Norway</option>
+                                        </optgroup>
+                                        <optgroup label="Americas">
+                                            <option value="US">🇺🇸 United States</option>
+                                            <option value="CA">🇨🇦 Canada</option>
+                                        </optgroup>
+                                        <optgroup label="Asia & Oceania">
+                                            <option value="IN">🇮🇳 India</option>
+                                            <option value="CN">🇨🇳 China</option>
+                                            <option value="AU">🇦🇺 Australia</option>
+                                        </optgroup>
+                                        <optgroup label="Other">
+                                            <option value="OTHER">🌍 Other</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="regPassword" placeholder="Password" required>
+                                    <button type="button" class="toggle-password" data-target="regPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                    <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+                                    <button type="button" class="toggle-password" data-target="regConfirmPassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Freelancer extra fields -->
+                            <div id="freelancerExtraFields" class="hidden">
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-code"></i>
+                                        <input type="text" id="regSkills" placeholder="Your Skills (e.g. Web Dev, Design, Writing)">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        <input type="number" id="regHourlyRate" placeholder="Hourly Rate (in USD)" min="0" step="any" inputmode="decimal">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-link"></i>
+                                        <input type="url" id="regPortfolio" placeholder="Portfolio Link (GitHub / Behance / LinkedIn)">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-image"></i>
+                                        <input type="url" id="regProfilePic" placeholder="Profile Picture URL (optional)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Instructor extra fields -->
+                            <div id="instructorExtraFields" class="hidden">
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-chalkboard"></i>
+                                        <input type="text" id="regExpertise" placeholder="Your Subject / Expertise Area">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-align-left"></i>
+                                        <input type="text" id="regBio" placeholder="Brief Bio (e.g. 5 years teaching web dev)">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="input-icon">
+                                        <i class="fas fa-image"></i>
+                                        <input type="url" id="regInstructorProfilePic" placeholder="Profile Picture URL (optional)">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="agreeTerms" required>
+                                    <span>I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a></span>
+                                </label>
+                            </div>
+                            <input type="hidden" id="regSelectedRole" value="learner">
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="authMessage" class="auth-message"></div>
+                    <p class="demo-note">
+                        <i class="fas fa-info-circle"></i> 
+                    </p>
+                </div>
+
+                <div class="auth-info">
+                    <div class="info-card">
+                        <i class="fas fa-graduation-cap"></i>
+                        <h3>Why Join SkillHub?</h3>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Access 500+ premium courses</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Connect with expert instructors</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Earn money teaching your skills</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Find freelance opportunities</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Learn at your own pace</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <!-- ==================== DASHBOARD SECTION ==================== -->
+    <section id="dashboard" class="dashboard-section hidden">
+        <div class="container">
+
+            <!-- ── Dashboard Header ── -->
+            <div class="dashboard-header">
+                <div class="dashboard-welcome">
+                    <div class="dashboard-avatar" id="dashAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h2>Welcome back, <span id="dashName">User</span>!</h2>
+                        <p id="dashRoleBadge" class="dash-role-badge"><i class="fas fa-circle"></i> Learner</p>
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                    <a href="chat.html" class="btn btn-sm" style="background:#2563eb;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;">
+                        <i class="fas fa-comments"></i> Messages
+                    </a>
+                    <a href="profile.html" class="btn btn-sm" style="background:#7c3aed;color:white;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;">
+                        <i class="fas fa-user-circle"></i> My Profile
+                    </a>
+                    <a href="create-course.html" id="dashCreateCourseBtn" class="btn btn-sm" style="background:#059669;color:white;text-decoration:none;display:none;align-items:center;gap:0.4rem;">
+                        <i class="fas fa-plus-circle"></i> Create Course
+                    </a>
+                    <button class="btn btn-gray btn-sm" id="dashLogoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── Stats Row ── -->
+            <div class="dash-stats-row">
+                <div class="dash-stat-card">
+                    <i class="fas fa-book-open"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashEnrolledCount">0</span>
+                        <span class="dash-stat-label">Enrolled Courses</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <i class="fas fa-wallet"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashWallet">$0.00</span>
+                        <span class="dash-stat-label">Wallet Balance</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <i class="fas fa-star"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashRating">—</span>
+                        <span class="dash-stat-label">Your Rating</span>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <span class="dash-stat-num" id="dashStatus">—</span>
+                        <span class="dash-stat-label">Account Status</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Tabs ── -->
+            <div class="dash-tabs" id="dashTabs">
+                <button class="dash-tab active" data-dash="profile-overview">
+                    <i class="fas fa-id-card"></i> Profile
+                </button>
+                <button class="dash-tab" data-dash="my-courses" id="tabMyCourses">
+                    <i class="fas fa-graduation-cap"></i> <span id="tabCoursesLabel">My Courses</span>
+                </button>
+                <button class="dash-tab" data-dash="payment-history">
+                    <i class="fas fa-receipt"></i> Payments
+                </button>
+                <button class="dash-tab" data-dash="account-settings">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </div>
+
+            <!-- ══════════════════════════════════════════
+                 TAB 1 — PROFILE OVERVIEW
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-profile-overview" class="dash-tab-content active">
+                <div class="profile-overview-grid">
+
+                    <!-- LEFT: Profile Card -->
+                    <div class="profile-card">
+                        <!-- Cover banner -->
+                        <div class="profile-card-banner"></div>
+
+                        <!-- Avatar -->
+                        <div class="profile-avatar-wrap">
+                            <div class="profile-avatar-lg" id="profileAvatarLg">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <button class="profile-avatar-edit-btn" id="profileAvatarEditBtn" title="Change profile picture">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+
+                        <!-- Name + role -->
+                        <div class="profile-card-identity">
+                            <h3 class="profile-full-name" id="profileFullName">—</h3>
+                            <span class="profile-role-chip" id="profileRoleChip">Learner</span>
+                        </div>
+
+                        <!-- Meta info -->
+                        <div class="profile-info-block">
+                            <div class="profile-meta-row">
+                                <span class="profile-meta-icon"><i class="fas fa-envelope"></i></span>
+                                <span id="profileEmail">—</span>
+                            </div>
+                            <div class="profile-meta-row">
+                                <span class="profile-meta-icon"><i class="fas fa-phone"></i></span>
+                                <span id="profilePhone">—</span>
+                            </div>
+                            <div class="profile-meta-row">
+                                <span class="profile-meta-icon"><i class="fas fa-globe"></i></span>
+                                <span id="profileCountry">—</span>
+                            </div>
+                        </div>
+
+                        <!-- Edit Profile Button -->
+                        <button class="profile-edit-main-btn" id="profileEditToggleBtn">
+                            <i class="fas fa-user-edit"></i> Edit Profile
+                        </button>
+
+                        <!-- Inline Edit Form -->
+                        <div id="profileEditForm" class="profile-edit-form hidden">
+                            <form id="dashProfileForm">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-user"></i>
+                                        <input type="text" id="dashProfileName" placeholder="Full Name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Profile Picture URL</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-image"></i>
+                                        <input type="url" id="dashProfilePic" placeholder="https://...">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Bio</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-info-circle"></i>
+                                        <textarea id="dashProfileBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Skills (comma separated)</label>
+                                    <div class="input-icon">
+                                        <i class="fas fa-code"></i>
+                                        <input type="text" id="dashProfileSkills" placeholder="e.g. Web Dev, Design, Marketing">
+                                    </div>
+                                </div>
+                                <div class="profile-edit-actions">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-save"></i> Save
+                                    </button>
+                                    <button type="button" class="btn btn-gray btn-sm" id="profileEditCancelBtn">
+                                        Cancel
+                                    </button>
+                                </div>
+                                <p id="dashProfileMsg" class="form-message"></p>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Bio + Skills panel -->
+                    <div class="profile-side-panel">
+                        <!-- About Me card -->
+                        <div class="profile-bio-card">
+                            <div class="profile-bio-card-header">
+                                <i class="fas fa-user-circle"></i>
+                                <h4>About Me</h4>
+                            </div>
+                            <p id="profileBioText" class="profile-bio-text">No bio added yet.</p>
+                        </div>
+
+                        <!-- Skills card -->
+                        <div id="profileSkillsWrap" class="profile-skills-card hidden">
+                            <div class="profile-bio-card-header">
+                                <i class="fas fa-tags"></i>
+                                <h4>Skills</h4>
+                            </div>
+                            <div id="profileSkillsTags" class="profile-skills-tags"></div>
+                        </div>
+
+                        <!-- Quick links card -->
+                        <div class="profile-quick-links">
+                            <a href="chat.html" class="profile-quick-link">
+                                <i class="fas fa-comments"></i>
+                                <span>Messages</span>
+                                <i class="fas fa-chevron-right profile-quick-arrow"></i>
+                            </a>
+                            <a href="profile.html" class="profile-quick-link">
+                                <i class="fas fa-id-badge"></i>
+                                <span>Full Profile</span>
+                                <i class="fas fa-chevron-right profile-quick-arrow"></i>
+                            </a>
+                            <a href="#courses" class="profile-quick-link" onclick="document.querySelector('.dash-tab[data-dash=my-courses]').click()">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>My Courses</span>
+                                <i class="fas fa-chevron-right profile-quick-arrow"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════
+                 TAB 2 — MY COURSES
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-my-courses" class="dash-tab-content">
+                <div id="dashCoursesList" class="dash-courses-grid">
+                    <div class="dash-empty-state">
+                        <i class="fas fa-book-open"></i>
+                        <p>No courses yet. <a href="#courses">Browse courses</a> to get started!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════
+                 TAB 3 — PAYMENT HISTORY
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-payment-history" class="dash-tab-content">
+                <div class="dash-section-header">
+                    <h3><i class="fas fa-receipt"></i> Payment History</h3>
+                    <button class="btn btn-sm btn-outline-blue" id="refreshPaymentsBtn">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div id="paymentHistoryList" class="payment-history-list">
+                    <div class="dash-empty-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading payments...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════
+                 TAB 4 — ACCOUNT SETTINGS
+            ══════════════════════════════════════════ -->
+            <div id="dashTab-account-settings" class="dash-tab-content">
+                <div class="settings-grid">
+
+                    <!-- Change Password -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <i class="fas fa-lock"></i>
+                            <h4>Change Password</h4>
+                        </div>
+                        <form id="dashPasswordForm">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="dashCurrentPwd" placeholder="Current password" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-key"></i>
+                                    <input type="password" id="dashNewPwd" placeholder="New password (min 6 chars)" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                    <input type="password" id="dashConfirmPwd" placeholder="Confirm new password" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-shield-alt"></i> Update Password
+                            </button>
+                            <p id="dashPasswordMsg" class="form-message"></p>
+                        </form>
+                    </div>
+
+                    <!-- Update Phone -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <i class="fas fa-phone-alt"></i>
+                            <h4>Update Phone Number</h4>
+                        </div>
+                        <form id="dashPhoneForm">
+                            <div class="form-group">
+                                <label>New Phone Number</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="dashNewPhone" placeholder="e.g. 0912345678" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Current Password (to confirm)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="dashPhoneConfirmPwd" placeholder="Enter your password" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Phone
+                            </button>
+                            <p id="dashPhoneMsg" class="form-message"></p>
+                        </form>
+                    </div>
+
+                    <!-- Change Country -->
+                    <div class="settings-card">
+                        <div class="settings-card-header">
+                            <i class="fas fa-globe-africa"></i>
+                            <h4>Change Country</h4>
+                        </div>
+                        <form id="dashCountryForm">
+                            <div class="form-group">
+                                <label>Select Country</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-globe"></i>
+                                    <select id="dashNewCountry" required>
+                                        <option value="">— Select Country —</option>
+                                        <optgroup label="East Africa">
+                                            <option value="ET">🇪🇹 Ethiopia</option>
+                                            <option value="UG">🇺🇬 Uganda</option>
+                                            <option value="SS">🇸🇸 South Sudan</option>
+                                            <option value="KE">🇰🇪 Kenya</option>
+                                            <option value="TZ">🇹🇿 Tanzania</option>
+                                            <option value="RW">🇷🇼 Rwanda</option>
+                                            <option value="BI">🇧🇮 Burundi</option>
+                                            <option value="SO">🇸🇴 Somalia</option>
+                                        </optgroup>
+                                        <optgroup label="West Africa">
+                                            <option value="NG">🇳🇬 Nigeria</option>
+                                            <option value="GH">🇬🇭 Ghana</option>
+                                            <option value="CM">🇨🇲 Cameroon</option>
+                                        </optgroup>
+                                        <optgroup label="Southern Africa">
+                                            <option value="ZA">🇿🇦 South Africa</option>
+                                            <option value="ZM">🇿🇲 Zambia</option>
+                                            <option value="ZW">🇿🇼 Zimbabwe</option>
+                                        </optgroup>
+                                        <optgroup label="Middle East">
+                                            <option value="AE">🇦🇪 UAE</option>
+                                            <option value="SA">🇸🇦 Saudi Arabia</option>
+                                        </optgroup>
+                                        <optgroup label="Europe">
+                                            <option value="GB">🇬🇧 United Kingdom</option>
+                                            <option value="DE">🇩🇪 Germany</option>
+                                            <option value="FR">🇫🇷 France</option>
+                                            <option value="NL">🇳🇱 Netherlands</option>
+                                        </optgroup>
+                                        <optgroup label="Americas">
+                                            <option value="US">🇺🇸 United States</option>
+                                            <option value="CA">🇨🇦 Canada</option>
+                                        </optgroup>
+                                        <optgroup label="Asia & Oceania">
+                                            <option value="IN">🇮🇳 India</option>
+                                            <option value="AU">🇦🇺 Australia</option>
+                                        </optgroup>
+                                        <option value="OTHER">🌍 Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Country
+                            </button>
+                            <p id="dashCountryMsg" class="form-message"></p>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ==================== FORGOT PASSWORD MODAL ==================== -->
+    <div id="forgotPasswordModal" class="modal">
+        <div class="modal-content modal-sm">
+            <button class="modal-close" id="closeForgotModal">&times;</button>
+
+            <!-- Step 1: Enter phone -->
+            <div id="forgotStep1">
+                <div class="modal-icon"><i class="fas fa-lock-open"></i></div>
+                <h3>Forgot Password?</h3>
+                <p class="modal-subtitle">Enter your WhatsApp number and we'll send you a reset code.</p>
+                <form id="forgotPhoneForm">
+                    <div class="form-group">
+                        <div class="input-icon">
+                            <i class="fab fa-whatsapp"></i>
+                            <input type="tel" id="forgotPhone" placeholder="WhatsApp Number (e.g. 0912345678)" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-paper-plane"></i> Send Reset Code
+                    </button>
+                    <p id="forgotStep1Msg" class="form-message"></p>
+                </form>
+            </div>
+
+            <!-- Step 2: Enter code + new password -->
+            <div id="forgotStep2" class="hidden">
+                <div class="modal-icon success"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Enter Reset Code</h3>
+                <p class="modal-subtitle">Check your WhatsApp for the 6-digit code.</p>
+                <form id="forgotResetForm">
+                    <div class="form-group">
+                        <div class="input-icon">
+                            <i class="fas fa-hashtag"></i>
+                            <input type="text" id="forgotCode" placeholder="6-digit code" maxlength="6" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="forgotNewPwd" placeholder="New password" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-icon">
+                            <i class="fas fa-check-circle"></i>
+                            <input type="password" id="forgotConfirmPwd" placeholder="Confirm new password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-shield-alt"></i> Reset Password
+                    </button>
+                    <p id="forgotStep2Msg" class="form-message"></p>
+                    <button type="button" class="btn-text-link" id="forgotBackBtn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 3: Success -->
+            <div id="forgotStep3" class="hidden">
+                <div class="modal-icon success"><i class="fas fa-check-circle"></i></div>
+                <h3>Password Reset!</h3>
+                <p class="modal-subtitle">Your password has been updated. You can now log in.</p>
+                <button class="btn btn-primary btn-full" id="forgotDoneBtn">
+                    <i class="fas fa-sign-in-alt"></i> Go to Login
+                </button>
+            </div>
+        </div>
+    </div>
+
+  <!-- ==================== ABOUT SECTION ==================== -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Our Story</span>
+                <h2> About <span class="blue-text">Skill</span><span class="yellow-text">Hub</span></h2>
+                <p>Empowering the next generation of digital economy</p>
+            </div>
+
+            <div class="about-wrapper">
+                <div class="about-main">
+                    <div class="about-card">
+                        <div class="about-icon-large">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <p class="about-text">
+                            <strong>SkillHub</strong> is a revolutionary platform that seamlessly connects 
+                            <span class="blue-highlight">learners</span>, 
+                            <span class="yellow-highlight">instructors</span>, and 
+                            <span class="black-highlight">freelancers</span> in one unified ecosystem. 
+                            Learn digital skills, teach what you know, or earn by offering services—all in one place.
+                        </p>
+                        
+                        <div class="about-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">—</div>
+                                <div class="stat-label">Active Courses</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">—</div>
+                                <div class="stat-label">Happy Students</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">—</div>
+                                <div class="stat-label">Expert Instructors</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">—</div>
+                                <div class="stat-label">Freelancers</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-features-grid">
+                    <div class="feature-box learning">
+                        <div class="feature-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Learning</h3>
+                            <p>Access 500+ premium courses taught by industry experts. Learn at your own pace with flexible scheduling.</p>
+                            <div class="feature-tags">
+                                <span>WhatsApp Payment</span>
+                                <span>Certificate</span>
+                                <span>Lifetime Access</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-box earning">
+                        <div class="feature-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Earning</h3>
+                            <p>Turn your expertise into income. Become an instructor or freelancer and start earning today.</p>
+                            <div class="feature-tags">
+                                <span>Freelance Work</span>
+                                <span>Course Revenue</span>
+                                <span>Global Clients</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feature-box hiring">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h3>Hiring</h3>
+                            <p>Find and hire skilled freelancers for your projects. Connect directly via WhatsApp.</p>
+                            <div class="feature-tags">
+                                <span>Verified Talent</span>
+                                <span>Quick Connect</span>
+                                <span>Quality Work</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-mission">
+                    <div class="mission-card">
+                        <div class="mission-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <div class="mission-content">
+                            <h3>Our Mission</h3>
+                            <p>To democratize education and freelance opportunities across Ethiopia and South Sudan, making quality learning and earning accessible to everyone through technology and community.</p>
+                        </div>
+                    </div>
+                    <div class="mission-card">
+                        <div class="mission-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="mission-content">
+                            <h3>Our Vision</h3>
+                            <p>To become Africa's leading ecosystem for digital skills development, connecting millions of learners with opportunities that transform their lives.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-values" id="core-values">
+                    <h3>Our Core Values</h3>
+                    <div class="values-grid">
+                        <div class="value-item">
+                            <div class="value-number">01</div>
+                            <h4>Continuous Learning</h4>
+                            <p>We believe growth begins with learning. We encourage individuals to continuously develop their knowledge, acquire practical skills and adapt to an ever-changing world.</p>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">02</div>
+                            <h4>Innovation &amp; Creativity</h4>
+                            <p>We embrace new ideas, technology and creative thinking. We encourage people to solve problems, explore possibilities and build solutions that make a meaningful difference.</p>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">03</div>
+                            <h4>Integrity &amp; Trust</h4>
+                            <p>We believe strong relationships are built on honesty, transparency and accountability. We strive to create a reliable environment where learners, professionals and businesses can connect with confidence.</p>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">04</div>
+                            <h4>Excellence &amp; Quality</h4>
+                            <p>We are committed to delivering quality learning experiences, professional services and meaningful opportunities. We encourage high standards, continuous improvement and a commitment to doing things well.</p>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">05</div>
+                            <h4>Inclusivity &amp; Equal Opportunity</h4>
+                            <p>We believe talent exists everywhere. We strive to create an inclusive ecosystem where people from different backgrounds can access opportunities, showcase their abilities and grow professionally.</p>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-number">06</div>
+                            <h4>Empowerment &amp; Impact</h4>
+                            <p>We exist to help people turn knowledge and skills into meaningful opportunities. We measure our impact through the growth of individuals, success of professionals and progress of businesses.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <!-- ==================== CONTACT SECTION ==================== -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Get in Touch</span>
+                <h2><span class="blue-text">Contact</span> <span class="blue-text">Us</span></h2>
+                <p>We'd love to hear from you. Reach out anytime!</p>
+            </div>
+
+            <div class="contact-wrapper">
+                <!-- Contact Info Card -->
+                <div class="contact-info-card">
+                    <div class="contact-icon-large">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Contact Skillhub</h3>
+                    <p>Have a question, need assistance, or interested in working with Skillhub? Reach out to our team.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item whatsapp">
+                            <div class="contact-item-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="contact-item-content">
+                                <span class="contact-label">WhatsApp Business</span>
+                                <a class="contact-value" href="https://wa.me/211910628427">Message us on WhatsApp</a>
+                                <span class="contact-note-small">Quick assistance within 24 hours.</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-item email">
+                            <div class="contact-item-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-item-content">
+                                <span class="contact-label">Email Address</span>
+                                <a class="contact-value" href="mailto:frontdeskskillhub@gmail.com">frontdeskskillhub@gmail.com</a>
+                                <span class="contact-note-small">We aim to respond within 48 hours.</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-item phone">
+                            <div class="contact-item-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div class="contact-item-content">
+                                <span class="contact-label">Phone</span>
+                                <a class="contact-value" href="tel:+251989616976">+251 989 616 976</a>
+                                <span class="contact-note-small">Call us for direct assistance.</span>
+                            </div>
+                        </div>
+
+                        <div class="contact-item business">
+                            <div class="contact-item-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="contact-item-content">
+                                <span class="contact-label">Business Inquiries</span>
+                                <span class="contact-value">Partnerships &amp; Corporate Services</span>
+                                <span class="contact-note-small">Let's explore opportunities together.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="social-links">
+                        <a href="https://www.tiktok.com/@skillhub_connect1?_r=1&amp;_t=ZS-9BDGle3aPn2" class="social-link tiktok" aria-label="SkillHub on TikTok" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="https://www.facebook.com/share/1EGvDvtVSR/?mibextid=wwXIfr" class="social-link facebook" aria-label="SkillHub on Facebook" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://wa.me/211910628427" class="social-link whatsapp" aria-label="Chat with SkillHub on WhatsApp" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="mailto:frontdeskskillhub@gmail.com" class="social-link email" aria-label="Email SkillHub">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form-card">
+                    <h3>Send Us a Message</h3>
+                    <p class="contact-form-intro">Have a question, need assistance, or interested in working with Skillhub? We'd love to hear from you. Fill out the form below, and our team will get back to you as soon as possible. Whether you're a learner, instructor, freelancer, business or partner, we're here to help.</p>
+                    <form id="contactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="contact-field-label" for="contactName">Full Name</label>
+                                <input type="text" id="contactName" placeholder="Enter your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="contact-field-label" for="contactEmail">Email Address</label>
+                                <input type="email" id="contactEmail" placeholder="Enter your email" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="contact-field-label" for="contactPhone">Phone Number</label>
+                                <input type="tel" id="contactPhone" placeholder="Enter your phone number (optional)">
+                            </div>
+                            <div class="form-group">
+                                <label class="contact-field-label" for="contactRole">I am contacting you as</label>
+                                <select id="contactRole" required>
+                                    <option value="">Select an option</option>
+                                    <option>Learner / Student</option>
+                                    <option>Instructor</option>
+                                    <option>Freelancer</option>
+                                    <option>Client / Employer</option>
+                                    <option>Business / Organization</option>
+                                    <option>Partner</option>
+                                    <option>General Inquiry</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="contact-field-label" for="contactSubject">Subject</label>
+                            <input type="text" id="contactSubject" placeholder="What is your inquiry about?" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="contact-field-label" for="contactMessage">Your Message</label>
+                            <textarea id="contactMessage" rows="5" placeholder="Write your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">
+                            Send Us a Message
+                            <span class="btn-overlay"></span>
+                        </button>
+                        <p id="contactFormMessage" class="form-message"></p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Support hours and help -->
+            <div class="business-hours">
+                <div class="hours-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="hours-content">
+                        <h4>Our Support Hours</h4>
+                        <p>We're here to help you get the most out of Skillhub.</p>
+                        <div class="support-hours-list">
+                            <div><strong>Monday – Friday</strong><span>9:00 AM – 6:00 PM</span></div>
+                            <div><strong>Saturday</strong><span>10:00 AM – 4:00 PM</span></div>
+                            <div><strong>Sunday</strong><span>Closed</span></div>
+                        </div>
+                        <p class="support-timezone">East Africa Time (EAT)</p>
+                    </div>
+                </div>
+                <div class="note-card contact-help-card">
+                    <i class="fas fa-life-ring"></i>
+                    <div class="note-content">
+                        <h4>How Can We Help You?</h4>
+                        <div class="contact-help-grid">
+                            <div><strong>Learning &amp; Courses</strong><span>Course and enrollment support.</span></div>
+                            <div><strong>Freelancing</strong><span>Projects and earning opportunities.</span></div>
+                            <div><strong>Hiring Talent</strong><span>Find and hire professionals.</span></div>
+                            <div><strong>Business Solutions</strong><span>Training and business partnerships.</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+       <!-- ==================== MODERN FOOTER ==================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- Footer Logo & About -->
+                <div class="footer-section footer-about">
+                    <div class="footer-logo">
+                        <img src="logo.png" alt="SkillHub Logo" style="width:40px;height:40px;object-fit:contain;">
+                        <span class="logo-text" style="color:#1f2937;">SkillHub</span>
+                    </div>
+                    <p class="footer-description">
+                        SkillHub is a revolutionary platform connecting learners, instructors, and freelancers in one unified ecosystem. 
+                        Learn, teach, and earn — all in one place.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://www.tiktok.com/@skillhub_connect1?_r=1&amp;_t=ZS-9BDGle3aPn2" class="social-icon tiktok" aria-label="SkillHub on TikTok" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="https://www.facebook.com/share/1EGvDvtVSR/?mibextid=wwXIfr" class="social-icon facebook" aria-label="SkillHub on Facebook" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://wa.me/211910628427" class="social-icon whatsapp" aria-label="Chat with SkillHub on WhatsApp" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="mailto:frontdeskskillhub@gmail.com" class="social-icon email" aria-label="Email SkillHub">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section footer-links">
+                    <h3>For Learners</h3>
+                    <ul>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> Explore Courses</a></li>
+                        <li><a href="learn.html"><i class="fas fa-chevron-right"></i> Online Learning</a></li>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> Live Classes</a></li>
+                        <li><a href="courses.html"><i class="fas fa-chevron-right"></i> Masterclasses</a></li>
+                        <li><a href="dashboard.html"><i class="fas fa-chevron-right"></i> My Learning</a></li>
+                        <li><a href="certificate.html"><i class="fas fa-chevron-right"></i> Certificates</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section footer-links">
+                    <h3>For Instructors</h3>
+                    <ul>
+                        <li><a href="#courses"><i class="fas fa-chevron-right"></i> Become an Instructor</a></li>
+                        <li><a href="create-course.html"><i class="fas fa-chevron-right"></i> Create a Course</a></li>
+                        <li><a href="instructor-dashboard.html"><i class="fas fa-chevron-right"></i> Instructor Dashboard</a></li>
+                        <li><a href="instructor-dashboard.html?view=students"><i class="fas fa-chevron-right"></i> Manage Students</a></li>
+                        <li><a href="faq.html"><i class="fas fa-chevron-right"></i> Instructor Guidelines</a></li>
+                        <li><a href="instructor-dashboard.html?view=earnings"><i class="fas fa-chevron-right"></i> Instructor Earnings</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section footer-links">
+                    <h3>For Freelancers</h3>
+                    <ul>
+                        <li><a href="#earn"><i class="fas fa-chevron-right"></i> Become a Freelancer</a></li>
+                        <li><a href="#earn"><i class="fas fa-chevron-right"></i> Create a Profile</a></li>
+                        <li><a href="freelancer-dashboard.html?view=portfolio"><i class="fas fa-chevron-right"></i> Showcase Portfolio</a></li>
+                        <li><a href="freelancer-dashboard.html?view=services"><i class="fas fa-chevron-right"></i> List Your Services</a></li>
+                        <li><a href="freelancer-dashboard.html?view=work"><i class="fas fa-chevron-right"></i> Find Projects</a></li>
+                        <li><a href="freelancer-dashboard.html"><i class="fas fa-chevron-right"></i> Freelancer Dashboard</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section footer-links">
+                    <h3>Hire Talent</h3>
+                    <ul>
+                        <li><a href="#earn"><i class="fas fa-chevron-right"></i> Browse Freelancers</a></li>
+                        <li><a href="#earn"><i class="fas fa-chevron-right"></i> Find Professionals</a></li>
+                        <li><a href="#earn"><i class="fas fa-chevron-right"></i> Search by Skills</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Post a Project</a></li>
+                        <li><a href="#how-it-works"><i class="fas fa-chevron-right"></i> How Hiring Works</a></li>
+                        <li><a href="#earn"><i class="fas fa-chevron-right"></i> Contact Talent</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section footer-links">
+                    <h3>Business Solutions</h3>
+                    <ul>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Corporate Training</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Digital Services</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Talent Sourcing</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Project Outsourcing</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Partnerships</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Request a Proposal</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section footer-links">
+                    <h3>About Skillhub</h3>
+                    <ul>
+                        <li><a href="#about"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                        <li><a href="#about"><i class="fas fa-chevron-right"></i> Our Mission &amp; Vision</a></li>
+                        <li><a href="#how-it-works"><i class="fas fa-chevron-right"></i> How Skillhub Works</a></li>
+                        <li><a href="#core-values"><i class="fas fa-chevron-right"></i> Our Core Values</a></li>
+                        <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact Us</a></li>
+                        <li><a href="faq.html"><i class="fas fa-chevron-right"></i> FAQs &amp; Support</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-section footer-contact">
+                    <h3>Contact Info</h3>
+                    <div class="contact-info-item">
+                        <i class="fab fa-whatsapp"></i>
+                        <div>
+                            <span>WhatsApp</span>
+                            <a href="https://wa.me/211910628427">Chat with SkillHub</a>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <span>Email</span>
+                            <a href="mailto:frontdeskskillhub@gmail.com">frontdeskskillhub@gmail.com</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Newsletter Section -->
+            <div class="footer-newsletter">
+                <div class="newsletter-content">
+                    <div class="newsletter-text">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <div>
+                            <h4>Subscribe to Our Newsletter</h4>
+                            <p>Get the latest updates on new courses and opportunities</p>
+                        </div>
+                    </div>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" placeholder="Enter your email address" id="newsletterEmail" required>
+                            <button type="submit">
+                                Subscribe <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <p id="newsletterMessage" class="newsletter-message"></p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <p class="copyright">
+                        &copy; 2026 <span class="copyright-highlight">SkillHub</span> — Learn, Teach, Earn.
+                    </p>
+                </div>
+                <div class="back-to-top" id="backToTop">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>Top</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="api-config.js"></script>
+    <script src="site-analytics.js" defer></script>
+    <script src="script.js"></script>
+        <script>
+      // Register Service Worker for PWA install
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) { console.log('SW registered'); })
+            .catch(function(err) { console.log('SW failed:', err); });
+        });
+      }
+    </script>
+</body>
+</html>

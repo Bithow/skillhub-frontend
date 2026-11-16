@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="api-config.js"></script>
+    <script src="site-analytics.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Client and employer talent dashboard for SkillHub.">
+    <title>Client Dashboard | SkillHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="client-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="dashboard-page client-dashboard-page">
+    <div class="dashboard-shell client-shell">
+        <aside class="dashboard-sidebar client-sidebar" id="clientSidebar">
+            <div class="dashboard-brand-row">
+                <img src="logo.png" alt="SkillHub logo" class="dashboard-brand-logo">
+                <div>
+                    <span class="dashboard-brand-kicker">Hiring workspace</span>
+                    <strong>SkillHub</strong>
+                </div>
+                <button class="client-sidebar-close" type="button" id="clientSidebarClose" aria-label="Close navigation"><i class="fas fa-xmark"></i></button>
+            </div>
+
+            <nav class="dashboard-nav client-nav" aria-label="Client dashboard navigation">
+                <a href="client-dashboard.html?view=overview" class="dashboard-nav-item active" data-client-nav="overview"><i class="fas fa-gauge-high"></i> Overview</a>
+                <a href="client-dashboard.html?view=talent" class="dashboard-nav-item" data-client-nav="talent"><i class="fas fa-user-tie"></i> Find Talent</a>
+                <a href="client-dashboard.html?view=post-project" class="dashboard-nav-item" data-client-nav="post-project"><i class="fas fa-circle-plus"></i> Post a Project</a>
+                <a href="client-dashboard.html?view=projects" class="dashboard-nav-item" data-client-nav="projects"><i class="fas fa-list-check"></i> My Projects</a>
+                <a href="client-dashboard.html?view=proposals" class="dashboard-nav-item" data-client-nav="proposals"><i class="fas fa-paper-plane"></i> Proposals</a>
+                <a href="client-dashboard.html?view=hired" class="dashboard-nav-item" data-client-nav="hired"><i class="fas fa-people-group"></i> Hired Talent</a>
+                <a href="client-dashboard.html?view=messages" class="dashboard-nav-item" data-client-nav="messages"><i class="fas fa-message"></i> Messages</a>
+                <a href="client-dashboard.html?view=contracts" class="dashboard-nav-item" data-client-nav="contracts"><i class="fas fa-file-signature"></i> Contracts</a>
+                <a href="client-dashboard.html?view=deliverables" class="dashboard-nav-item" data-client-nav="deliverables"><i class="fas fa-folder-open"></i> Deliverables</a>
+                <a href="client-dashboard.html?view=payments" class="dashboard-nav-item" data-client-nav="payments"><i class="fas fa-wallet"></i> Payments &amp; Transactions</a>
+                <a href="client-dashboard.html?view=saved" class="dashboard-nav-item" data-client-nav="saved"><i class="fas fa-bookmark"></i> Saved Talent</a>
+                <a href="client-dashboard.html?view=reviews" class="dashboard-nav-item" data-client-nav="reviews"><i class="fas fa-star"></i> Reviews</a>
+                <a href="profile.html" class="dashboard-nav-item"><i class="fas fa-building"></i> Company Profile</a>
+                <a href="profile.html#tab-settings" class="dashboard-nav-item"><i class="fas fa-gear"></i> Settings</a>
+            </nav>
+
+            <div class="dashboard-user-card client-user-card">
+                <div class="dashboard-sidebar-avatar client-avatar" id="clientAvatar"><i class="fas fa-user"></i></div>
+                <div class="dashboard-user-meta">
+                    <strong id="clientName">Client</strong>
+                    <span class="dash-role-badge"><i class="fas fa-briefcase"></i> Client</span>
+                </div>
+                <a href="profile.html" class="dashboard-mini-link"><i class="fas fa-arrow-up-right-from-square"></i> Profile shortcut</a>
+                <a href="profile.html#tab-settings" class="dashboard-mini-link"><i class="fas fa-gear"></i> Account settings</a>
+                <button type="button" class="dashboard-logout-btn" id="clientLogoutBtn"><i class="fas fa-right-from-bracket"></i> Log out</button>
+            </div>
+        </aside>
+        <button type="button" class="client-scrim" id="clientScrim" aria-label="Close navigation" hidden></button>
+
+        <main class="dashboard-main client-main">
+            <header class="dashboard-topbar client-topbar">
+                <button type="button" class="client-menu-button" id="clientMenuButton" aria-controls="clientSidebar" aria-expanded="false" aria-label="Open navigation"><i class="fas fa-bars"></i></button>
+                <div class="client-welcome-copy">
+                    <p class="dashboard-topbar-kicker">Client workspace</p>
+                    <h1>Welcome back, <span id="clientWelcomeName">Client</span>!</h1>
+                    <p class="client-subtitle">Find talent, manage hiring, and keep projects moving forward.</p>
+                </div>
+                <div class="dashboard-header-actions">
+                    <a class="dashboard-icon-button" href="chat.html" aria-label="Open messages" title="Messages"><i class="fas fa-message"></i></a>
+                    <a class="client-header-profile" href="profile.html" aria-label="Open profile"><span id="clientHeaderAvatar" class="client-header-avatar"><i class="fas fa-user"></i></span></a>
+                    <a class="client-primary-button" href="client-dashboard.html?view=talent"><i class="fas fa-user-plus"></i><span>Hire Talent</span></a>
+                </div>
+            </header>
+
+            <p class="client-load-message" id="clientLoadMessage" role="status">Loading your hiring workspace...</p>
+
+            <section class="client-view-section" id="overview">
+                <section class="dashboard-panel client-panel">
+                    <div class="dashboard-panel-header">
+                        <div>
+                            <span class="dashboard-panel-kicker">Overview</span>
+                            <h2>Welcome</h2>
+                        </div>
+                        <a href="client-dashboard.html?view=talent" class="dashboard-link-button">Hire talent</a>
+                    </div>
+                    <div class="client-welcome-panel">
+                        <div>
+                            <p class="client-welcome-copy-intro">Find specialists, compare profiles, and manage hiring activity from one professional workspace.</p>
+                            <div class="client-cta-row">
+                                <a href="client-dashboard.html?view=talent" class="client-primary-button secondary">Find talent</a>
+                                <a href="client-dashboard.html?view=post-project" class="dashboard-link-button">Post a project</a>
+                            </div>
+                        </div>
+                        <div class="client-mini-summary">
+                            <div><span>Open projects</span><strong id="clientOpenProjects">0</strong></div>
+                            <div><span>Hired talent</span><strong id="clientHiredCount">0</strong></div>
+                            <div><span>Total spent</span><strong id="clientTotalSpent">$0.00</strong></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="dash-stats-row client-stats" aria-label="Client hiring statistics">
+                    <article class="dash-stat-card"><i class="fas fa-list-check"></i><div><span class="dash-stat-num" id="clientActiveProjects">0</span><span class="dash-stat-label">Active Projects</span></div></article>
+                    <article class="dash-stat-card"><i class="fas fa-user-tie"></i><div><span class="dash-stat-num" id="clientHiredFreelancers">0</span><span class="dash-stat-label">Hired Freelancers</span></div></article>
+                    <article class="dash-stat-card"><i class="fas fa-paper-plane"></i><div><span class="dash-stat-num" id="clientPendingProposals">0</span><span class="dash-stat-label">Pending Proposals</span></div></article>
+                    <article class="dash-stat-card"><i class="fas fa-wallet"></i><div><span class="dash-stat-num" id="clientSpentTotal">$0.00</span><span class="dash-stat-label">Total Spent</span></div></article>
+                </section>
+
+                <div class="client-overview-grid">
+                    <section class="dashboard-panel client-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Talent marketplace</span><h2>Find Talent</h2></div><a href="client-dashboard.html?view=talent" class="dashboard-link-button">Browse all</a></div>
+                        <div class="client-empty-state"><i class="fas fa-magnifying-glass"></i><div><strong>Talent discovery is ready for live profiles</strong><p>Connect to your freelancer records to surface professionals, reviews, rates, and portfolio cards.</p></div></div>
+                    </section>
+                    <section class="dashboard-panel client-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Active work</span><h2>My Projects</h2></div><a href="client-dashboard.html?view=projects" class="dashboard-link-button">Manage</a></div>
+                        <div class="client-empty-state"><i class="fas fa-list-check"></i><div><strong>No project records yet</strong><p>Create a project to begin collecting proposals and hiring candidates.</p></div></div>
+                    </section>
+                </div>
+
+                <div class="client-overview-grid">
+                    <section class="dashboard-panel client-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Opportunity flow</span><h2>Proposals &amp; Applications</h2></div><a href="client-dashboard.html?view=proposals" class="dashboard-link-button">Review</a></div>
+                        <div class="client-empty-state"><i class="fas fa-file-lines"></i><div><strong>No proposals available</strong><p>When proposals are received, they will appear here for comparison and decision-making.</p></div></div>
+                    </section>
+                    <section class="dashboard-panel client-panel">
+                        <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Recent work</span><h2>Recent Activity</h2></div></div>
+                        <div class="client-activity-list">
+                            <div class="client-activity-item"><i class="fas fa-bell"></i><div><strong>Activity feed is waiting for project updates</strong><span>No hiring, message, or delivery activity yet.</span></div></div>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="talent" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Marketplace</span><h2>Find Talent</h2></div><button type="button" class="dashboard-link-button" disabled>Filter</button></div>
+                <div class="client-filter-bar">
+                    <label class="client-search"><i class="fas fa-magnifying-glass"></i><input type="search" placeholder="Search freelancers, skills, or roles" aria-label="Search talent"></label>
+                    <div class="client-filter-pills">
+                        <span>All skills</span>
+                        <span>Design</span>
+                        <span>Development</span>
+                        <span>Marketing</span>
+                    </div>
+                </div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-user-tie"></i><div><strong>Freelancer directory is not connected yet</strong><p>Connect the existing freelancer records to enable real talent search, filters, ratings, pricing, and portfolio previews.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="post-project" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Project intake</span><h2>Post a Project</h2></div></div>
+                <div class="client-form-grid">
+                    <div class="client-form-card">
+                        <label>Project title<input type="text" id="projectTitle" placeholder="e.g. Brand identity refresh" maxlength="160" required></label>
+                        <label>Project description<textarea id="projectDescription" rows="5" placeholder="Describe the scope, goals, and requirements" maxlength="10000" required></textarea></label>
+                    </div>
+                    <div class="client-form-card">
+                        <label>Freelancer<select id="projectFreelancer" required><option value="">Loading available freelancers…</option></select></label>
+                        <label>Agreed project budget<input type="number" id="projectBudget" min="1" step="0.01" placeholder="e.g. 500" required></label>
+                        <label>Currency<select id="projectCurrency"><option value="USD">USD</option><option value="ETB">ETB</option><option value="UGX">UGX</option><option value="SSP">SSP</option><option value="KES">KES</option></select></label>
+                        <p class="client-data-note">Project payments are made directly between you and the freelancer. SkillHub records reported payments and commission separately; it does not hold or transfer project funds.</p>
+                    </div>
+                </div>
+                <div class="client-form-actions">
+                    <p id="clientProjectMessage" role="status"></p>
+                    <button type="button" id="publishProjectBtn" class="client-primary-button secondary">Create project agreement</button>
+                </div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="projects" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Delivery pipeline</span><h2>My Projects</h2></div><a href="client-dashboard.html?view=post-project" class="dashboard-link-button">New project</a></div>
+                <div id="clientProjectList" class="client-project-list"><div class="client-empty-state client-large-empty"><i class="fas fa-spinner fa-spin"></i><div><strong>Loading projects</strong></div></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="proposals" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Talent evaluations</span><h2>Proposals</h2></div></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-paper-plane"></i><div><strong>No proposals yet</strong><p>New freelancer proposals and applications will appear here for review and comparison.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="hired" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Working relationships</span><h2>Hired Talent</h2></div></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-people-group"></i><div><strong>No hired professionals yet</strong><p>Your selected freelancers will appear here with project details and active contracts.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="messages" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Communication</span><h2>Messages</h2></div><a href="chat.html" class="dashboard-link-button">Open chat</a></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-message"></i><div><strong>No conversations yet</strong><p>Freelancer and team messages will appear here once a project starts.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="contracts" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Agreements</span><h2>Contracts</h2></div></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-file-signature"></i><div><strong>No contracts yet</strong><p>Contract records and signed agreements will appear here when they are created for a project.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="deliverables" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Submission review</span><h2>Deliverables</h2></div></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-folder-open"></i><div><strong>No deliverables submitted</strong><p>Freelancer submissions, revisions, and approvals will appear here for review.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="payments" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Payments</span><h2>Payments &amp; Transactions</h2></div></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-wallet"></i><div><strong>No payment activity yet</strong><p>Transaction history, invoices, and spending totals appear here once payments are created.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="saved" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Shortlist</span><h2>Saved Talent</h2></div></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-bookmark"></i><div><strong>No saved freelancers yet</strong><p>Use the talent directory to shortlist professionals you want to evaluate later.</p></div></div>
+            </section>
+
+            <section class="client-view-section dashboard-panel client-panel" id="reviews" hidden>
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Feedback</span><h2>Reviews</h2></div></div>
+                <div class="client-empty-state client-large-empty"><i class="fas fa-star"></i><div><strong>No reviews yet</strong><p>Client feedback and freelancer ratings will appear here for completed work.</p></div></div>
+            </section>
+
+            <footer class="client-footer"><span>SkillHub Client Workspace</span><a href="profile.html">Manage company profile</a></footer>
+        </main>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script src="client-dashboard.js" defer></script>
+</body>
+</html>

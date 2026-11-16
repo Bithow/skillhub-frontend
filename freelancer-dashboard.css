@@ -1,0 +1,156 @@
+.freelancer-project-list { display: grid; gap: .85rem; }
+.freelancer-project-card { padding: 1rem; border: 1px solid #e1e7ee; border-radius: 6px; background: #fff; }
+.freelancer-project-card > header { display: flex; justify-content: space-between; gap: .75rem; align-items: flex-start; }
+.freelancer-project-card > header > div > span { color: #64748b; font-size: .72rem; }
+.freelancer-project-card h3 { margin: .2rem 0 .4rem; color: #27364a; font-size: 1rem; }
+.freelancer-project-card > p { margin: .5rem 0; color: #556274; font-size: .84rem; line-height: 1.55; }
+.freelancer-project-meta { display: flex; flex-wrap: wrap; gap: .5rem 1rem; padding: .65rem 0; color: #64748b; font-size: .75rem; }
+.freelancer-project-meta strong { color: #344054; }
+.freelancer-project-deliver, .freelancer-payment-report-form button, .freelancer-withdraw-panel button { min-height: 36px; padding: .5rem .75rem; border: 1px solid #2563eb; border-radius: 5px; background: #2563eb; color: #fff; font: inherit; font-size: .78rem; font-weight: 650; cursor: pointer; }
+.freelancer-project-payments { margin-top: .75rem; padding-top: .75rem; border-top: 1px solid #edf0f3; }
+.freelancer-project-payments h4 { margin: 0 0 .55rem; color: #344054; font-size: .84rem; }
+.freelancer-project-payment { display: grid; gap: .35rem; padding: .7rem; border: 1px solid #e5e9ef; border-radius: 5px; background: #f9fbfc; font-size: .78rem; }
+.freelancer-project-payment > div { display: flex; justify-content: space-between; gap: .5rem; }
+.freelancer-project-payment > div span, .freelancer-project-payment > p, .freelancer-project-payment > small { color: #64748b; }
+.freelancer-project-payment > p, .freelancer-project-payment > small { margin: 0; line-height: 1.45; }
+.freelancer-payment-report-form, .freelancer-withdraw-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .65rem; margin-top: .7rem; }
+.freelancer-payment-report-form label, .freelancer-withdraw-fields label { display: grid; gap: .3rem; color: #475569; font-size: .74rem; font-weight: 600; }
+.freelancer-payment-report-form input, .freelancer-withdraw-fields input, .freelancer-withdraw-fields select { width: 100%; min-width: 0; min-height: 36px; padding: .45rem .55rem; border: 1px solid #d5dce5; border-radius: 5px; background: #fff; color: #253247; font: inherit; font-size: .78rem; }
+.freelancer-withdraw-panel { margin-top: 1rem; padding: 1rem; border: 1px solid #e0e7ef; border-radius: 6px; background: #f9fbfd; }
+.freelancer-withdraw-panel h3 { margin: 0 0 .35rem; color: #27364a; font-size: .98rem; }
+.freelancer-withdraw-panel > p { margin: 0; color: #64748b; font-size: .78rem; }
+.freelancer-withdraw-panel button { margin-top: .7rem; }
+#freelancerWithdrawalMessage { display: inline-block; margin-left: .6rem; color: #526174; font-size: .76rem; }
+.freelancer-finance-filters { display: flex; flex-wrap: wrap; align-items: end; gap: .55rem; margin: .8rem 0; }
+.freelancer-finance-filters label { display: grid; gap: .25rem; color: #64748b; font-size: .7rem; }
+.freelancer-finance-filters input, .freelancer-finance-filters select { min-height: 36px; padding: .4rem .55rem; border: 1px solid #d5dce5; border-radius: 5px; background: #fff; color: #344054; font: inherit; font-size: .76rem; }
+.freelancer-finance-filters button { min-height: 36px; padding: .4rem .7rem; border: 1px solid #2563eb; border-radius: 5px; background: #2563eb; color: #fff; font: inherit; font-size: .76rem; font-weight: 650; cursor: pointer; }
+.freelancer-ledger-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .25rem .75rem; padding: .7rem; border-bottom: 1px solid #e8edf2; font-size: .77rem; }
+.freelancer-ledger-row span { color: #64748b; }
+.freelancer-ledger-row strong { color: #344054; }
+.freelancer-ledger-row small { color: #64748b; }
+@media (max-width: 520px) { .freelancer-payment-report-form, .freelancer-withdraw-fields { grid-template-columns: 1fr; } }
+body.freelancer-dashboard-page { background: #f5f7fb; }
+.freelancer-sidebar { width: 290px; min-width: 290px; padding: 1.25rem 1rem 1rem; gap: .75rem; z-index: 20; }
+.freelancer-nav { flex: 1; min-height: 0; overflow-y: auto; padding: .2rem .1rem; scrollbar-width: thin; }
+.freelancer-nav .dashboard-nav-item { min-height: 42px; padding: .62rem .72rem; border-radius: 8px; font-size: .83rem; }
+.freelancer-nav .dashboard-nav-item i { width: 18px; text-align: center; }
+.freelancer-user-card { border-radius: 8px; padding: .8rem; gap: .5rem; }
+.freelancer-user-card .dashboard-user-meta { align-items: flex-start; flex-direction: column; }
+.freelancer-user-card .dashboard-user-meta strong { overflow-wrap: anywhere; }
+.freelancer-user-card .dashboard-logout-btn { border-radius: 6px; }
+.freelancer-avatar { position: relative; overflow: hidden; background: #edf2f7; color: #64748b; }
+.freelancer-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.freelancer-main { min-width: 0; max-width: 1600px; margin: 0 auto; padding: 2rem clamp(1.25rem, 3vw, 3rem) 3rem; }
+.freelancer-topbar { align-items: flex-start; margin-bottom: 1.15rem; }
+.freelancer-topbar h1 { font-size: 2rem; line-height: 1.2; }
+.freelancer-topbar .dashboard-topbar-kicker { color: #2563eb; letter-spacing: 0; }
+.freelancer-subtitle { margin: .55rem 0 0; color: #64748b; font-size: .9rem; }
+.freelancer-topbar .dashboard-header-actions { flex-shrink: 0; }
+.freelancer-header-profile { display: inline-flex; border-radius: 50%; }
+.freelancer-header-profile:focus-visible { outline: 3px solid rgba(37,99,235,.35); outline-offset: 3px; }
+.freelancer-header-avatar { position: relative; display: grid; place-items: center; width: 40px; height: 40px; overflow: hidden; border-radius: 50%; background: #e8edf3; color: #657185; }
+.freelancer-header-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.freelancer-primary-button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: .55rem; padding: .68rem .95rem; border: 1px solid #1d4ed8; border-radius: 7px; background: #1d4ed8; color: #fff; text-decoration: none; font-size: .85rem; font-weight: 650; }
+.freelancer-primary-button:hover { background: #1e40af; }
+.freelancer-profile-progress { position: relative; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: .45rem 1rem; align-items: center; padding: 1rem 1.1rem 1.25rem; border: 1px solid #e5e9ef; border-radius: 8px; background: #fff; box-shadow: none; }
+.freelancer-profile-progress-copy { display: grid; grid-template-columns: auto auto; justify-content: start; gap: .2rem .65rem; align-items: baseline; }
+.freelancer-profile-progress-copy .dashboard-panel-kicker { grid-column: 1 / -1; color: #64748b; }
+.freelancer-profile-progress-copy strong { color: #253247; font-size: .9rem; }
+.freelancer-profile-progress-copy > span:last-child { color: #768294; font-size: .78rem; }
+.freelancer-profile-progress .dashboard-link-button { grid-column: 2; grid-row: 1 / span 2; padding: .6rem .75rem; border-radius: 6px; background: #eef3fb; color: #294d7a; text-decoration: none; font-size: .77rem; font-weight: 650; }
+.freelancer-progress-track { position: absolute; right: 1.1rem; bottom: .6rem; left: 1.1rem; height: 4px; overflow: hidden; border-radius: 9px; background: #edf0f4; }
+.freelancer-progress-track span { display: block; width: 0; height: 100%; border-radius: inherit; background: #55779f; transition: width .25s ease; }
+.freelancer-stats { grid-template-columns: repeat(4, minmax(0,1fr)); margin-top: 1rem; }
+.freelancer-stats .dash-stat-card { min-height: 98px; border-radius: 8px; box-shadow: none; }
+.freelancer-stats .dash-stat-card i { flex: 0 0 40px; width: 40px; height: 40px; border-radius: 8px; background: #edf2f7; color: #42526b; }
+.freelancer-stats .dash-stat-card:nth-child(2) i { background: #f5f1e8; color: #8a6831; }
+.freelancer-stats .dash-stat-card:nth-child(3) i { background: #e9f4f1; color: #26745c; }
+.freelancer-stats .dash-stat-card:nth-child(4) i { background: #edf1f8; color: #4b5e7b; }
+.freelancer-stats .dash-stat-num { font-size: 1.35rem; }
+.freelancer-stats .dash-stat-card small { display: block; margin-top: .3rem; color: #8993a2; font-size: .64rem; line-height: 1.3; }
+.freelancer-overview-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+.freelancer-panel { min-width: 0; padding: 1.15rem; border: 1px solid #e5e9ef; border-radius: 8px; background: #fff; box-shadow: none; }
+.freelancer-panel .dashboard-panel-kicker { color: #64748b; letter-spacing: .04em; }
+.freelancer-panel .dashboard-panel-header h2 { font-size: 1.2rem; }
+.freelancer-panel .dashboard-link-button { border-radius: 6px; background: #eef3fb; color: #294d7a; text-decoration: none; font-size: .77rem; padding: .6rem .75rem; }
+.freelancer-overview-grid + .freelancer-panel, .freelancer-overview-grid + .freelancer-overview-grid { margin-top: 1rem; }
+.freelancer-empty-state { display: flex; align-items: flex-start; gap: .75rem; min-height: 100px; padding: .9rem; border: 1px dashed #d5dce6; border-radius: 6px; color: #687487; background: #fbfcfd; font-size: .8rem; line-height: 1.5; }
+.freelancer-empty-state > i { flex: 0 0 20px; margin-top: .1rem; color: #70819a; text-align: center; }
+.freelancer-empty-state strong { display: block; margin-bottom: .28rem; color: #344054; font-size: .84rem; }
+.freelancer-empty-state p { margin: 0; }
+.freelancer-large-empty { min-height: 150px; align-items: center; justify-content: center; }
+.freelancer-large-empty > i { font-size: 1.2rem; }
+.freelancer-request-list { display: grid; gap: .6rem; }
+.freelancer-request-card { display: grid; grid-template-columns: 38px minmax(0,1fr) auto; gap: .7rem; align-items: start; padding: .75rem; border: 1px solid #e7ebf0; border-radius: 6px; }
+.freelancer-client-avatar { display: grid; place-items: center; width: 38px; height: 38px; overflow: hidden; border-radius: 50%; background: #e9edf2; color: #718096; }
+.freelancer-request-copy { min-width: 0; }
+.freelancer-request-copy strong { display: block; overflow-wrap: anywhere; color: #344054; font-size: .82rem; }
+.freelancer-request-copy p { margin: .25rem 0; color: #64748b; font-size: .76rem; overflow-wrap: anywhere; }
+.freelancer-request-copy time { color: #8a94a3; font-size: .68rem; }
+.freelancer-request-status { padding: .28rem .4rem; border-radius: 4px; background: #f3f5f7; color: #667386; font-size: .66rem; font-weight: 650; text-transform: capitalize; }
+.freelancer-request-reply { grid-column: 2 / -1; justify-self: start; display: inline-flex; align-items: center; gap: .4rem; padding: .42rem .58rem; border: 1px solid #dfe5ec; border-radius: 5px; color: #294d7a; text-decoration: none; font-size: .7rem; font-weight: 650; }
+.freelancer-data-list { display: grid; gap: .65rem; }
+.freelancer-data-row { display: flex; justify-content: space-between; gap: 1rem; padding-bottom: .55rem; border-bottom: 1px solid #edf0f4; color: #697586; font-size: .77rem; }
+.freelancer-data-row:last-child { padding-bottom: 0; border-bottom: 0; }
+.freelancer-data-row strong { color: #344054; text-align: right; }
+.freelancer-wallet-summary { display: flex; align-items: center; gap: .8rem; padding: .8rem; border: 1px solid #e7ebf0; border-radius: 6px; background: #fbfcfd; }
+.freelancer-wallet-summary > i { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 6px; background: #edf1f8; color: #4b5e7b; }
+.freelancer-wallet-summary span, .freelancer-wallet-summary small { display: block; color: #768294; font-size: .7rem; }
+.freelancer-wallet-summary strong { display: block; margin: .16rem 0; color: #27364a; font-size: 1rem; }
+.freelancer-wallet-summary small { line-height: 1.4; }
+.freelancer-review-summary { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .75rem; }
+.freelancer-review-metric, .freelancer-analytics-card { padding: .85rem; border: 1px solid #e7ebf0; border-radius: 6px; }
+.freelancer-review-metric span, .freelancer-analytics-card span { display: block; color: #748093; font-size: .74rem; }
+.freelancer-review-metric strong, .freelancer-analytics-card strong { display: block; margin-top: .35rem; color: #263445; font-size: 1.15rem; }
+.freelancer-analytics-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: .75rem; }
+.freelancer-data-note { margin: .75rem 0 0; color: #8691a0; font-size: .72rem; line-height: 1.45; }
+.freelancer-view-section[hidden] { display: none !important; }
+.freelancer-detail-page { margin-top: 0; }
+.freelancer-portfolio-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: .8rem; }
+.freelancer-portfolio-card { overflow: hidden; border: 1px solid #e6eaf0; border-radius: 6px; background: #fff; }
+.freelancer-portfolio-image { display: grid; place-items: center; height: 150px; overflow: hidden; background: #edf1f5; color: #78869a; }
+.freelancer-portfolio-image img { width: 100%; height: 100%; object-fit: cover; }
+.freelancer-portfolio-copy { padding: .8rem; }
+.freelancer-portfolio-copy strong { color: #344054; font-size: .83rem; }
+.freelancer-portfolio-copy p { margin: .35rem 0; color: #748093; font-size: .75rem; line-height: 1.45; }
+.freelancer-portfolio-copy a { display: inline-flex; gap: .35rem; margin-top: .35rem; color: #294d7a; text-decoration: none; font-size: .72rem; font-weight: 650; }
+.freelancer-footer { display: flex; justify-content: space-between; gap: .75rem; padding: 1.5rem .2rem .2rem; color: #8993a2; font-size: .73rem; }
+.freelancer-footer a { color: #526985; text-decoration: none; }
+.freelancer-sidebar-close, .freelancer-menu-button, .freelancer-scrim { display: none; }
+.freelancer-load-message { margin: .4rem 0 .75rem; color: #667386; font-size: .8rem; }
+.freelancer-load-message:empty { display: none; }
+@media (max-width: 1100px) {
+    .freelancer-sidebar { width: 260px; min-width: 260px; }
+    .freelancer-main { padding-inline: 1.2rem; }
+    .freelancer-stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 760px) {
+    .freelancer-sidebar { position: fixed; inset: 0 auto 0 0; width: min(84vw,310px); min-width: 0; height: 100dvh; transform: translateX(-105%); transition: transform .2s ease; box-shadow: 12px 0 30px rgba(15,23,42,.12); }
+    .freelancer-sidebar.is-open { transform: translateX(0); }
+    .freelancer-sidebar-close { display: inline-grid; place-items: center; width: 36px; height: 36px; margin-left: auto; border: 1px solid #e5e9ef; border-radius: 6px; background: #fff; color: #4b5563; cursor: pointer; }
+    .freelancer-scrim { position: fixed; inset: 0; z-index: 19; display: block; border: 0; background: rgba(23,32,45,.38); }
+    .freelancer-scrim[hidden] { display: none; }
+    .freelancer-menu-button { display: inline-grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border: 1px solid #e1e6ed; border-radius: 6px; background: #fff; color: #43536a; cursor: pointer; }
+    .freelancer-topbar { display: grid; grid-template-columns: 40px minmax(0,1fr); align-items: start; column-gap: .75rem; }
+    .freelancer-welcome-copy { min-width: 0; }
+    .freelancer-topbar h1 { font-size: 1.55rem; overflow-wrap: anywhere; }
+    .freelancer-topbar .dashboard-header-actions { grid-column: 2; justify-content: flex-start; margin-top: .4rem; }
+    .freelancer-overview-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+    .freelancer-main { padding: 1rem .85rem 2rem; }
+    .freelancer-stats { gap: .55rem; }
+    .freelancer-stats .dash-stat-card { min-height: 84px; padding: .7rem .58rem; gap: .55rem; }
+    .freelancer-stats .dash-stat-card i { flex-basis: 32px; width: 32px; height: 32px; font-size: .8rem; }
+    .freelancer-stats .dash-stat-num { font-size: 1.1rem; }
+    .freelancer-stats .dash-stat-label { font-size: .68rem; }
+    .freelancer-stats .dash-stat-card small { font-size: .57rem; }
+    .freelancer-profile-progress { padding-inline: .85rem; }
+    .freelancer-profile-progress-copy { grid-template-columns: 1fr; }
+    .freelancer-profile-progress .dashboard-link-button { font-size: .68rem; }
+    .freelancer-panel { padding: .9rem; }
+    .freelancer-panel .dashboard-panel-header h2 { font-size: 1.1rem; }
+    .freelancer-review-summary { grid-template-columns: 1fr 1fr; }
+    .freelancer-footer { flex-direction: column; }
+}

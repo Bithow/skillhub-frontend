@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="api-config.js"></script>
+    <script src="site-analytics.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your SkillHub courses and teaching activity.">
+    <title>Instructor Dashboard | SkillHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="instructor-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="dashboard-page instructor-dashboard-page">
+    <div class="dashboard-shell instructor-shell">
+        <aside class="dashboard-sidebar instructor-sidebar" id="instructorSidebar">
+            <div class="dashboard-brand-row">
+                <img src="logo.png" alt="SkillHub logo" class="dashboard-brand-logo">
+                <div><span class="dashboard-brand-kicker">Teaching workspace</span><strong>SkillHub</strong></div>
+                <button class="instructor-sidebar-close" type="button" id="instructorSidebarClose" aria-label="Close navigation"><i class="fas fa-xmark"></i></button>
+            </div>
+            <nav class="dashboard-nav instructor-nav" aria-label="Instructor dashboard navigation">
+                <a href="instructor-dashboard.html?view=overview" class="dashboard-nav-item active" data-instructor-nav="overview"><i class="fas fa-gauge-high"></i> Overview</a>
+                <a href="instructor-dashboard.html?view=courses" class="dashboard-nav-item" data-instructor-nav="courses"><i class="fas fa-book-open"></i> My Courses</a>
+                <a href="create-course.html" class="dashboard-nav-item"><i class="fas fa-circle-plus"></i> Create Course</a>
+                <a href="instructor-dashboard.html?view=curriculum" class="dashboard-nav-item" data-instructor-nav="curriculum"><i class="fas fa-list-check"></i> Curriculum &amp; Lessons</a>
+                <a href="instructor-dashboard.html?view=students" class="dashboard-nav-item" data-instructor-nav="students"><i class="fas fa-users"></i> Students</a>
+                <a href="instructor-dashboard.html?view=assignments" class="dashboard-nav-item" data-instructor-nav="assignments"><i class="fas fa-file-lines"></i> Assignments</a>
+                <a href="instructor-dashboard.html?view=quizzes" class="dashboard-nav-item" data-instructor-nav="quizzes"><i class="fas fa-circle-question"></i> Quizzes &amp; Assessments</a>
+                <a href="chat.html" class="dashboard-nav-item"><i class="fas fa-message"></i> Messages</a>
+                <a href="instructor-dashboard.html?view=announcements" class="dashboard-nav-item" data-instructor-nav="announcements"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="instructor-dashboard.html?view=reviews" class="dashboard-nav-item" data-instructor-nav="reviews"><i class="fas fa-star"></i> Reviews &amp; Ratings</a>
+                <a href="instructor-dashboard.html?view=analytics" class="dashboard-nav-item" data-instructor-nav="analytics"><i class="fas fa-chart-line"></i> Analytics</a>
+                <a href="instructor-dashboard.html?view=earnings" class="dashboard-nav-item" data-instructor-nav="earnings"><i class="fas fa-wallet"></i> Earnings</a>
+                <a href="profile.html" class="dashboard-nav-item"><i class="fas fa-user"></i> Profile</a>
+                <a href="profile.html#tab-settings" class="dashboard-nav-item"><i class="fas fa-gear"></i> Settings</a>
+            </nav>
+            <div class="dashboard-user-card instructor-user-card">
+                <div class="dashboard-sidebar-avatar instructor-avatar" id="instructorAvatar"><i class="fas fa-user"></i></div>
+                <div class="dashboard-user-meta"><strong id="instructorName">Instructor</strong><span class="dash-role-badge"><i class="fas fa-chalkboard-user"></i> Instructor</span></div>
+                <a href="profile.html" class="dashboard-mini-link"><i class="fas fa-arrow-up-right-from-square"></i> Profile</a>
+                <a href="profile.html#tab-settings" class="dashboard-mini-link"><i class="fas fa-gear"></i> Account settings</a>
+                <button type="button" class="dashboard-logout-btn" id="instructorLogoutBtn"><i class="fas fa-right-from-bracket"></i> Log out</button>
+            </div>
+        </aside>
+        <button type="button" class="instructor-scrim" id="instructorScrim" aria-label="Close navigation" hidden></button>
+
+        <main class="dashboard-main instructor-main" id="overview">
+            <header class="dashboard-topbar instructor-topbar">
+                <button type="button" class="instructor-menu-button" id="instructorMenuButton" aria-controls="instructorSidebar" aria-expanded="false" aria-label="Open navigation"><i class="fas fa-bars"></i></button>
+                <div class="instructor-welcome-copy">
+                    <p class="dashboard-topbar-kicker">Instructor workspace</p>
+                    <h1>Welcome back, <span id="instructorWelcomeName">Instructor</span>!</h1>
+                    <p class="instructor-subtitle">Your teaching space is ready. Keep your courses moving forward.</p>
+                </div>
+                <div class="dashboard-header-actions">
+                    <a class="dashboard-icon-button" href="chat.html" aria-label="Open messages" title="Messages"><i class="fas fa-message"></i></a>
+                    <a class="instructor-profile-shortcut" href="profile.html" aria-label="Open your profile"><span id="instructorHeaderAvatar" class="instructor-header-avatar instructor-header-avatar-placeholder"><i class="fas fa-user"></i></span></a>
+                    <a class="instructor-primary-button" href="create-course.html"><i class="fas fa-plus"></i><span>Create New Course</span></a>
+                </div>
+            </header>
+
+            <div class="instructor-load-message" id="instructorLoadMessage" role="status">Loading your instructor workspace...</div>
+
+            <section class="dash-stats-row instructor-stats instructor-view-section" id="instructor-stats" aria-label="Instructor statistics">
+                <article class="dash-stat-card"><i class="fas fa-book-open"></i><div><span class="dash-stat-num" id="instructorCourseCount">—</span><span class="dash-stat-label">Total Courses</span></div></article>
+                <article class="dash-stat-card"><i class="fas fa-users"></i><div><span class="dash-stat-num" id="instructorStudentCount">—</span><span class="dash-stat-label">Student Enrollments</span></div></article>
+                <article class="dash-stat-card"><i class="fas fa-circle-check"></i><div><span class="dash-stat-num" id="instructorCompletionCount">—</span><span class="dash-stat-label">Course Completions</span><small>Not tracked by current reporting</small></div></article>
+                <article class="dash-stat-card"><i class="fas fa-wallet"></i><div><span class="dash-stat-num" id="instructorEarnings">—</span><span class="dash-stat-label">Total Earnings</span><small>Instructor earnings report unavailable</small></div></article>
+            </section>
+
+            <section class="dashboard-panel instructor-panel instructor-view-section" id="courses">
+                <div class="dashboard-panel-header">
+                    <div><span class="dashboard-panel-kicker">Course library</span><h2>My Courses</h2></div>
+                    <a href="create-course.html" class="dashboard-link-button"><i class="fas fa-plus"></i> Create course</a>
+                </div>
+                <div class="instructor-course-tools">
+                    <label class="instructor-search" for="instructorCourseSearch"><i class="fas fa-magnifying-glass"></i><input id="instructorCourseSearch" type="search" placeholder="Search your courses" autocomplete="off"></label>
+                    <div class="instructor-filter-tabs" role="group" aria-label="Filter courses">
+                        <button type="button" class="active" data-course-filter="all" aria-pressed="true">All</button>
+                        <button type="button" data-course-filter="published" aria-pressed="false">Published</button>
+                        <button type="button" data-course-filter="draft" aria-pressed="false">Drafts</button>
+                        <button type="button" data-course-filter="pending" aria-pressed="false">Pending</button>
+                        <button type="button" data-course-filter="rejected" aria-pressed="false">Rejected</button>
+                    </div>
+                </div>
+                <div class="instructor-course-grid" id="instructorCourseGrid" aria-live="polite"></div>
+                <p class="instructor-results-note" id="instructorCourseNote"></p>
+            </section>
+
+            <div class="instructor-overview-grid">
+                <section class="dashboard-panel instructor-panel instructor-view-section" id="student-activity">
+                    <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Keep in touch</span><h2>Student Activity</h2></div></div>
+                    <div class="dashboard-empty-state instructor-empty"><i class="fas fa-users"></i><p>Student-level activity is not available in the current instructor API.</p></div>
+                </section>
+                <section class="dashboard-panel instructor-panel instructor-view-section" id="performance-summary">
+                    <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">At a glance</span><h2>Course Performance</h2></div><a href="instructor-dashboard.html?view=analytics" class="dashboard-link-button">Analytics</a></div>
+                    <div class="instructor-performance-list" id="instructorPerformanceList"><div class="dashboard-empty-state instructor-empty"><i class="fas fa-chart-simple"></i><p>Course performance will appear when your course data is available.</p></div></div>
+                </section>
+            </div>
+
+            <section class="dashboard-panel instructor-panel instructor-view-section" id="quick-actions">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Shortcuts</span><h2>Quick Actions</h2></div></div>
+                <div class="instructor-quick-actions">
+                    <a href="create-course.html"><i class="fas fa-circle-plus"></i><span>Create New Course</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="instructor-dashboard.html?view=curriculum" data-add-lesson><i class="fas fa-list-check"></i><span>Add New Lesson</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="instructor-dashboard.html?view=courses"><i class="fas fa-book-open"></i><span>Manage Courses</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="instructor-dashboard.html?view=students"><i class="fas fa-users"></i><span>View Students</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="instructor-dashboard.html?view=assignments"><i class="fas fa-file-lines"></i><span>Review Assignments</span><i class="fas fa-arrow-right"></i></a>
+                    <a href="instructor-dashboard.html?view=earnings"><i class="fas fa-wallet"></i><span>View Earnings</span><i class="fas fa-arrow-right"></i></a>
+                </div>
+            </section>
+
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="curriculum">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Build your classroom</span><h2>Curriculum &amp; Lessons</h2></div><a href="create-course.html" class="dashboard-link-button">Choose a course</a></div>
+                <div class="instructor-curriculum-course-list" id="instructorCurriculumCourseList"><div class="dashboard-empty-state instructor-empty"><i class="fas fa-list-check"></i><p>Select a course to edit its existing lessons and curriculum.</p></div></div>
+            </section>
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="students">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Your community</span><h2>Students</h2></div><a href="chat.html" class="dashboard-link-button">Open messages</a></div>
+                <div class="dashboard-empty-state instructor-empty"><i class="fas fa-users"></i><p>Enrolled student names and individual progress are not exposed by the current instructor API.</p></div>
+            </section>
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="assignments">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Learner work</span><h2>Assignments</h2></div></div>
+                <div class="dashboard-empty-state instructor-empty"><i class="fas fa-file-lines"></i><p>Assignment submissions and grading are not supported by the current platform API.</p></div>
+            </section>
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="quizzes">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Knowledge checks</span><h2>Quizzes &amp; Assessments</h2></div></div>
+                <div class="dashboard-empty-state instructor-empty"><i class="fas fa-circle-question"></i><p>Quiz creation and learner results are not available yet.</p></div>
+            </section>
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="announcements">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Course updates</span><h2>Announcements</h2></div></div>
+                <div class="dashboard-empty-state instructor-empty"><i class="fas fa-bullhorn"></i><p>Course announcements are not supported by the current platform API.</p></div>
+            </section>
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="reviews">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Learner feedback</span><h2>Reviews &amp; Ratings</h2></div></div>
+                <div class="instructor-review-summary" id="instructorReviewSummary"><div class="dashboard-empty-state instructor-empty"><i class="fas fa-star"></i><p>No course reviews are available yet.</p></div></div>
+            </section>
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="analytics">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Course insights</span><h2>Analytics</h2></div></div>
+                <div class="instructor-analytics-grid" id="instructorAnalyticsGrid"></div>
+                <p class="instructor-results-note">Analytics shown here are limited to views, enrollments, and ratings returned by the course API.</p>
+            </section>
+            <section class="dashboard-panel instructor-panel instructor-detail-panel instructor-view-section" id="earnings">
+                <div class="dashboard-panel-header"><div><span class="dashboard-panel-kicker">Payouts and transactions</span><h2>Earnings</h2></div><a href="profile.html" class="dashboard-link-button">Payment history</a></div>
+                <p class="instructor-results-note">Simulated course totals are test activity, not money received. Only eligible, non-simulated ledger earnings are considered for internal withdrawal requests.</p>
+                <div class="instructor-finance-filters"><label>From<input type="date" id="instructorFinanceFrom"></label><label>To<input type="date" id="instructorFinanceTo"></label><label>Currency<select id="instructorFinanceCurrency"><option value="">All currencies</option><option>USD</option><option>ETB</option><option>UGX</option><option>SSP</option><option>KES</option></select></label><label>Status<select id="instructorFinanceStatus"><option value="">All statuses</option><option value="eligible">Eligible</option><option value="simulated_pending">Simulated</option><option value="requested">Requested</option></select></label><button type="button" id="filterInstructorFinance">Apply filters</button></div>
+                <div id="instructorFinanceSummary" class="instructor-analytics-grid"><div class="dashboard-empty-state instructor-empty"><i class="fas fa-spinner fa-spin"></i><p>Loading financial records…</p></div></div>
+                <div id="instructorLedgerHistory" class="instructor-curriculum-course-list"></div>
+                <section class="instructor-withdraw-panel"><h3>Request a withdrawal review</h3><p>Internal request only. Approval does not initiate a payout.</p>
+                    <div class="instructor-withdraw-fields"><label>Amount<input id="instructorWithdrawalAmount" type="number" min="5" step="0.01" placeholder="0.00"></label><label>Currency<select id="instructorWithdrawalCurrency"><option>USD</option><option>ETB</option><option>UGX</option><option>SSP</option><option>KES</option></select></label><label>Payout preference<select id="instructorPayoutMethod"><option value="mobile_money">Mobile money</option><option value="telebirr">Telebirr</option><option value="cbe_birr">CBE Bank</option><option value="bank_transfer">Bank transfer</option><option value="other">Other</option></select></label><label>Destination hint (optional)<input id="instructorPayoutDestination" maxlength="120" placeholder="Only last digits are stored"></label></div>
+                    <button type="button" class="dashboard-link-button" id="instructorWithdrawalSubmit">Submit request</button><p id="instructorWithdrawalMessage" role="status"></p>
+                </section>
+                <div id="instructorWithdrawalHistory" class="instructor-curriculum-course-list"></div>
+            </section>
+            <footer class="instructor-footer"><span>SkillHub Instructor Workspace</span><a href="profile.html">Manage your profile</a></footer>
+        </main>
+    </div>
+    <script src="script.js" defer></script>
+    <script src="instructor-dashboard.js" defer></script>
+</body>
+</html>

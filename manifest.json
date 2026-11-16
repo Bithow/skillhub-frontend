@@ -1,0 +1,26 @@
+{
+  "name": "SkillHub",
+  "short_name": "SkillHub",
+  "description": "Learn, Teach & Earn — One Ecosystem",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["education", "productivity"]
+}

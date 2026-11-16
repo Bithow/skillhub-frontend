@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="api-config.js"></script>
+    <script src="site-analytics.js" defer></script>
+  <script>
+    // HTTPS enforcement — redirect http to https on production
+    if(window.location.protocol==='http:'&&window.location.hostname!=='localhost'&&window.location.hostname!=='127.0.0.1'&&!window.location.hostname.startsWith('192.168.')){window.location.replace('https:'+window.location.href.substring(5));}
+  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Content - SkillHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
+
+        .topbar {
+            background: #1e3a8a; color: white; padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .topbar a {
+            color: white; text-decoration: none; font-size: 1.1rem; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .topbar-logo {
+            width: 32px; height: 32px; object-fit: contain;
+            border-radius: 6px; background: white; padding: 2px;
+        }
+        .topbar-right { font-size: 0.875rem; opacity: 0.8; }
+
+        .layout { display: grid; grid-template-columns: 320px 1fr; min-height: calc(100vh - 60px); }
+
+        /* SIDEBAR */
+        .sidebar {
+            background: white; border-right: 1px solid #e2e8f0;
+            overflow-y: auto; max-height: calc(100vh - 60px); position: sticky; top: 60px;
+        }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .sidebar-header h2 { font-size: 1rem; font-weight: 700; color: #1e293b; }
+        .sidebar-header p { font-size: 0.75rem; color: #64748b; margin-top: 0.25rem; }
+        .lesson-item {
+            padding: 1rem 1.5rem; border-bottom: 1px solid #f1f5f9; cursor: pointer;
+            transition: background 0.2s; display: flex; align-items: center; gap: 0.75rem;
+        }
+        .lesson-item:hover { background: #f8fafc; }
+        .lesson-item.active { background: #eff6ff; border-left: 3px solid #2563eb; }
+        .lesson-num {
+            width: 28px; height: 28px; background: #e2e8f0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+        }
+        .lesson-item.active .lesson-num { background: #2563eb; color: white; }
+        .lesson-info h4 { font-size: 0.875rem; font-weight: 600; }
+        .lesson-info p { font-size: 0.75rem; color: #64748b; margin-top: 0.125rem; }
+        .lesson-icons { margin-left: auto; display: flex; gap: 0.5rem; }
+        .lesson-icons i { font-size: 0.875rem; color: #94a3b8; }
+        .lesson-icons .fa-video { color: #ef4444; }
+        .lesson-icons .fa-file-pdf { color: #f59e0b; }
+
+        /* MAIN CONTENT */
+        .main { padding: 2rem; overflow-y: auto; }
+        .content-tabs {
+            display: flex; gap: 0; margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .content-tab {
+            padding: 0.75rem 1.5rem; border: none; background: none; cursor: pointer;
+            font-size: 0.875rem; font-weight: 600; color: #64748b;
+            border-bottom: 3px solid transparent; margin-bottom: -2px;
+        }
+        .content-tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+
+        /* VIDEO */
+        .video-container {
+            background: #000; border-radius: 0.75rem; overflow: hidden;
+            aspect-ratio: 16/9; margin-bottom: 1.5rem;
+        }
+        .video-container iframe { width: 100%; height: 100%; border: none; }
+        .no-video {
+            background: #1e293b; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; color: white; gap: 1rem; aspect-ratio: 16/9;
+            border-radius: 0.75rem; margin-bottom: 1.5rem;
+        }
+        .no-video i { font-size: 3rem; opacity: 0.5; }
+        .no-video p { opacity: 0.7; }
+
+        /* LESSON INFO */
+        .lesson-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .lesson-meta { font-size: 0.875rem; color: #64748b; margin-bottom: 1.5rem; }
+        .lesson-desc { color: #475569; line-height: 1.7; margin-bottom: 1.5rem; }
+
+        /* PDF */
+        .pdf-section { margin-bottom: 1.5rem; }
+        .pdf-link {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: #fef3c7; color: #92400e; padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; text-decoration: none; font-weight: 600;
+            transition: background 0.2s;
+        }
+        .pdf-link:hover { background: #fde68a; }
+
+        /* DISCUSSION */
+        .discussion-section { max-width: 700px; }
+        .discussion-section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+        .comment-form { margin-bottom: 1.5rem; }
+        .comment-input {
+            width: 100%; padding: 0.875rem; border: 2px solid #e2e8f0;
+            border-radius: 0.5rem; font-size: 0.875rem; resize: vertical;
+            min-height: 80px; font-family: inherit;
+        }
+        .comment-input:focus { outline: none; border-color: #2563eb; }
+        .comment-btn {
+            margin-top: 0.5rem; padding: 0.625rem 1.5rem; background: #2563eb;
+            color: white; border: none; border-radius: 0.5rem; cursor: pointer;
+            font-weight: 600; font-size: 0.875rem;
+        }
+        .comment-btn:hover { background: #1d4ed8; }
+        .comment {
+            background: white; padding: 1rem; border-radius: 0.5rem;
+            margin-bottom: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .comment-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+        .comment-author { font-weight: 600; font-size: 0.875rem; }
+        .comment-date { font-size: 0.75rem; color: #94a3b8; }
+        .comment-text { font-size: 0.875rem; color: #475569; line-height: 1.6; }
+        .no-comments { color: #94a3b8; font-size: 0.875rem; padding: 1rem 0; }
+
+        /* NOT ENROLLED */
+        .not-enrolled {
+            text-align: center; padding: 4rem 2rem; background: white;
+            border-radius: 1rem; max-width: 500px; margin: 2rem auto;
+        }
+        .not-enrolled i { font-size: 3rem; color: #f59e0b; margin-bottom: 1rem; }
+        .not-enrolled h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .not-enrolled p { color: #64748b; margin-bottom: 1.5rem; }
+        .not-enrolled a {
+            display: inline-block; background: #2563eb; color: white;
+            padding: 0.75rem 2rem; border-radius: 0.5rem; text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* LOADING */
+        .loading { text-align: center; padding: 3rem; color: #64748b; }
+        .loading i { font-size: 2rem; display: block; margin-bottom: 1rem; }
+
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { max-height: 300px; position: static; }
+            .main { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <a href="index.html">
+        <img src="logo.png" alt="SkillHub" class="topbar-logo"> SkillHub
+    </a>
+    <span class="topbar-right" id="topbarUser">Loading...</span>
+    <a href="javascript:history.back()" style="color:white;font-size:0.85rem;display:flex;align-items:center;gap:0.4rem;opacity:0.85;text-decoration:none;">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<div id="loadingScreen" class="loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    Loading course...
+</div>
+
+<div id="notEnrolled" class="not-enrolled" style="display:none;">
+    <i class="fas fa-lock"></i>
+    <h2>Access Restricted</h2>
+    <p>You need to purchase this course to access the content.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+        <a href="index.html#courses" style="background:#2563eb;color:white;padding:0.75rem 2rem;border-radius:0.5rem;text-decoration:none;font-weight:600;">Browse Courses</a>
+        <a id="buyThisCourseBtn" href="index.html#courses" style="background:#10b981;color:white;padding:0.75rem 2rem;border-radius:0.5rem;text-decoration:none;font-weight:600;"><i class="fas fa-credit-card"></i> Buy This Course</a>
+    </div>
+</div>
+
+<div id="courseLayout" class="layout" style="display:none;">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2 id="courseTitle">Course Title</h2>
+            <p id="lessonCount">0 lessons</p>
+        </div>
+        <div id="lessonsList"></div>
+    </div>
+    <div class="main">
+        <div class="content-tabs">
+            <button class="content-tab active" onclick="showContentTab('lesson', this)"><i class="fas fa-play"></i> Lesson</button>
+            <button class="content-tab" onclick="showContentTab('discussion', this)"><i class="fas fa-comments"></i> Discussion</button>
+        </div>
+
+        <div id="lessonContent">
+            <div id="videoArea"></div>
+            <h2 class="lesson-title" id="lessonTitle">Select a lesson</h2>
+            <p class="lesson-meta" id="lessonMeta"></p>
+            <p class="lesson-desc" id="lessonDesc"></p>
+            <div class="pdf-section" id="pdfSection"></div>
+            <!-- Mark as Complete button -->
+            <div id="markCompleteWrap" style="margin-top:1.25rem;display:none;">
+                <button id="markCompleteBtn"
+                    style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.65rem 1.5rem;background:#2563eb;color:white;border:none;border-radius:0.5rem;font-weight:600;font-size:0.875rem;cursor:pointer;transition:background 0.2s;"
+                    onclick="markLessonComplete(currentLessonIndex)">
+                    <i class="fas fa-check-circle"></i> Mark as Complete
+                </button>
+            </div>
+        </div>
+
+        <div id="discussionContent" style="display:none;">
+            <div class="discussion-section">
+                <h3><i class="fas fa-comments"></i> Course Discussion</h3>
+                <div class="comment-form">
+                    <textarea class="comment-input" id="commentInput" placeholder="Ask a question or share your thoughts..."></textarea>
+                    <button class="comment-btn" onclick="postComment()"><i class="fas fa-paper-plane"></i> Post Comment</button>
+                </div>
+                <div id="commentsList"><div class="no-comments">No comments yet. Be the first!</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var API_BASE = window.SKILLHUB_API_BASE || "https://skillhub-backend-i3dr.onrender.com/api";
+var token = sessionStorage.getItem("skillhub_token") || localStorage.getItem("skillhub_token");
+if (token) {
+    sessionStorage.setItem("skillhub_token", token);
+}
+var courseId = new URLSearchParams(window.location.search).get("id");
+var currentCourse = null;
+var currentLesson = null;
+var currentLessonIndex = 0;
+
+// Central fetch helper with 401 auto-logout
+async function authFetch(url, options) {
+    var res = await fetch(url, options);
+    if (res.status === 401) {
+        sessionStorage.removeItem("skillhub_token");
+        localStorage.removeItem("skillhub_token");
+        sessionStorage.removeItem("skillhub_user");
+        localStorage.removeItem("skillhub_user");
+        window.location.href = "index.html?session=expired";
+        throw new Error("Session expired.");
+    }
+    return res;
+}
+
+function esc(str) {
+    if (!str) return "";
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+async function init() {
+    if (!courseId) {
+        window.location.href = "index.html#courses";
+        return;
+    }
+
+    // Must be logged in
+    if (!token) {
+        document.getElementById("loadingScreen").style.display = "none";
+        document.getElementById("notEnrolled").style.display = "block";
+        document.getElementById("notEnrolled").querySelector("p").textContent =
+            "Please log in to access course content.";
+        return;
+    }
+
+    // Validate the session before checking course access.
+    try {
+        var headers = { "Authorization": "Bearer " + token };
+        var userRes = await authFetch(API_BASE + "/auth/me", { headers: headers });
+        var userData = await userRes.json();
+
+        // Handle expired / invalid token
+        if (!userData.success || !userData.user) {
+            sessionStorage.removeItem("skillhub_token");
+            localStorage.removeItem("skillhub_token");
+            sessionStorage.removeItem("skillhub_user");
+            localStorage.removeItem("skillhub_user");
+            document.getElementById("loadingScreen").style.display = "none";
+            document.getElementById("notEnrolled").style.display = "block";
+            document.getElementById("notEnrolled").querySelector("p").textContent =
+                "Your session has expired. Please log in again.";
+            return;
+        }
+
+        var user = userData.user;
+        document.getElementById("topbarUser").textContent = user.name || "";
+
+        // Admins and instructors always have access
+        var isPrivileged = user.role === "admin" || user.role === "instructor";
+        if (!isPrivileged) {
+            var enrollRes = await authFetch(API_BASE + "/courses/enrolled/me", { headers: headers });
+            var enrollData = await enrollRes.json();
+            var enrolledCourses = Array.isArray(enrollData.courses) ? enrollData.courses : [];
+            var isEnrolled = enrolledCourses.some(function(course) {
+                var enrolledId = typeof course === "string" ? course :
+                    course && (course._id || course.id || course.courseId || course.course);
+                if (enrolledId && typeof enrolledId === "object") {
+                    enrolledId = enrolledId._id || enrolledId.id;
+                }
+                return enrolledId != null && String(enrolledId) === String(courseId);
+            });
+
+            if (!isEnrolled) {
+                document.getElementById("loadingScreen").style.display = "none";
+                document.getElementById("notEnrolled").style.display = "block";
+                document.getElementById("notEnrolled").querySelector("p").textContent =
+                    "You need to purchase this course to access the content.";
+                var buyBtn = document.getElementById("buyThisCourseBtn");
+                if (buyBtn) buyBtn.href = "payment.html?type=course&id=" + encodeURIComponent(courseId);
+                return;
+            }
+        }
+
+        // Request lesson content only after the learner's enrollment is confirmed.
+        var courseRes = await authFetch(API_BASE + "/courses/" + encodeURIComponent(courseId), { headers: headers });
+        var courseData = await courseRes.json();
+        if (!courseData.success || !courseData.course) {
+            document.getElementById("loadingScreen").innerHTML =
+                "<p style='color:red;'>Course not found. <a href='index.html'>Go back</a></p>";
+            return;
+        }
+
+        currentCourse = courseData.course;
+        renderCourse(courseData.course, user, isPrivileged);
+
+    } catch(e) {
+        document.getElementById("loadingScreen").innerHTML =
+            "<p style='color:red;'>Failed to load course. Please check your connection and <a href='javascript:location.reload()'>try again</a>.</p>";
+    }
+}
+
+var completedLessons = {}; // { lessonIndex: true }
+var currentUser = null;
+
+function loadCompletedLessons() {
+    try {
+        var key = 'sh_progress_' + courseId;
+        completedLessons = JSON.parse(localStorage.getItem(key) || '{}');
+    } catch(e) { completedLessons = {}; }
+}
+
+// Fetch progress from backend and merge with localStorage
+async function loadProgressFromBackend() {
+    if (!token || !courseId) return;
+    try {
+        var res = await fetch(API_BASE + '/courses/' + courseId + '/progress', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) return;
+        var data = await res.json();
+        if (!data.success) return;
+
+        // Backend returns completed lesson indices
+        var backendCompleted = data.completedLessons || [];
+        backendCompleted.forEach(function(idx) {
+            completedLessons[idx] = true;
+        });
+
+        // Save merged result back to localStorage
+        try {
+            localStorage.setItem('sh_progress_' + courseId, JSON.stringify(completedLessons));
+        } catch(e) {}
+
+        // Re-render progress UI with merged data
+        updateProgressBar();
+        updateAllLessonUI();
+        if (currentCourse) refreshCertButton(currentCourse, currentUser);
+    } catch(e) { /* silent — localStorage progress still works */ }
+}
+
+// Update all lesson items in sidebar to reflect completed state
+function updateAllLessonUI() {
+    var lessons = currentCourse ? currentCourse.lessons || [] : [];
+    lessons.forEach(function(_, i) {
+        var lessonEl = document.getElementById('lesson-' + i);
+        if (!lessonEl) return;
+        var numEl = lessonEl.querySelector('.lesson-num');
+        if (completedLessons[i] && numEl) {
+            numEl.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem;"></i>';
+            numEl.style.background = '#10b981';
+            numEl.style.color = 'white';
+        }
+    });
+}
+
+function markLessonComplete(index) {
+    completedLessons[index] = true;
+    try {
+        localStorage.setItem('sh_progress_' + courseId, JSON.stringify(completedLessons));
+    } catch(e) {}
+
+    // Update lesson item UI
+    var lessonEl = document.getElementById('lesson-' + index);
+    if (lessonEl) {
+        var numEl = lessonEl.querySelector('.lesson-num');
+        if (numEl) { numEl.innerHTML = '<i class="fas fa-check" style="font-size:0.7rem;"></i>'; numEl.style.background = '#10b981'; numEl.style.color = 'white'; }
+    }
+
+    // Update progress bar
+    updateProgressBar();
+
+    // Refresh certificate button state
+    refreshCertButton(currentCourse, currentUser);
+
+    // Tell backend
+    syncProgressToBackend();
+
+    // Update mark-complete button
+    var btn = document.getElementById('markCompleteBtn');
+    if (btn) { btn.innerHTML = '<i class="fas fa-check-circle"></i> Completed'; btn.style.background = '#10b981'; btn.disabled = true; }
+}
+
+function updateProgressBar() {
+    var lessons = currentCourse ? currentCourse.lessons || [] : [];
+    if (!lessons.length) return;
+    var done = Object.keys(completedLessons).length;
+    var pct = Math.round((done / lessons.length) * 100);
+
+    var bar = document.getElementById('courseProgressBar');
+    var label = document.getElementById('courseProgressLabel');
+    if (bar) bar.style.width = pct + '%';
+    if (label) label.textContent = pct + '% complete (' + done + '/' + lessons.length + ' lessons)';
+}
+
+async function syncProgressToBackend() {
+    if (!token || !courseId) return;
+    var lessons = currentCourse ? currentCourse.lessons || [] : [];
+    if (!lessons.length) return;
+    var pct = Math.round((Object.keys(completedLessons).length / lessons.length) * 100);
+    try {
+        await fetch(API_BASE + '/courses/' + courseId + '/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ progress: pct, completedLessons: Object.keys(completedLessons).map(Number) })
+        });
+    } catch(e) { /* silent — localStorage keeps progress locally */ }
+}
+
+function refreshCertButton(course, user) {
+    var wrap = document.getElementById('certBtnWrap');
+    if (!wrap) return;
+    var lessons = course ? course.lessons || [] : (currentCourse ? currentCourse.lessons || [] : []);
+    if (!lessons.length) return;
+
+    var totalDone = Object.keys(completedLessons).length;
+    var allDone = totalDone >= lessons.length;
+    var pct = Math.round((totalDone / lessons.length) * 100);
+
+    if (allDone) {
+        // All lessons complete — show active certificate button
+        var u = user || currentUser || {};
+        wrap.innerHTML = '<a href="certificate.html?id=' + encodeURIComponent(courseId) +
+            '&name=' + encodeURIComponent(u.name || '') +
+            '&course=' + encodeURIComponent((course || currentCourse || {}).title || '') +
+            '" target="_blank" style="display:block;text-align:center;background:linear-gradient(135deg,#059669,#10b981);color:white;padding:0.75rem;border-radius:0.5rem;text-decoration:none;font-weight:600;font-size:0.875rem;">' +
+            '<i class="fas fa-award"></i> 🎉 Get Your Certificate</a>';
+    } else {
+        // Not done yet — show locked state with progress hint
+        wrap.innerHTML = '<div style="text-align:center;padding:0.5rem 0;">' +
+            '<div style="font-size:0.78rem;color:#94a3b8;margin-bottom:0.5rem;">' +
+            '<i class="fas fa-lock"></i> Certificate unlocks at 100%</div>' +
+            '<div style="height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;">' +
+            '<div style="height:100%;width:' + pct + '%;background:#2563eb;border-radius:3px;transition:width 0.4s;"></div></div>' +
+            '<div style="font-size:0.72rem;color:#64748b;margin-top:4px;">' + totalDone + ' / ' + lessons.length + ' lessons complete</div>' +
+            '</div>';
+    }
+}
+function renderCourse(course, user, isPrivileged) {
+    currentUser = user;
+    loadCompletedLessons();
+    document.getElementById("loadingScreen").style.display = "none";
+    document.title = course.title + " - SkillHub";
+    document.getElementById("courseLayout").style.display = "grid";
+    document.getElementById("courseTitle").textContent = course.title;
+
+    var lessons = course.lessons || [];
+    document.getElementById("lessonCount").textContent = lessons.length + " lesson" + (lessons.length !== 1 ? "s" : "");
+
+    // Add progress bar to sidebar header
+    var progressBar = document.getElementById('progressBarWrap');
+    if (!progressBar) {
+        var header = document.querySelector('.sidebar-header');
+        if (header) {
+            var pb = document.createElement('div');
+            pb.id = 'progressBarWrap';
+            pb.style.cssText = 'margin-top:0.75rem;';
+            pb.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+                '<span style="font-size:0.72rem;color:#64748b;" id="courseProgressLabel">0% complete</span></div>' +
+                '<div style="height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;">' +
+                '<div id="courseProgressBar" style="height:100%;background:#2563eb;border-radius:3px;width:0%;transition:width 0.4s ease;"></div></div>';
+            header.appendChild(pb);
+        }
+    }
+    updateProgressBar();
+
+    if (lessons.length === 0) {
+        document.getElementById("lessonsList").innerHTML = "<p style='padding:1rem;color:#94a3b8;font-size:0.875rem;'>No lessons added yet.</p>";
+        document.getElementById("videoArea").innerHTML = "<div class='no-video'><i class='fas fa-video-slash'></i><p>No lessons available yet</p></div>";
+        return;
+    }
+
+    // Add certificate button at bottom of sidebar — locked until all lessons complete
+    var certBtn = "<div id='certBtnWrap' style='padding:1rem 1.5rem;border-top:2px solid #e2e8f0;margin-top:0.5rem;'></div>";
+
+    document.getElementById("lessonsList").innerHTML = lessons.map(function(lesson, i) {
+        var icons = "";
+        if (lesson.videoUrl) icons += "<i class='fas fa-video'></i>";
+        if (lesson.pdfUrl) icons += "<i class='fas fa-file-pdf'></i>";
+        var isDone = completedLessons[i];
+        var numStyle = isDone ? "background:#10b981;color:white;" : "";
+        var numContent = isDone ? "<i class='fas fa-check' style='font-size:0.7rem;'></i>" : (i + 1);
+        return "<div class='lesson-item' id='lesson-" + i + "' onclick='selectLesson(" + i + ")'>" +
+            "<div class='lesson-num' style='" + numStyle + "'>" + numContent + "</div>" +
+            "<div class='lesson-info'><h4>" + esc(lesson.title || "Lesson " + (i+1)) + "</h4>" +
+            (lesson.duration ? "<p>" + lesson.duration + " min</p>" : "") + "</div>" +
+            "<div class='lesson-icons'>" + icons + "</div>" +
+            "</div>";
+    }).join("") + certBtn;
+
+    refreshCertButton(course, user);
+
+    selectLesson(0);
+    loadDiscussion(true);
+
+    // Fetch progress from backend and merge — runs after render so UI updates smoothly
+    loadProgressFromBackend();
+}
+
+function selectLesson(index) {
+    var lessons = currentCourse.lessons || [];
+    if (!lessons[index]) return;
+    currentLesson = lessons[index];
+    currentLessonIndex = index;
+
+    document.querySelectorAll(".lesson-item").forEach(function(el) { el.classList.remove("active"); });
+    var el = document.getElementById("lesson-" + index);
+    if (el) el.classList.add("active");
+
+    document.getElementById("lessonTitle").textContent = currentLesson.title || "Lesson " + (index + 1);
+    document.getElementById("lessonMeta").textContent = currentLesson.duration ? currentLesson.duration + " minutes" : "";
+    document.getElementById("lessonDesc").textContent = currentLesson.description || "";
+
+    // Update Mark as Complete button
+    var markWrap = document.getElementById('markCompleteWrap');
+    var markBtn = document.getElementById('markCompleteBtn');
+    if (markWrap) markWrap.style.display = 'block';
+    if (markBtn) {
+        if (completedLessons[index]) {
+            markBtn.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+            markBtn.style.background = '#10b981';
+            markBtn.disabled = true;
+        } else {
+            markBtn.innerHTML = '<i class="fas fa-check-circle"></i> Mark as Complete';
+            markBtn.style.background = '#2563eb';
+            markBtn.disabled = false;
+        }
+    }
+
+    // Video
+    var videoArea = document.getElementById("videoArea");
+    if (currentLesson.videoUrl) {
+        var embedUrl = getEmbedUrl(currentLesson.videoUrl);
+        videoArea.innerHTML = buildVideoHtml(embedUrl, currentLesson.videoUrl);
+    } else {
+        videoArea.innerHTML = "<div class='no-video'><i class='fas fa-video-slash'></i><p>No video for this lesson</p></div>";
+    }
+
+    // PDF
+    var pdfSection = document.getElementById("pdfSection");
+    if (currentLesson.pdfUrl) {
+        pdfSection.innerHTML = "<a href='" + esc(currentLesson.pdfUrl) + "' target='_blank' class='pdf-link'><i class='fas fa-file-pdf'></i> Download PDF / Notes</a>";
+    } else {
+        pdfSection.innerHTML = "";
+    }
+}
+
+function getEmbedUrl(url) {
+    if (!url) return null;
+
+    // YouTube — watch?v= or youtu.be/ or youtube.com/shorts/
+    var ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (ytMatch) return "https://www.youtube.com/embed/" + ytMatch[1];
+
+    // Google Drive — /file/d/ID/view or /file/d/ID
+    var driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (driveMatch) return "https://drive.google.com/file/d/" + driveMatch[1] + "/preview";
+
+    // Vimeo
+    var vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vimeoMatch) return "https://player.vimeo.com/video/" + vimeoMatch[1];
+
+    // Loom
+    var loomMatch = url.match(/loom\.com\/share\/([a-zA-Z0-9]+)/);
+    if (loomMatch) return "https://www.loom.com/embed/" + loomMatch[1];
+
+    // Dailymotion
+    var dmMatch = url.match(/dailymotion\.com\/video\/([a-zA-Z0-9]+)/);
+    if (dmMatch) return "https://www.dailymotion.com/embed/video/" + dmMatch[1];
+
+    // Direct MP4 / WebM / OGV — embed using HTML5 video
+    if (url.match(/\.(mp4|webm|ogv)(\?.*)?$/i)) return 'mp4:' + url;
+
+    return null;
+}
+
+// Build the video area HTML — handles all sources including MP4
+function buildVideoHtml(embedUrl, originalUrl) {
+    if (!embedUrl) {
+        // Unsupported source — show warning + external link
+        return "<div class='no-video' style='flex-direction:column;gap:0.75rem;padding:2rem;'>" +
+            "<i class='fas fa-exclamation-circle' style='font-size:2rem;color:#f59e0b;'></i>" +
+            "<p style='font-size:0.875rem;text-align:center;max-width:340px;line-height:1.6;'>" +
+            "This video can't be played inside SkillHub.<br>" +
+            "<a href='" + esc(originalUrl) + "' target='_blank' rel='noopener' style='color:#60a5fa;font-weight:600;'>" +
+            "<i class='fas fa-external-link-alt'></i> Open video in new tab</a>" +
+            "</p>" +
+            "<p style='font-size:0.75rem;color:#94a3b8;text-align:center;'>" +
+            "Supported: YouTube, Google Drive, Vimeo, Loom, Dailymotion, MP4 links</p>" +
+            "</div>";
+    }
+    // Direct MP4/WebM
+    if (embedUrl.startsWith('mp4:')) {
+        var src = esc(embedUrl.substring(4));
+        return "<div class='video-container'>" +
+            "<video controls style='width:100%;height:100%;background:#000;'>" +
+            "<source src='" + src + "' type='video/mp4'>" +
+            "Your browser does not support the video tag." +
+            "</video></div>";
+    }
+    // Standard iframe embed
+    return "<div class='video-container'><iframe src='" + esc(embedUrl) + "' allowfullscreen " +
+        "allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'>" +
+        "</iframe></div>";
+}
+
+function showContentTab(tab, btn) {
+    document.querySelectorAll(".content-tab").forEach(function(b) { b.classList.remove("active"); });
+    btn.classList.add("active");
+    document.getElementById("lessonContent").style.display = tab === "lesson" ? "block" : "none";
+    document.getElementById("discussionContent").style.display = tab === "discussion" ? "block" : "none";
+    if (tab === "discussion") loadDiscussion(true);
+}
+
+var _discussionPage = 1;
+var _discussionPageSize = 10;
+var _discussionHasMore = false;
+var _discussionLoading = false;
+
+async function loadDiscussion(reset) {
+    if (_discussionLoading) return;
+    if (reset) {
+        _discussionPage = 1;
+        _discussionHasMore = false;
+        document.getElementById("commentsList").innerHTML =
+            "<div class='no-comments' style='color:#94a3b8;'>Loading comments...</div>";
+    }
+    _discussionLoading = true;
+    try {
+        var url = API_BASE + "/courses/" + courseId + "/discussion" +
+            "?page=" + _discussionPage + "&limit=" + _discussionPageSize;
+        var discussionHeaders = {};
+        if (token) discussionHeaders.Authorization = "Bearer " + token;
+        var res = await fetch(url, { headers: discussionHeaders });
+        var data = await res.json();
+        if (!data.success) {
+            document.getElementById("commentsList").innerHTML =
+                "<div class='no-comments'>" + esc(data.message || "Please log in and enroll to view the discussion.") + "</div>";
+            _discussionLoading = false;
+            return;
+        }
+
+        var comments = data.discussion || data.comments || [];
+        var total    = data.total || data.totalComments || comments.length;
+
+        // Determine if more pages exist
+        _discussionHasMore = (_discussionPage * _discussionPageSize) < total;
+
+        if (_discussionPage === 1) {
+            renderComments(comments, false);
+        } else {
+            appendComments(comments);
+        }
+
+        renderLoadMoreBtn();
+    } catch(e) {
+        if (_discussionPage === 1) {
+            document.getElementById("commentsList").innerHTML =
+                "<div class='no-comments'>Could not load comments. Please try again.</div>";
+        }
+    }
+    _discussionLoading = false;
+}
+
+function renderComments(comments, append) {
+    var el = document.getElementById("commentsList");
+    // Remove existing load-more button if present
+    var existing = document.getElementById("loadMoreCommentsBtn");
+    if (existing) existing.remove();
+
+    if (!comments.length && !append) {
+        el.innerHTML = "<div class='no-comments'>No comments yet. Be the first!</div>";
+        return;
+    }
+    if (_discussionPage === 1) el.innerHTML = "";
+    appendComments(comments);
+}
+
+function appendComments(comments) {
+    var el = document.getElementById("commentsList");
+    var empty = el.querySelector(".no-comments");
+    if (empty) empty.remove();
+
+    comments.forEach(function(c) {
+        var div = document.createElement("div");
+        div.className = "comment";
+        div.innerHTML =
+            "<div class='comment-header'>" +
+            "<span class='comment-author'>" + esc(c.userName || "User") + "</span>" +
+            "<span class='comment-date'>" + new Date(c.createdAt).toLocaleDateString() + "</span>" +
+            "</div>" +
+            "<p class='comment-text'>" + esc(c.message) + "</p>";
+        el.appendChild(div);
+    });
+}
+
+function renderLoadMoreBtn() {
+    var existing = document.getElementById("loadMoreCommentsBtn");
+    if (existing) existing.remove();
+
+    if (!_discussionHasMore) return;
+
+    var el = document.getElementById("commentsList");
+    var btn = document.createElement("div");
+    btn.id = "loadMoreCommentsBtn";
+    btn.style.cssText = "text-align:center;padding:1rem 0;";
+    btn.innerHTML = "<button onclick='loadMoreComments()' " +
+        "style='padding:0.5rem 1.5rem;background:#eff6ff;color:#2563eb;border:2px solid #2563eb;" +
+        "border-radius:0.5rem;font-size:0.85rem;font-weight:600;cursor:pointer;transition:background 0.2s;'>" +
+        "<i class='fas fa-chevron-down'></i> Load more comments</button>";
+    el.appendChild(btn);
+}
+
+function loadMoreComments() {
+    _discussionPage++;
+    loadDiscussion(false);
+}
+
+async function postComment() {
+    if (!token) { alert("Please login to comment."); return; }
+    var msg = document.getElementById("commentInput").value.trim();
+    if (!msg) return;
+    var btn = document.querySelector(".comment-btn");
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Posting...'; }
+    try {
+        var res = await fetch(API_BASE + "/courses/" + courseId + "/discussion", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+            body: JSON.stringify({ message: msg })
+        });
+        var data = await res.json();
+        if (data.success) {
+            document.getElementById("commentInput").value = "";
+            // Reset to page 1 to show newest comment
+            loadDiscussion(true);
+        } else {
+            alert(data.message || "Failed to post comment.");
+        }
+    } catch(e) { alert("Failed to post comment. Please try again."); }
+    finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Post Comment'; }
+    }
+}
+
+init();
+</script>
+</body>
+</html>

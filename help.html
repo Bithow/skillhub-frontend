@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    // HTTPS enforcement — redirect http to https on production
+    if(window.location.protocol==='http:'&&window.location.hostname!=='localhost'&&window.location.hostname!=='127.0.0.1'&&!window.location.hostname.startsWith('192.168.')){window.location.replace('https:'+window.location.href.substring(5));}
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help Center – SkillHub</title>
+  <link rel="icon" href="logo.png" type="image/png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="page-navigation.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="payment-config.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter','Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b}
+    a{text-decoration:none;color:inherit}
+
+    /* TOPBAR */
+    .topbar{background:#1e3a8a;color:white;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.75rem}
+    .topbar-logo{display:flex;align-items:center;gap:0.5rem;font-size:1.1rem;font-weight:700;color:white}
+    .topbar-logo img{width:32px;height:32px;object-fit:contain;border-radius:6px;background:white;padding:2px}
+    .logo-hub{color:#fbbf24}
+    .topbar-link{color:white;font-size:0.85rem;opacity:0.85;display:flex;align-items:center;gap:0.35rem;transition:opacity 0.2s}
+    .topbar-link:hover{opacity:1}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:white;padding:3rem 2rem;text-align:center}
+    .hero h1{font-size:2rem;font-weight:800;margin-bottom:0.75rem}
+    .hero p{font-size:1rem;opacity:0.85;max-width:520px;margin:0 auto 1.5rem}
+    .search-box{display:flex;max-width:480px;margin:0 auto;background:white;border-radius:2rem;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+    .search-box input{flex:1;border:none;padding:0.8rem 1.25rem;font-size:0.95rem;outline:none;color:#1e293b;font-family:inherit}
+    .search-box button{background:#2563eb;color:white;border:none;padding:0 1.25rem;cursor:pointer;font-size:0.95rem;transition:background 0.2s}
+    .search-box button:hover{background:#1d4ed8}
+
+    /* QUICK LINKS */
+    .quick-links{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;padding:1.5rem 1rem;background:white;border-bottom:1px solid #e2e8f0}
+    .quick-link{padding:0.5rem 1rem;border-radius:50px;border:1.5px solid #e2e8f0;font-size:0.8rem;font-weight:600;color:#374151;cursor:pointer;transition:all 0.2s}
+    .quick-link:hover,.quick-link.active{background:#2563eb;color:white;border-color:#2563eb}
+
+    /* MAIN LAYOUT */
+    .layout{max-width:1000px;margin:2rem auto;padding:0 1rem;display:grid;grid-template-columns:220px 1fr;gap:1.5rem}
+    @media(max-width:768px){.layout{grid-template-columns:1fr}}
+
+    /* SIDEBAR NAV */
+    .sidebar{background:white;border-radius:1rem;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);height:fit-content;position:sticky;top:1rem}
+    .sidebar-section{margin-bottom:1.25rem}
+    .sidebar-section h4{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;padding:0 0.5rem;margin-bottom:0.5rem}
+    .nav-link{display:flex;align-items:center;gap:0.6rem;padding:0.5rem 0.75rem;border-radius:0.5rem;font-size:0.85rem;color:#374151;cursor:pointer;transition:all 0.15s;border:none;background:none;width:100%;text-align:left;font-family:inherit}
+    .nav-link i{width:16px;color:#64748b;font-size:0.8rem}
+    .nav-link:hover{background:#f1f5f9;color:#2563eb}
+    .nav-link:hover i{color:#2563eb}
+    .nav-link.active{background:#eff6ff;color:#2563eb;font-weight:600}
+    .nav-link.active i{color:#2563eb}
+
+    /* CONTENT */
+    .content-area{display:flex;flex-direction:column;gap:1.25rem}
+    .section-block{background:white;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:none}
+    .section-block.visible{display:block}
+    .section-block h2{font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.6rem;color:#1e293b}
+    .section-block h2 i{color:#2563eb}
+
+    /* FAQ ACCORDION */
+    .faq-item{border:1px solid #e2e8f0;border-radius:0.75rem;margin-bottom:0.75rem;overflow:hidden}
+    .faq-q{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;cursor:pointer;font-size:0.9rem;font-weight:600;color:#1e293b;background:white;transition:background 0.15s;gap:1rem;border:none;width:100%;text-align:left;font-family:inherit}
+    .faq-q:hover{background:#f8fafc}
+    .faq-q.open{background:#eff6ff;color:#2563eb}
+    .faq-q .faq-icon{color:#64748b;font-size:0.8rem;flex-shrink:0;transition:transform 0.2s}
+    .faq-q.open .faq-icon{transform:rotate(180deg);color:#2563eb}
+    .faq-a{display:none;padding:0 1.25rem 1rem;font-size:0.875rem;color:#475569;line-height:1.7;border-top:1px solid #f1f5f9}
+    .faq-a.open{display:block}
+    .faq-a ul{margin:0.5rem 0 0 1.2rem}
+    .faq-a li{margin-bottom:0.35rem}
+
+    /* CONTACT CARDS */
+    .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+    .contact-card{border:1.5px solid #e2e8f0;border-radius:0.75rem;padding:1.25rem;text-align:center;transition:all 0.2s}
+    .contact-card:hover{border-color:#2563eb;box-shadow:0 4px 16px rgba(37,99,235,0.1)}
+    .contact-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 0.75rem}
+    .icon-wa{background:#d1fae5;color:#059669}
+    .icon-tg{background:#dbeafe;color:#2563eb}
+    .icon-em{background:#ede9fe;color:#7c3aed}
+    .contact-card h4{font-size:0.9rem;font-weight:700;margin-bottom:0.3rem}
+    .contact-card p{font-size:0.8rem;color:#64748b;margin-bottom:0.75rem;line-height:1.5}
+    .contact-btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;border-radius:50px;font-size:0.8rem;font-weight:600;color:white;transition:opacity 0.2s}
+    .contact-btn:hover{opacity:0.85}
+    .btn-wa{background:#25d366}
+    .btn-tg{background:#229ed9}
+    .btn-em{background:#7c3aed}
+
+    /* STEP LIST */
+    .step-list{counter-reset:steps}
+    .step-item{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start}
+    .step-num{width:30px;height:30px;background:#2563eb;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0}
+    .step-text h4{font-size:0.875rem;font-weight:700;margin-bottom:0.2rem}
+    .step-text p{font-size:0.8rem;color:#64748b;line-height:1.5}
+
+    /* ALERT */
+    .alert{display:flex;gap:0.75rem;padding:0.875rem 1rem;border-radius:0.625rem;margin-bottom:1rem;align-items:flex-start;font-size:0.875rem}
+    .alert i{flex-shrink:0;margin-top:2px}
+    .alert-blue{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+    .alert-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+    .alert-yellow{background:#fefce8;border:1px solid #fde68a;color:#92400e}
+
+    /* STATUS PILLS */
+    .pill{display:inline-flex;align-items:center;gap:0.35rem;padding:0.2rem 0.65rem;border-radius:50px;font-size:0.75rem;font-weight:700}
+    .pill-pending{background:#fef3c7;color:#92400e}
+    .pill-approved{background:#d1fae5;color:#065f46}
+    .pill-rejected{background:#fee2e2;color:#991b1b}
+
+    /* FOOTER */
+    .footer{text-align:center;padding:2rem 1rem;color:#94a3b8;font-size:0.8rem;margin-top:2rem}
+    .footer a{color:#2563eb;text-decoration:none}
+    .footer a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">
+    <img src="logo.png" alt="SkillHub" onerror="this.style.display='none'">
+    Skill<span class="logo-hub">Hub</span>
+  </a>
+  <a href="index.html" class="topbar-link"><i class="fas fa-arrow-left"></i> Back to Home</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1><i class="fas fa-life-ring"></i> Help Center</h1>
+  <p>Find answers to common questions, payment help, and how to get in touch with our team.</p>
+  <div class="search-box">
+    <input type="search" id="searchInput" placeholder="Search help topics..." minlength="2" maxlength="100" aria-describedby="helpSearchStatus" oninput="filterFAQs(this.value)" />
+    <button id="helpSearchButton" type="button" aria-label="Search help topics"><i class="fas fa-search"></i></button>
+  </div>
+  <p id="helpSearchStatus" role="status" aria-live="polite" style="min-height:1.2rem;margin:.5rem auto 0;color:white;font-size:.82rem;"></p>
+</div>
+
+<!-- QUICK LINKS -->
+<div class="quick-links">
+  <button class="quick-link active" onclick="showSection('learners', this)">Learners</button>
+  <button class="quick-link" onclick="showSection('instructors', this)">Instructors</button>
+  <button class="quick-link" onclick="showSection('freelancers', this)">Freelancers</button>
+  <button class="quick-link" onclick="showSection('payment', this)">Payment Help</button>
+  <button class="quick-link" onclick="showSection('access', this)">Course Access</button>
+  <button class="quick-link" onclick="showSection('certificates', this)">Certificates</button>
+  <button class="quick-link" onclick="showSection('contact', this)">Contact Support</button>
+</div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <h4>For Users</h4>
+      <button class="nav-link active" onclick="showSection('learners', this)"><i class="fas fa-graduation-cap"></i> Learners</button>
+      <button class="nav-link" onclick="showSection('instructors', this)"><i class="fas fa-chalkboard-teacher"></i> Instructors</button>
+      <button class="nav-link" onclick="showSection('freelancers', this)"><i class="fas fa-briefcase"></i> Freelancers</button>
+    </div>
+    <div class="sidebar-section">
+      <h4>Payments</h4>
+      <button class="nav-link" onclick="showSection('payment', this)"><i class="fas fa-credit-card"></i> Payment Help</button>
+      <button class="nav-link" onclick="showSection('withdrawal', this)"><i class="fas fa-wallet"></i> Withdrawals</button>
+    </div>
+    <div class="sidebar-section">
+      <h4>Platform</h4>
+      <button class="nav-link" onclick="showSection('access', this)"><i class="fas fa-lock-open"></i> Course Access</button>
+      <button class="nav-link" onclick="showSection('certificates', this)"><i class="fas fa-certificate"></i> Certificates</button>
+    </div>
+    <div class="sidebar-section">
+      <h4>Support</h4>
+      <button class="nav-link" onclick="showSection('contact', this)"><i class="fas fa-headset"></i> Contact Support</button>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content-area">
+
+    <!-- ========== LEARNERS ========== -->
+    <div class="section-block visible" id="sec-learners">
+      <h2><i class="fas fa-graduation-cap"></i> FAQs for Learners</h2>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I enroll in a course? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Browse courses on the home page, click <strong>View Details</strong>, then click <strong>Buy This Course</strong>. You'll be taken to the payment page to complete your purchase.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How long does it take to get access after paying? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">After you submit your payment receipt, our team reviews it within <strong>24 hours</strong>. You'll receive confirmation once access is granted. For faster processing, make sure your receipt photo is clear and the transaction reference number is included.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I access a course I've already paid for? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Log in to your account, go to your <strong>Profile → My Courses</strong>, and click <strong>Continue Learning</strong>. If your payment was recently approved, it may take a few minutes to appear.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I get a refund? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Yes, within <strong>7 days</strong> of purchase if you have completed less than 20% of the course. Contact our support team with your payment reference to request a refund. See our full <a href="refund.html" style="color:#2563eb">Refund Policy</a>.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Do I get a certificate? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Yes! Once you complete 100% of a course, a <strong>Get Certificate</strong> button appears in your profile. The certificate is yours to download and print.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What devices can I use? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">SkillHub works on any device with a web browser — phone, tablet, or desktop. It's also installable as a <strong>PWA</strong> (Progressive Web App) for offline access to the shell.</div>
+      </div>
+    </div>
+
+    <!-- ========== INSTRUCTORS ========== -->
+    <div class="section-block" id="sec-instructors">
+      <h2><i class="fas fa-chalkboard-teacher"></i> FAQs for Instructors</h2>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I become an instructor? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Register for an account and select <strong>Instructor</strong> as your role. Your instructor account will be reviewed and approved by our admin team within 24 hours.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I create and publish a course? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Once approved, click the <strong>Create Course</strong> button in your dashboard. Add your course title, description, price (in USD), category, and lessons (video links, PDFs). Submit the course — it goes to <strong>Pending</strong> status until an admin reviews and approves it.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How and when do I get paid? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">
+          SkillHub collects payments from students. You earn <strong>80%</strong> of each course sale (20% is the platform fee). Your earnings accumulate in your instructor wallet. When your balance is withdrawable, submit a <strong>Withdrawal Request</strong> in your profile with your preferred payment method.
+          <ul>
+            <li>Minimum withdrawal: <strong>$5</strong></li>
+            <li>Processing time: 1–3 business days</li>
+          </ul>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What video hosting should I use? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Upload your videos to <strong>YouTube</strong> (unlisted), <strong>Google Drive</strong>, or <strong>Vimeo</strong> and paste the link into your lesson. SkillHub embeds them automatically.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">My course was rejected — what do I do? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">The admin will provide a rejection reason. Common reasons: incomplete lessons, unclear pricing, or content policy violations. Fix the issues and resubmit, or contact support.</div>
+      </div>
+    </div>
+
+    <!-- ========== FREELANCERS ========== -->
+    <div class="section-block" id="sec-freelancers">
+      <h2><i class="fas fa-briefcase"></i> FAQs for Freelancers</h2>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I list my services? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Register with the <strong>Freelancer</strong> role and complete your profile (skills, hourly rate, portfolio). Your profile goes to admin for approval. Once approved, you appear in the freelancers section on the homepage.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do clients hire me? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Clients can click <strong>Message</strong> to chat with you directly, or click <strong>Hire</strong> which takes them through the payment flow. Once a client pays, you'll receive a hire request in your profile.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What commission does SkillHub take? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">SkillHub charges a <strong>12% platform fee</strong> on freelance payments. You keep <strong>88%</strong> of the agreed rate.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I withdraw my earnings? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Go to your <strong>Profile → Wallet</strong> and click <strong>Request Withdrawal</strong>. Enter your amount, country, payment method, and account details. Admin reviews and sends your payment manually within 1–3 business days.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I set my availability? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Go to <strong>Profile → My Services</strong> and toggle your status between <strong>Available</strong> and <strong>Busy</strong>. Clients can see your current availability on your profile card.</div>
+      </div>
+    </div>
+
+    <!-- ========== PAYMENT HELP ========== -->
+    <div class="section-block" id="sec-payment">
+      <h2><i class="fas fa-credit-card"></i> Payment Help</h2>
+
+      <div class="alert alert-blue">
+        <i class="fas fa-info-circle"></i>
+        <div>All prices on SkillHub are shown in <strong>USD ($)</strong>. Pay using your local mobile money or bank transfer — our accounts accept the equivalent in your local currency.</div>
+      </div>
+
+      <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:1rem;color:#374151">How to Pay — Step by Step</h3>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-text"><h4>Select your course or service</h4><p>Click Buy on the course or Hire on a freelancer's profile.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text"><h4>Choose your payment method</h4><p>Pick the mobile money or bank transfer option for your country.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text"><h4>Send the payment</h4><p>Transfer the exact amount to the account number shown. Use your full name as the payment reference.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-text"><h4>Upload your receipt</h4><p>On the payment page, upload a photo of your receipt and enter your transaction/reference number.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-text"><h4>Wait for admin verification</h4><p>Your payment status shows as <span class="pill pill-pending">Pending</span>. Once verified it becomes <span class="pill pill-approved">Approved</span> and access is granted. If there's an issue it shows <span class="pill pill-rejected">Rejected</span> with a reason.</p></div>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.95rem;font-weight:700;margin:1.25rem 0 0.75rem;color:#374151">Payment Methods by Country</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <thead>
+          <tr style="background:#f8fafc;">
+            <th style="padding:0.625rem 0.875rem;text-align:left;border-bottom:2px solid #e2e8f0">Country</th>
+            <th style="padding:0.625rem 0.875rem;text-align:left;border-bottom:2px solid #e2e8f0">Method</th>
+            <th style="padding:0.625rem 0.875rem;text-align:left;border-bottom:2px solid #e2e8f0">Account Number</th>
+          </tr>
+        </thead>
+        <tbody id="helpPaymentTableBody">
+          <!-- Populated by renderHelpPaymentTable() from payment-config.js -->
+        </tbody>
+      </table>
+
+      <div class="faq-item" style="margin-top:1.25rem">
+        <button class="faq-q" onclick="toggleFaq(this)">My payment was rejected — what do I do? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Check the rejection reason shown in your payment history. Common issues: wrong amount, unclear receipt photo, or missing reference number. Re-submit or contact support.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">My payment is still Pending after 24 hours <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Contact support via WhatsApp or Telegram with your transaction reference number. Please do NOT resend the payment — just follow up on the existing one.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I pay via WhatsApp? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">No — payments are submitted through the SkillHub payment page. However, WhatsApp is used for <strong>refund requests, support, and following up on delayed payments</strong>. Do not send payment receipts via WhatsApp as your primary submission — always use the payment page first.</div>
+      </div>
+    </div>
+
+    <!-- ========== WITHDRAWAL ========== -->
+    <div class="section-block" id="sec-withdrawal">
+      <h2><i class="fas fa-wallet"></i> Withdrawal Help</h2>
+
+      <div class="alert alert-green">
+        <i class="fas fa-check-circle"></i>
+        <div>Withdrawals are available for <strong>Instructors</strong> and <strong>Freelancers</strong> only. Learner accounts do not have a wallet.</div>
+      </div>
+
+      <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:0.75rem;color:#374151">How to Request a Withdrawal</h3>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-text"><h4>Go to Profile → Wallet</h4><p>Check your withdrawable balance (approved earnings that are ready to withdraw).</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-text"><h4>Click "Request Withdrawal"</h4><p>Enter the amount in USD, select your country and payment method, then enter your account details.</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-text"><h4>Submit the request</h4><p>Admin reviews your request within 1–2 business days and sends the payment manually.</p></div>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.95rem;font-weight:700;margin:1.25rem 0 0.75rem;color:#374151">Supported Withdrawal Methods</h3>
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+        <thead>
+          <tr style="background:#f8fafc;">
+            <th style="padding:0.625rem 0.875rem;text-align:left;border-bottom:2px solid #e2e8f0">Country</th>
+            <th style="padding:0.625rem 0.875rem;text-align:left;border-bottom:2px solid #e2e8f0">Method</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:0.625rem 0.875rem">🇪🇹 Ethiopia</td><td style="padding:0.625rem 0.875rem">Telebirr, CBE Bank Transfer</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:0.625rem 0.875rem">🇺🇬 Uganda</td><td style="padding:0.625rem 0.875rem">MTN Mobile Money, Airtel Money</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:0.625rem 0.875rem">🇸🇸 South Sudan</td><td style="padding:0.625rem 0.875rem">MTN Mobile Money (via Uganda)</td></tr>
+          <tr style="border-bottom:1px solid #f1f5f9"><td style="padding:0.625rem 0.875rem">🇰🇪 Kenya</td><td style="padding:0.625rem 0.875rem">M-Pesa</td></tr>
+          <tr><td style="padding:0.625rem 0.875rem">🌍 International</td><td style="padding:0.625rem 0.875rem">Western Union, WorldRemit</td></tr>
+        </tbody>
+      </table>
+
+      <div class="faq-item" style="margin-top:1.25rem">
+        <button class="faq-q" onclick="toggleFaq(this)">What is the minimum withdrawal amount? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">The minimum withdrawal is <strong>$5 USD</strong>.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How long does a withdrawal take? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">1–3 business days after admin approval. You'll see the status update in your wallet history.</div>
+      </div>
+    </div>
+
+    <!-- ========== COURSE ACCESS ========== -->
+    <div class="section-block" id="sec-access">
+      <h2><i class="fas fa-lock-open"></i> Course Access Help</h2>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">I paid but can't access the course <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Your payment may still be under review (up to 24 hours). Check your <strong>Payment History</strong> tab in your profile to see the status. If it shows <span class="pill pill-approved">Approved</span> but you still can't access the course, contact support.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">The course video won't play <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Videos are hosted on YouTube, Google Drive, or Vimeo. Try:
+          <ul>
+            <li>Refreshing the page</li>
+            <li>Switching to a different browser</li>
+            <li>Checking your internet connection</li>
+            <li>Disabling browser extensions that might block iframes</li>
+          </ul>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I download course materials? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">PDF materials attached to lessons can be downloaded via the link in the lesson. Videos cannot be downloaded directly from SkillHub.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Do I have lifetime access? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Yes — once your payment is verified, you have lifetime access to the course content as long as your account is active.</div>
+      </div>
+    </div>
+
+    <!-- ========== CERTIFICATES ========== -->
+    <div class="section-block" id="sec-certificates">
+      <h2><i class="fas fa-certificate"></i> Certificate Help</h2>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I get my certificate? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Complete 100% of a course. Then go to <strong>Profile → My Courses</strong> and click <strong>Get Certificate</strong> next to the completed course.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I download or print my certificate? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">On the certificate page, click <strong>Download / Print Certificate</strong>. This opens your browser's print dialog — choose <strong>Save as PDF</strong> to download a digital copy.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Is the certificate accredited? <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">SkillHub certificates are platform-issued completion certificates. They are not government-accredited but serve as proof of skill development and course completion.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">I can't find the "Get Certificate" button <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Make sure you have reached 100% course progress. If progress isn't updating, go through each lesson and mark it complete. Contact support if the issue persists.</div>
+      </div>
+    </div>
+
+    <!-- ========== CONTACT ========== -->
+    <div class="section-block" id="sec-contact">
+      <h2><i class="fas fa-headset"></i> Contact Support</h2>
+
+      <div class="alert alert-yellow">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div>WhatsApp and Telegram are for <strong>support only</strong>. Do NOT send payment screenshots directly to our contacts — use the payment receipt upload on the payment page instead.</div>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-icon icon-wa"><i class="fab fa-whatsapp"></i></div>
+          <h4>WhatsApp Support</h4>
+          <p>Quick support for general questions. Response within a few hours.</p>
+          <a href="https://wa.me/256783999418?text=Hi+SkillHub+Support%2C+I+need+help+with..." target="_blank" rel="noopener" class="contact-btn btn-wa"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon icon-tg"><i class="fab fa-telegram"></i></div>
+          <h4>Telegram Support</h4>
+          <p>Reach us on Telegram for support and updates.</p>
+          <a href="https://t.me/skillhubsupport" target="_blank" rel="noopener" class="contact-btn btn-tg"><i class="fab fa-telegram"></i> Open Telegram</a>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon icon-em"><i class="fas fa-envelope"></i></div>
+          <h4>Email Support</h4>
+          <p>For detailed issues. Response within 48 hours.</p>
+          <a href="mailto:hello@skillhub.com" class="contact-btn btn-em"><i class="fas fa-envelope"></i> Send Email</a>
+        </div>
+      </div>
+
+      <div style="margin-top:1.25rem;padding:1rem;background:#f8fafc;border-radius:0.75rem;border:1px solid #e2e8f0">
+        <h4 style="font-size:0.875rem;font-weight:700;margin-bottom:0.5rem"><i class="fas fa-clock" style="color:#2563eb;margin-right:0.4rem"></i> Support Hours</h4>
+        <p style="font-size:0.82rem;color:#64748b;line-height:1.7">
+          Monday – Friday: 9:00 AM – 6:00 PM (EAT)<br>
+          Saturday: 10:00 AM – 4:00 PM (EAT)<br>
+          Sunday: Closed
+        </p>
+      </div>
+
+      <div class="faq-item" style="margin-top:1.25rem">
+        <button class="faq-q" onclick="toggleFaq(this)">What to include when contacting support <i class="fas fa-chevron-down faq-icon"></i></button>
+        <div class="faq-a">Please include:
+          <ul>
+            <li>Your registered email or phone number</li>
+            <li>The issue you're experiencing</li>
+            <li>Your transaction reference number (for payment issues)</li>
+            <li>Any error messages you see</li>
+          </ul>
+          This helps us resolve your issue faster.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content-area -->
+</div><!-- /layout -->
+
+<div class="footer">
+  <p>© 2026 SkillHub — <a href="index.html">Home</a> · <a href="faq.html">FAQ</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="refund.html">Refund Policy</a></p>
+</div>
+
+<script>
+  // Section switching
+  function showSection(id, triggerEl) {
+    document.querySelectorAll('.section-block').forEach(el => el.classList.remove('visible'));
+    const target = document.getElementById('sec-' + id);
+    if (target) target.classList.add('visible');
+
+    // Update sidebar nav links
+    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.quick-link').forEach(el => el.classList.remove('active'));
+
+    if (triggerEl) {
+      triggerEl.classList.add('active');
+      // Also sync sidebar/quicklink counterpart
+      document.querySelectorAll('.nav-link, .quick-link').forEach(el => {
+        if (el !== triggerEl && el.getAttribute('onclick') === triggerEl.getAttribute('onclick')) {
+          el.classList.add('active');
+        }
+      });
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // FAQ accordion
+  function toggleFaq(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    // Close all in same block
+    const block = btn.closest('.section-block');
+    block.querySelectorAll('.faq-q.open').forEach(q => {
+      q.classList.remove('open');
+      q.nextElementSibling.classList.remove('open');
+    });
+    if (!isOpen) {
+      btn.classList.add('open');
+      answer.classList.add('open');
+    }
+  }
+
+  // Search filter
+  function filterFAQs(query) {
+    const q = query.toLowerCase().trim();
+    const status = document.getElementById('helpSearchStatus');
+    if (q && q.length < 2) {
+      status.textContent = 'Enter at least 2 characters to search help topics.';
+      return;
+    }
+    if (q.length > 100) {
+      status.textContent = 'Search must be 100 characters or fewer.';
+      return;
+    }
+    status.textContent = '';
+
+    // Remove any existing no-results message
+    const existing = document.getElementById('searchNoResults');
+    if (existing) existing.remove();
+
+    if (!q) {
+      // Restore original state — show active section only
+      document.querySelectorAll('.faq-item').forEach(item => { item.style.display = ''; });
+      document.querySelectorAll('.section-block').forEach(el => el.classList.remove('visible'));
+      const activeLink = document.querySelector('.nav-link.active, .quick-link.active');
+      if (activeLink) {
+        const onclick = activeLink.getAttribute('onclick');
+        const match = onclick && onclick.match(/showSection\('(\w+)'/);
+        if (match) {
+          const sec = document.getElementById('sec-' + match[1]);
+          if (sec) sec.classList.add('visible');
+        }
+      }
+      return;
+    }
+
+    // Show all sections and filter FAQ items
+    document.querySelectorAll('.section-block').forEach(el => el.classList.add('visible'));
+    let totalVisible = 0;
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const text = item.textContent.toLowerCase();
+      const visible = text.includes(q);
+      item.style.display = visible ? '' : 'none';
+      if (visible) totalVisible++;
+    });
+
+    // Show no-results message if nothing matched
+    if (totalVisible === 0) {
+      const msg = document.createElement('div');
+      msg.id = 'searchNoResults';
+      msg.style.cssText = 'text-align:center;padding:2rem;color:#94a3b8;font-size:0.9rem;';
+      const icon = document.createElement('i');
+      icon.className = 'fas fa-search';
+      icon.style.cssText = 'font-size:1.5rem;display:block;margin-bottom:0.5rem;';
+      msg.appendChild(icon);
+      msg.appendChild(document.createTextNode('No results for "' + q + '". Try different keywords.'));
+      document.querySelector('.content-area').appendChild(msg);
+    }
+  }
+
+  document.getElementById('helpSearchButton').addEventListener('click', function() {
+    filterFAQs(document.getElementById('searchInput').value);
+  });
+  document.getElementById('searchInput').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      filterFAQs(event.currentTarget.value);
+    }
+  });
+
+  // Open section from URL hash
+  const hash = window.location.hash.replace('#', '');
+  const validSections = ['learners','instructors','freelancers','payment','access','certificates','contact','withdrawal'];
+  if (hash && validSections.includes(hash)) {
+    showSection(hash, document.querySelector(`[onclick="showSection('${hash}', this)"]`));
+  }
+
+  // Render payment methods table from config
+  (function renderHelpPaymentTable() {
+    var tbody = document.getElementById('helpPaymentTableBody');
+    if (!tbody || !window.SKILLHUB_PAYMENT_METHODS) return;
+    var rows = '';
+    var allMethods = SKILLHUB_PAYMENT_METHODS.reduce(function(acc, group) {
+      group.methods.forEach(function(m) {
+        acc.push({ flag: group.flag, label: group.label, name: m.name, display: m.display });
+      });
+      return acc;
+    }, []);
+    allMethods.forEach(function(m, i) {
+      var isLast = i === allMethods.length - 1;
+      var style = isLast ? '' : 'border-bottom:1px solid #f1f5f9';
+      rows += '<tr style="' + style + '">' +
+        '<td style="padding:0.625rem 0.875rem">' + m.flag + ' ' + m.label + '</td>' +
+        '<td style="padding:0.625rem 0.875rem">' + m.name + '</td>' +
+        '<td style="padding:0.625rem 0.875rem;font-weight:600">' + m.display + '</td>' +
+        '</tr>';
+    });
+    tbody.innerHTML = rows;
+  })();
+</script>
+</body>
+</html>
