@@ -9,12 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="api-config.js"></script>
 </head>
 <body class="dashboard-page" data-page="dashboard">
     <div class="dashboard-shell">
-        <aside class="dashboard-sidebar">
+        <aside class="dashboard-sidebar" id="dashSidebar">
+            <button class="dashboard-sidebar-close" id="dashSidebarClose" aria-label="Close menu">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="dashboard-brand-row">
                 <img src="logo.png" alt="SkillHub logo" class="dashboard-brand-logo">
                 <div>
@@ -48,6 +52,9 @@
 
         <main class="dashboard-main">
             <header class="dashboard-topbar">
+                <button class="dashboard-menu-button" id="dashMenuButton" aria-label="Open menu" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div>
                     <p class="dashboard-topbar-kicker">Learning dashboard</p>
                     <h1>Welcome back, <span id="dashNameMain">Learner</span>!</h1>
@@ -202,7 +209,7 @@
 
         </main>
     </div>
-
+    <button class="dashboard-scrim" id="dashScrim" hidden aria-label="Close menu"></button>
     <script src="script.js" defer></script>
 </body>
 </html>
